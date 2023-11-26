@@ -4,6 +4,7 @@ export const useMatchStore = create((set) => ({
 
     //object variable for setUp Tab
     setUp: {
+        uploadedFile: "",
         wellbore: {
             name: "",
             created: "",
@@ -30,14 +31,14 @@ export const useMatchStore = create((set) => ({
             mapName: "",
             northAlignment: ""
         },
-        Field: {
+        field: {
             name: "",
             easting: "",
             northing: "",
             mapName: "",
             northAlignment: ""
         },
-        Additional: {
+        additional: {
             units: "",
             verticalSectionAzimuth: "",
             surveyReferencePoint: ""
