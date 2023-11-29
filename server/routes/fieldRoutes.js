@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const multer = require("multer");
-const { getAllFields, fieldController } = require("../controllers/fieldcontroller");
+const { getAllFields, fieldController } = require("../controllers/fieldController");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 router.post("/fields",upload.single('excelFile'), fieldController);
