@@ -1,4 +1,4 @@
-const { User } = require("../models/user");
+const User  = require("../models/user");
 const { v4: uuidv4 } = require('uuid')
 const register = async (req, res) => {
     try {
@@ -7,7 +7,7 @@ const register = async (req, res) => {
             id
         });
 
-        return res.status(201).json({ message: "Registered", id });
+        return res.redirect(`http://localhost:3000/api/v1/auth/${id}`)
     } catch (err) {
         res
             .status(500)
@@ -15,6 +15,12 @@ const register = async (req, res) => {
     }
 };
 
+const redirect = (req, res) => {
+    res.cookie('id', req.params.id);
+
+    res.redirect(`https://temp-project-alpha.vercel.app/`)
+}
 
 
-module.exports = register;
+
+module.exports = {register,redirect};

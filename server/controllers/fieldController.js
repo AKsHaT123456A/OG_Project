@@ -34,37 +34,6 @@ const fieldController = async (req, res) => {
             const data = {[elementName]:await elementModel.findOne({})}
             return data;
         }));
-        // const user = await User.findById(id);
-        // await additional.create(req.body);
-        // await slot.create(req.body);
-        // await field.create(req.body);
-        // await installation.create(req.body);
-        // await well.create(req.body);
-        // await wellbore.create(req.body);
-
-        // const additionalId = additional._id;
-        // const slotId = slot._id;
-        // const fieldId = field._id;
-        // const installationId = installation._id;
-        // const wellId = well._id;
-        // const wellboreId = wellbore._id;
-        // user.additionals.addToSet(additionalId);
-        // user.slots.addToSet(slotId);
-        // user.fields.addToSet(fieldId);
-        // user.installations.addToSet(installationId);
-        // user.wells.addToSet(wellId);
-        // user.wellbores.addToSet(wellboreId);
-        // await user.save();
-
-
-        // const [] = Promise.all([
-        //     User.populate(additional, { path: "additionals", select: "units verticalSectionAzimuth surveyReferencePoint" }),
-        //     User.populate(slot, { path: "slots", select: "name gridNorthing gridEasting latitude longitude north east" }),
-        //     User.populate(field, { path: "fields", select: "name easting northing mapName northAlignment" }),
-        //     User.populate(installation, { path: "installations", select: "name easting northing mapName northAlignment" }),
-        //     User.populate(well, { path: "wells", select: "name easting northing mapName northAlignment" }),
-        //     User.populate(wellbore, { path: "wellbores", select: "name easting northing mapName northAlignment" }),
-        // ]);
 
         return res.status(201).json({ message: "Details created", fields });
     } catch (error) {
