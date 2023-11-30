@@ -7,7 +7,7 @@ const register = async (req, res) => {
             id
         });
 
-        return res.redirect(`http://localhost:3000/api/v1/auth/${id}`)
+        return res.redirect(`https://og-project.onrender.com/api/v1/auth/${id}`)
     } catch (err) {
         res
             .status(500)
