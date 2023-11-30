@@ -6,7 +6,7 @@ const additionalSchema = new mongoose.Schema(
         verticalSectionAzimuth: { type: String, trim: true, required: true },
         surveyReferencePoint: { type: String, trim: true, required: true },
     },
-    { versionKey: false, timestamps: true }
+    { versionKey: false }
 );
 const additional = mongoose.model("additional", additionalSchema);
 module.exports = additional;

@@ -6,7 +6,7 @@ const wellSchema = new mongoose.Schema(
         GovernmentID: { type:String , trim: true, default: "N/A"},
         LastRevised: { type: Date, trim: true, required: true , default: Date.now},
     },
-    { versionKey: false, timestamps: true }
+    { versionKey: false, }
 );
 const well = mongoose.model("well", wellSchema);
 module.exports = well;

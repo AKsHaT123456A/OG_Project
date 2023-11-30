@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema(
         slots: [{ type: mongoose.Schema.Types.ObjectId, ref: 'slot', default: [] }],
         additionals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'additional', default: [] }],
     },
-    { versionKey: false, timestamps: true }
+    { versionKey: false }
 );
 
 const User = mongoose.model("User", userSchema);

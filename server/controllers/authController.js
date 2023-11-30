@@ -1,8 +1,16 @@
-const User  = require("../models/user");
+const User = require("../models/user");
 const { v4: uuidv4 } = require('uuid')
 const register = async (req, res) => {
     try {
         const id = uuidv4();
+        const userId = req.cookies.id;
+        const user = await User.findOne({ id: userId });
+        if (user) {
+            if (!userId) {
+                return res.redirect(`https://temp-project-alpha.vercel.app/404`);
+            }
+            return res.redirect(`https://og-project.onrender.com/api/v1/auth/${userId}`);
+        }
         await User.create({
             id
         });
@@ -16,11 +24,14 @@ const register = async (req, res) => {
 };
 
 const redirect = (req, res) => {
-    res.cookie('id', req.params.id);
-
-    res.redirect(`https://temp-project-alpha.vercel.app/`)
+    if (!req.cookies.id) {
+        const fifteenDays = 15 * 24 * 60 * 60 * 1000; 
+        res.cookie('id', req.params.id, { maxAge: fifteenDays, httpOnly: true });
+    }
+    return res.redirect(`https://temp-project-alpha.vercel.app/`)
 }
 
 
 
-module.exports = {register,redirect};
+module.exports = { register, redirect };
+//setup ,remove created 

@@ -6,7 +6,7 @@ const wellboreSchema = new mongoose.Schema(
         Created: { type: Date, trim: true, required: true , default: Date.now},
         LastRevised: { type: Date, trim: true, required: true , default: Date.now},
     },
-    { versionKey: false, timestamps: true }
+    { versionKey: false }
 );
 const wellbore = mongoose.model("wellbore", wellboreSchema);
 module.exports = wellbore;

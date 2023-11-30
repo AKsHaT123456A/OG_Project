@@ -8,7 +8,7 @@ const fieldSchema = new mongoose.Schema(
         MapName:{ type:String, trim: true, required: true},
         NorthAlignment:{ type:String, trim: true, required: true},
     },
-    { versionKey: false, timestamps: true }
+    { versionKey: false }
 );
 const field = mongoose.model("field", fieldSchema);
 module.exports = field;

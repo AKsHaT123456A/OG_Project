@@ -8,7 +8,7 @@ const installationSchema = new mongoose.Schema(
         MapName:{ type:String, trim: true, required: true},
         NorthAlignment:{ type:String, trim: true, required: true},
     },
-    { versionKey: false, timestamps: true }
+    { versionKey: false }
 );
 const installation = mongoose.model("installation", installationSchema);
 module.exports = installation;

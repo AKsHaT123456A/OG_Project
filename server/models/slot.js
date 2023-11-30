@@ -10,7 +10,7 @@ const slotSchema = new mongoose.Schema(
         North:{ type:String, trim: true, required: true},
         East:{ type:String, trim: true, required: true},
     },
-    { versionKey: false, timestamps: true }
+    { versionKey: false }
 );
 const slot = mongoose.model("slot", slotSchema);
 module.exports = slot;
