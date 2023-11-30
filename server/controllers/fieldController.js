@@ -1,4 +1,3 @@
-const multer = require("multer");
 const xlsx = require("xlsx");
 const additional = require("../models/additional");
 const field = require("../models/field");
@@ -53,5 +52,13 @@ const getAllFields = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
+};
+
+const additionalField = async (req, res) => {
+    const additionalBody = await additional.create(req.body);
+    const _id = additionalBody._id;
+    const additionalData = { _id, ...additionalBody };
+    return res.status(201).json({ additional: additionalData._doc });
+
 }
-module.exports = { fieldController, getAllFields };
+module.exports = { fieldController, getAllFields, additionalField };
