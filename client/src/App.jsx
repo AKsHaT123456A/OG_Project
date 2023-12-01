@@ -2,7 +2,6 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import SetUp from "./components/SetUp";
 import PlannedWellPath from "./components/PlannedWellPath";
@@ -23,7 +22,7 @@ function CustomTabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -51,17 +50,17 @@ export default function BasicTabs() {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box component="main" maxWidth={"1500px"} marginInline={"auto"} >
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Set Up" {...a11yProps(0)} />
-          <Tab label="Planned Well Path" {...a11yProps(1)} />
-          <Tab label="Interpolate" {...a11yProps(2)} />
-          <Tab label="Actual Surveys" {...a11yProps(3)} />
-          <Tab label="Comparison" {...a11yProps(4)} />
+        <Tabs value={value} onChange={handleChange} variant='scrollable' allowScrollButtonsMobile aria-label="basic tabs example">
+          <Tab label="Set Up" sx={{ fontSize: "16px" }}  {...a11yProps(0)} />
+          <Tab label="Planned Well Path" sx={{ fontSize: "16px" }}  {...a11yProps(1)} />
+          <Tab label="Interpolate" sx={{ fontSize: "16px" }}  {...a11yProps(2)} />
+          <Tab label="Actual Surveys" sx={{ fontSize: "16px" }}  {...a11yProps(3)} />
+          <Tab label="Comparison" sx={{ fontSize: "16px" }}  {...a11yProps(4)} />
         </Tabs>
       </Box>
-      <CustomTabPanel value={value} index={0}>
+      <CustomTabPanel value={value} index={0} >
         <SetUp />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
@@ -76,6 +75,6 @@ export default function BasicTabs() {
       <CustomTabPanel value={value} index={4}>
         <Comparison />
       </CustomTabPanel>
-    </Box>
+    </Box >
   );
 }
