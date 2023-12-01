@@ -6,26 +6,30 @@ const constants = {
     DATABASE_KEY: process.env.DATABASE_KEY,
     CRYPTO_SECRET_KEY: process.env.SECRET_KEY,
     CACHE_TTL: 7200000,
-    WELLBORE:{
-        "header":1,
-        "data":2
+    WELLBORE: {
+        "header": 1,
+        "data": 2
     },
-    WELL:{
-        "header":5,
-        "data":6
+    WELL: {
+        "header": 5,
+        "data": 6
     },
-    INSTALLATION:{
-        "header":13,
-        "data":14
+    INSTALLATION: {
+        "header": 13,
+        "data": 14
     },
-    FIELD:{
-        "header":17,
-        "data":18
+    FIELD: {
+        "header": 17,
+        "data": 18
     },
-    SLOT:{
-        "header":9,
-        "data":10
-    }
+    SLOT: {
+        "header": 9,
+        "data": 10
+    },
+    SURVEY: {
+        "header": 21,
+        "data": 132
+    },
 };
 
 module.exports = constants;

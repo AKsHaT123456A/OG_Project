@@ -18,7 +18,7 @@ export const VisuallyHiddenInput = styled('input')({
 export async function uploadFile(file) {
   // Create a FormData object to send the file
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append('excelFile', file);
 
   try {
     // Make the POST request using fetch

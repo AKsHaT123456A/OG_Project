@@ -8,6 +8,7 @@ const well = require("../models/well");
 const wellbore = require("../models/wellbore");
 const parseExcelData = require("../utils/parseUtil");
 const constants = require("../connections/constants");
+const survey = require("../models/survey");
 
 const fieldController = async (req, res) => {
     try {
@@ -25,7 +26,7 @@ const fieldController = async (req, res) => {
             const parsedData = await parseExcelData(workbook.Sheets[sheetName], element);
             array.push(parsedData);
         });
-        const fieldsArray = [{ model: well, name: "well" }, { model: wellbore, name: "wellbore" }, { model: installation, name: "installtion" }, { model: field, name: "field" }, { model: slot, name: "slot" }];
+        const fieldsArray = [{ model: well, name: "well" }, { model: wellbore, name: "wellbore" }, { model: installation, name: "installation" }, { model: field, name: "field" }, { model: slot, name: "slot" }, { model: survey, name: "survey" }];
         const fields = await Promise.all(fieldsArray.map(async (element) => {
             const elementName = element.name;
             const elementModel = element.model;
@@ -40,7 +41,7 @@ const fieldController = async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 }
-
+const a=0;
 const getAllFields = async (req, res) => {
     try {
         const fieldsArray = [well, wellbore, installation, field, slot];

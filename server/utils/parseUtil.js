@@ -8,7 +8,7 @@ parseExcelData = async (sheet, excelData) => {
     const rowObject = {};
 
     rowHead.forEach((header, index) => {
-        header = header.replace(/ /g, "");
+        header = header.replace(/\/| /g, "").replace(/\[|\]/g, "");
         rowObject[header] = rowData[index];
         extractedData.push(rowObject);
     });
