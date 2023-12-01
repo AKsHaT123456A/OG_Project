@@ -12,7 +12,7 @@ const theme = createTheme({
       main: "#0abd61",
     },
     secondary: {
-      main: "#fcfcfc",
+      main: "#ffccff",
     },
     text: {
       primary: "#000000",
@@ -22,9 +22,6 @@ const theme = createTheme({
     },
     accent: {
       primary: "#216b38",
-    },
-    border: {
-      card: "#d5e0d5"
     },
     neutral: {
       main: '#00000099'
@@ -38,18 +35,24 @@ const theme = createTheme({
         }
       }
     },
-    MuiCard: {
+    MuiOutlinedInput: {
       styleOverrides: {
-        root: {
-          boxShadow: "0px 0px 1px 0.5px #d5e0d5",
-        }
-      }
-    }
+        // root: {
+          // '& fieldset': {
+          //   borderColor: '#b8b4b48f !important',
+          //    borderWidth: 2,
+          // },
+          // '&:focus-within fieldset': {
+          //   borderColor: '#009B4D !important',
+          // },
+        // },
+      },
+    },
   },
   typography: {
-    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+    fontFamily: '\'Ubuntu\', sans-serif',
     body1: {
-      fontSize: '1rem',
+      fontSize: '0.92rem',
       fontWeight: 400,
       '@media (max-width:800px)': {
         fontSize: '0.95rem',
@@ -65,7 +68,7 @@ const theme = createTheme({
       lineHeight: 1.57
     },
     button: {
-      fontWeight: 600
+      fontWeight: 500,
     },
     caption: {
       fontSize: '0.75rem',
@@ -120,14 +123,13 @@ const theme = createTheme({
       lineHeight: 1.2
     },
     h5: {
-      fontFamily: '\'Plus Jakarta Sans\', sans-serif',
-      fontWeight: 500,
-      fontSize: '1.5rem',
+      fontFamily: '\'Ubuntu\', sans-serif',
+      fontSize: '1.2rem',
       '@media (max-width:800px)': {
-        fontSize: '1.3rem',
+        fontSize: '1.1rem',
       },
       '@media (max-width:500px)': {
-        fontSize: '1.15rem',
+        fontSize: '1.05rem',
       },
       lineHeight: 1.2
     },

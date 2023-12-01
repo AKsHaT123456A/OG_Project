@@ -2,6 +2,10 @@ import { create } from 'zustand'
 
 export const useMatchStore = create((set) => ({
 
+
+    //variable for edit modal for setUp
+    open: false,
+    setOpen: (sopen) => set(state => ({ open: sopen })),
     //object variable for setUp Tab
     setUp: {
         uploadedFile: "",
