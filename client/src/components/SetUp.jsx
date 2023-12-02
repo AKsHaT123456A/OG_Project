@@ -1,72 +1,81 @@
 import { Box, Stack, Button, Typography, Paper } from '@mui/material';
-import { useEffect, useState } from 'react';
 import { useMatchStore } from '../store/store';
-import { VisuallyHiddenInput, uploadFile } from './constant';
+import { VisuallyHiddenInput, uploadFile } from '../store/constant';
 import LabelInput from './SetUp/LabelInput';
 import BoxHeader from './SetUp/BoxHeader';
 import LabelSelect from './SetUp/LabelSelect';
+import CircularProgress from '@mui/material/CircularProgress';
+import LabelDateInput from './SetUp/LabelDateInput';
 
 
 
 const SetUp = () => {
   const { setUp, updateSetUp } = useMatchStore();
 
-
-  const [fileSelected, selectFile] = useState("");
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      selectFile(file);
-      uploadFile(file);
+      console.log(file);
+      updateSetUp({ ...setUp, loading: true, enteries: false, uploadFile: file.name })
+      const data = await uploadFile(file);
+      if (data) {
+        updateSetUp({
+          ...data.setup, loading: false, enteries: true,
+          additional: {
+            Units: "",
+            VerticalSectionAzimuth: "",
+            SurveyReferencePoint: ""
+          },
+          uploadFile: file.name
+        });
+      } else {
+        updateSetUp({
+          wellbore: {
+            Name: "",
+            Created: "dd-mm-yy",
+            LastRevised: "dd-mm-yy",
+          },
+          well: {
+            Name: "",
+            GovernmentId: "",
+            LastRevised: "dd-mm-yy",
+          },
+          slot: {
+            Name: "",
+            GridNorthing: "",
+            GridEasting: "",
+            Latitude: "",
+            Longitude: "",
+            North: "",
+            East: ""
+          },
+          installation: {
+            Name: "",
+            Easting: "",
+            Northing: "",
+            MapName: "",
+            NorthAlignment: ""
+          },
+          field: {
+            Name: "",
+            Easting: "",
+            Northing: "",
+            MapName: "",
+            NorthAlignment: ""
+          },
+          additional: {
+            Units: "",
+            VerticalSectionAzimuth: "",
+            SurveyReferencePoint: ""
+          },
+          enteries: false,
+          loading: false,
+          uploadedFile: ""
+        });
+        alert('File not supported!');
+      }
     }
   };
-
-
-  useEffect(() => {
-    if (fileSelected !== "") {
-      updateSetUp({
-        ...setUp,
-        wellbore: {
-          name: "BB-xxx",
-          created: "Oct-18-2023",
-          lastRevised: "Oct-19-2023",
-        },
-        well: {
-          name: "BB-xxx",
-          governmentId: "",
-          lastRevised: "09-15-2023",
-        },
-        slot: {
-          name: "Slot #1",
-          gridNorthing: "2631471.29",
-          gridEasting: "766149.86",
-          latitude: "N23 46 27.6398",
-          longitude: "E53 36 41.4215",
-          north: "0.00N",
-          east: "0.00E"
-        },
-        installation: {
-          name: "AD-xx_BB-xxxx",
-          easting: "766149.86",
-          northing: "2631471.29",
-          mapName: "Nahrwan 1967 / UTM zone 39N",
-          northAlignment: "Grid"
-        },
-        field: {
-          name: "AD-xx_BB-xxxx",
-          easting: "772508.0413",
-          northing: "2647983.798",
-          mapName: "Nahrwan 1967 / UTM zone 39N",
-          northAlignment: "Grid"
-        },
-        additional: {
-          units: "feet",
-          verticalSectionAzimuth: "",
-          surveyReferencePoint: "Rotary Table"
-        }
-      },)
-    }
-  }, [fileSelected])
 
   return (
     <Box mt={2.5} component="div">
@@ -74,13 +83,17 @@ const SetUp = () => {
       <Stack alignItems={{ md: "center", xs: "space-between" }} justifyContent={'space-between'} spacing={4} direction={{ md: 'row', xs: 'column-reverse' }}>
         <Typography variant='h5' fontWeight={500} width={'100%'} >
           {
-            (fileSelected === "") ? "Import Well Plan" : "Current Well Plan"
+            (!setUp.enteries) ? "Import Well Plan" : "Current Well Plan"
           }
         </Typography>
         <Stack direction={{ sm: 'row', xs: 'row-reverse' }} width={'100%'} justifyContent={{ sm: "flex-end", xs: "space-between" }} alignItems='center' gap={{ sm: 8, xs: 2 }} alignSelf={{ sm: "flex-end", xs: "flex-start" }}>
           {
-            (fileSelected !== "") && <Typography variant='h5' fontWeight={500} color="#009B4D">{fileSelected.name.split('.')[0].slice(0, 16)}.xlsx</Typography>
+            (setUp.enteries) && <Typography variant='h5' fontWeight={500} color="#009B4D">{setUp.uploadFile}</Typography>
           }
+          {
+            (setUp.loading) && <CircularProgress size={28} />
+          }
+
           <Button variant="contained" onClick={() => document.getElementById('fileInput').click()}>
             Select File
             <VisuallyHiddenInput id="fileInput" type="file" accept=".xlsx, .xls" onChange={handleFileChange} />
@@ -99,11 +112,11 @@ const SetUp = () => {
 
             <Stack display={'grid'} padding={{ md: "20px 28px", sm: "20px 20px", xs: "20px 18px" }} gridTemplateColumns={{ lg: "1fr 1fr 1fr 1fr", md: "1fr 1fr 1fr", sm: "1fr 1fr" }} gap={4}>
 
-              <LabelInput fieldName="name" fieldLabel="Name" fieldStatus={fileSelected === ""} fieldValue={setUp.wellbore.name} fieldType="text" />
+              <LabelInput fieldLabel="Name" fieldStatus={!setUp.enteries} fieldValue={setUp.wellbore.Name} fieldName="setUp.wellbore.Name" />
 
-              <LabelInput fieldName="created" fieldLabel="Created" fieldStatus={fileSelected === ""} fieldValue={setUp.wellbore.created} fieldType={(setUp.wellbore.created === "") ? 'date' : 'text'} />
+              <LabelDateInput fieldLabel="Created" fieldStatus={!setUp.enteries} fieldValue={(setUp.wellbore.Created.includes('T')) ? setUp.wellbore.Created.split('T')[0] : (setUp.wellbore.Created)} fieldName="setUp.wellbore.Created" />
 
-              <LabelInput fieldName="lastRevised" fieldLabel="Last Revised" fieldStatus={fileSelected === ""} fieldValue={setUp.wellbore.lastRevised} fieldType={(setUp.wellbore.lastRevised === "") ? 'date' : 'text'} />
+              <LabelDateInput fieldLabel="Last Revised" fieldStatus={!setUp.enteries} fieldValue={(setUp.wellbore.LastRevised.includes('T')) ? setUp.wellbore.LastRevised.split('T')[0] : (setUp.wellbore.LastRevised)} fieldName="setUp.wellbore.LastRevised" />
 
             </Stack>
           </Stack>
@@ -118,11 +131,11 @@ const SetUp = () => {
 
             <Stack display={'grid'} padding={{ md: "20px 28px", sm: "20px 20px", xs: "20px 18px" }} gridTemplateColumns={{ lg: "1fr 1fr 1fr 1fr", md: "1fr 1fr 1fr", sm: "1fr 1fr" }} gap={4}>
 
-              <LabelInput fieldName="name" fieldLabel="Name" fieldStatus={fileSelected === ""} fieldValue={setUp.well.name} fieldType="text" />
+              <LabelInput fieldLabel="Name" fieldStatus={!setUp.enteries} fieldValue={setUp.well.Name} fieldName="setUp.well.Name" />
 
-              <LabelInput fieldName="governmentId" fieldLabel="Government Id" fieldStatus={fileSelected === ""} fieldValue={setUp.well.governmentId} fieldType="text" />
+              <LabelInput fieldLabel="Government Id" fieldStatus={!setUp.enteries} fieldValue={setUp.well.GovernmentId} fieldName="setUp.well.GovernmentId" />
 
-              <LabelInput fieldName="lastRevised" fieldLabel="Last Revised" fieldStatus={fileSelected === ""} fieldValue={setUp.well.lastRevised} fieldType={(setUp.well.lastRevised === "") ? 'date' : 'text'} />
+              <LabelDateInput fieldLabel="Last Revised" fieldStatus={!setUp.enteries} fieldValue={(setUp.well.LastRevised.includes('T')) ? setUp.well.LastRevised.split('T')[0] : (setUp.well.LastRevised)} fieldName="setUp.well.LastRevised" />
 
             </Stack>
           </Stack>
@@ -137,19 +150,19 @@ const SetUp = () => {
 
             <Stack display={'grid'} padding={{ md: "20px 28px", sm: "20px 20px", xs: "20px 18px" }} gridTemplateColumns={{ lg: "1fr 1fr 1fr 1fr", md: "1fr 1fr 1fr", sm: "1fr 1fr" }} gap={4}>
 
-              <LabelInput fieldName="name" fieldLabel="Name" fieldStatus={fileSelected === ""} fieldValue={setUp.slot.name} fieldType="text" />
+              <LabelInput fieldLabel="Name" fieldStatus={!setUp.enteries} fieldValue={setUp.slot.Name} fieldName="setUp.slot.Name" />
 
-              <LabelInput fieldName="gridNorthing" fieldLabel="Grid Northing" fieldStatus={fileSelected === ""} fieldValue={setUp.slot.gridNorthing} fieldType="text" />
+              <LabelInput fieldLabel="Grid Northing" fieldStatus={!setUp.enteries} fieldValue={setUp.slot.GridNorthing} fieldName="setUp.slot.GridNorthing" />
 
-              <LabelInput fieldName="gridEasting" fieldLabel="Grid Easting" fieldStatus={fileSelected === ""} fieldValue={setUp.slot.gridEasting} fieldType="text" />
+              <LabelInput fieldLabel="Grid Easting" fieldStatus={!setUp.enteries} fieldValue={setUp.slot.GridEasting} fieldName="setUp.slot.GridEasting" />
 
-              <LabelInput fieldName="latitude" fieldLabel="Latitude" fieldStatus={fileSelected === ""} fieldValue={setUp.slot.latitude} fieldType="text" />
+              <LabelInput fieldLabel="Latitude" fieldStatus={!setUp.enteries} fieldValue={setUp.slot.Latitude} fieldName="setUp.slot.Latitude" />
 
-              <LabelInput fieldName="longitude" fieldLabel="Longitude" fieldStatus={fileSelected === ""} fieldValue={setUp.slot.longitude} fieldType="text" />
+              <LabelInput fieldLabel="Longitude" fieldStatus={!setUp.enteries} fieldValue={setUp.slot.Longitude} fieldName="setUp.slot.Longitude" />
 
-              <LabelInput fieldName="north" fieldLabel="North" fieldStatus={fileSelected === ""} fieldValue={setUp.slot.north} fieldType="text" />
+              <LabelInput fieldLabel="North" fieldStatus={!setUp.enteries} fieldValue={setUp.slot.North} fieldName="setUp.slot.North" />
 
-              <LabelInput fieldName="east" fieldLabel="East" fieldStatus={fileSelected === ""} fieldValue={setUp.slot.east} fieldType="text" />
+              <LabelInput fieldLabel="East" fieldStatus={!setUp.enteries} fieldValue={setUp.slot.East} fieldName="setUp.slot.East" />
 
             </Stack>
           </Stack>
@@ -164,15 +177,15 @@ const SetUp = () => {
 
             <Stack display={'grid'} padding={{ md: "20px 28px", sm: "20px 20px", xs: "20px 18px" }} gridTemplateColumns={{ lg: "1fr 1fr 1fr 1fr", md: "1fr 1fr 1fr", sm: "1fr 1fr" }} gap={4}>
 
-              <LabelInput fieldName="name" fieldLabel="Name" fieldStatus={fileSelected === ""} fieldValue={setUp.installation.name} fieldType="text" />
+              <LabelInput fieldLabel="Name" fieldStatus={!setUp.enteries} fieldValue={setUp.installation.Name} fieldName="setUp.installation.Name" />
 
-              <LabelInput fieldName="easting" fieldLabel="Easting" fieldStatus={fileSelected === ""} fieldValue={setUp.installation.easting} fieldType="text" />
+              <LabelInput fieldLabel="Easting" fieldStatus={!setUp.enteries} fieldValue={setUp.installation.Easting} fieldName="setUp.installation.Easting" />
 
-              <LabelInput fieldName="northing" fieldLabel="Northing" fieldStatus={fileSelected === ""} fieldValue={setUp.installation.northing} fieldType="text" />
+              <LabelInput fieldLabel="Northing" fieldStatus={!setUp.enteries} fieldValue={setUp.installation.Northing} fieldName="setUp.installation.Northing" />
 
-              <LabelInput fieldName="mapName" fieldLabel="Map Name" fieldStatus={fileSelected === ""} fieldValue={setUp.installation.mapName} fieldType="text" />
+              <LabelInput fieldLabel="Map Name" fieldStatus={!setUp.enteries} fieldValue={setUp.installation.MapName} fieldName="setUp.installation.MapName" />
 
-              <LabelSelect fieldName="northAlignment" fieldLabel="North Alignment" fieldStatus={fileSelected === ""} fieldValue={setUp.installation.northAlignment} fieldArray={["Grid", "True", "Magnetic"]} />
+              <LabelSelect fieldLabel="North Alignment" fieldStatus={!setUp.enteries} fieldValue={setUp.installation.NorthAlignment} fieldName="setUp.installation.NorthAlignment" fieldArray={["Grid", "True", "Magnetic"]} />
 
             </Stack>
           </Stack>
@@ -187,15 +200,15 @@ const SetUp = () => {
 
             <Stack display={'grid'} padding={{ md: "20px 28px", sm: "20px 20px", xs: "20px 18px" }} gridTemplateColumns={{ lg: "1fr 1fr 1fr 1fr", md: "1fr 1fr 1fr", sm: "1fr 1fr" }} gap={4}>
 
-              <LabelInput fieldName="name" fieldLabel="Name" fieldStatus={fileSelected === ""} fieldValue={setUp.field.name} fieldType="text" />
+              <LabelInput fieldLabel="Name" fieldStatus={!setUp.enteries} fieldValue={setUp.field.Name} fieldName="setUp.field.Name" />
 
-              <LabelInput fieldName="easting" fieldLabel="Easting" fieldStatus={fileSelected === ""} fieldValue={setUp.field.easting} fieldType="text" />
+              <LabelInput fieldLabel="Easting" fieldStatus={!setUp.enteries} fieldValue={setUp.field.Easting} fieldName="setUp.field.Easting" />
 
-              <LabelInput fieldName="northing" fieldLabel="Northing" fieldStatus={fileSelected === ""} fieldValue={setUp.field.northing} fieldType="text" />
+              <LabelInput fieldLabel="Northing" fieldStatus={!setUp.enteries} fieldValue={setUp.field.Northing} fieldName="setUp.field.Northing" />
 
-              <LabelInput fieldName="mapName" fieldLabel="Map Name" fieldStatus={fileSelected === ""} fieldValue={setUp.field.mapName} fieldType="text" />
+              <LabelInput fieldLabel="Map Name" fieldStatus={!setUp.enteries} fieldValue={setUp.field.MapName} fieldName="setUp.field.MapName" />
 
-              <LabelSelect fieldName="northAlignment" fieldLabel="North Alignment" fieldStatus={fileSelected === ""} fieldValue={setUp.field.northAlignment} fieldArray={["Grid", "True", "Magnetic"]} />
+              <LabelSelect fieldLabel="North Alignment" fieldStatus={!setUp.enteries} fieldValue={setUp.field.NorthAlignment} fieldName="setUp.field.NorthAlignment" fieldArray={["Grid", "True", "Magnetic"]} />
 
             </Stack>
           </Stack>
@@ -210,11 +223,11 @@ const SetUp = () => {
 
             <Stack display={'grid'} padding={{ md: "20px 28px", sm: "20px 20px", xs: "20px 18px" }} gridTemplateColumns={{ lg: "1fr 1fr 1fr 1fr", md: "1fr 1fr 1fr", sm: "1fr 1fr" }} gap={4}>
 
-              <LabelInput fieldName="units" fieldLabel="Units" fieldStatus={fileSelected === ""} fieldValue={setUp.additional.units} fieldType="text" />
+              <LabelInput fieldLabel="Units" fieldStatus={!setUp.enteries} fieldValue={setUp.additional.Units} fieldName="setUp.additional.Units" />
 
-              <LabelInput fieldName="verticalSectionAzimuth" fieldLabel="Vertical Section Azimuth" fieldStatus={fileSelected === ""} fieldValue={setUp.additional.verticalSectionAzimuth} fieldType="text" />
+              <LabelInput fieldLabel="Vertical Section Azimuth" fieldStatus={!setUp.enteries} fieldValue={setUp.additional.VerticalSectionAzimuth} fieldName="setUp.additional.VerticalSectionAzimuth" />
 
-              <LabelSelect fieldName="surveyReferencePoint" fieldLabel="Survey Reference Point" fieldValue={setUp.additional.surveyReferencePoint} fieldArray={["Rotary Table"]} fieldStatus={fileSelected === ""} />
+              <LabelSelect fieldLabel="Survey Reference Point" fieldValue={setUp.additional.SurveyReferencePoint} fieldName="setUp.additional.SurveyReferencePoint" fieldArray={["Rotary Table"]} fieldStatus={!setUp.enteries} />
 
             </Stack>
           </Stack>

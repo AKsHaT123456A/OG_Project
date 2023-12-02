@@ -3,52 +3,56 @@ import { create } from 'zustand'
 export const useMatchStore = create((set) => ({
 
 
-    //variable for edit modal for setUp
     open: false,
     setOpen: (sopen) => set(state => ({ open: sopen })),
+
+
+
+
     //object variable for setUp Tab
     setUp: {
         uploadedFile: "",
         wellbore: {
-            name: "",
-            created: "",
-            lastRevised: "",
+            Name: "",
+            Created: "dd-mm-yy",
+            LastRevised: "dd-mm-yy",
         },
         well: {
-            name: "",
-            governmentId: "",
-            lastRevised: "",
+            Name: "",
+            GovernmentId: "",
+            LastRevised: "dd-mm-yy",
         },
         slot: {
-            name: "",
-            gridNorthing: "",
-            gridEasting: "",
-            latitude: "",
-            longitude: "",
-            north: "",
-            east: ""
+            Name: "",
+            GridNorthing: "",
+            GridEasting: "",
+            Latitude: "",
+            Longitude: "",
+            North: "",
+            East: ""
         },
         installation: {
-            name: "",
-            easting: "",
-            northing: "",
-            mapName: "",
-            northAlignment: ""
+            Name: "",
+            Easting: "",
+            Northing: "",
+            MapName: "",
+            NorthAlignment: ""
         },
         field: {
-            name: "",
-            easting: "",
-            northing: "",
-            mapName: "",
-            northAlignment: ""
+            Name: "",
+            Easting: "",
+            Northing: "",
+            MapName: "",
+            NorthAlignment: ""
         },
         additional: {
-            units: "",
-            verticalSectionAzimuth: "",
-            surveyReferencePoint: ""
-        }
+            Units: "",
+            VerticalSectionAzimuth: "",
+            SurveyReferencePoint: ""
+        },
+        enteries: false,
+        loading: false,
     },
-
     //variable to update set up tab
     updateSetUp: (newSetUp) => set(state => ({ setUp: newSetUp })),
 }))

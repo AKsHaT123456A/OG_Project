@@ -16,9 +16,10 @@ export const VisuallyHiddenInput = styled('input')({
 
 
 export async function uploadFile(file) {
+  let data = null;
   // Create a FormData object to send the file
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append('excelFile', file);
 
   try {
     // Make the POST request using fetch
@@ -30,7 +31,7 @@ export async function uploadFile(file) {
     if (response.ok) {
       // Request was successful
       const result = await response.json();
-      console.log('Response:', result);
+      data = result;
     } else {
       // Request failed
       console.error('Request failed:', response.statusText);
@@ -38,5 +39,5 @@ export async function uploadFile(file) {
   } catch (error) {
     console.error('Error:', error);
   }
-
+  return data;
 }
