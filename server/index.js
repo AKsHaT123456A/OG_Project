@@ -16,6 +16,7 @@ const apiPrefix = '/api/v1';
 // Import routes
 const authRoute = require("./routes/authRoutes");
 const fieldsRoute = require("./routes/fieldRoutes");
+const surveyRoute = require("./routes/surveyRoutes");
 // Database connection
 connectDB();
 
@@ -37,11 +38,12 @@ app.use(
 // Routes
 app.use(`${apiPrefix}/auth`, authRoute);
 app.use(`${apiPrefix}`, fieldsRoute);
+app.use(`${apiPrefix}`, surveyRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).json({ error: "Internal Server Error" ,err:err.message});
+  res.status(500).json({ error: "Internal Server Error", err: err.message });
 });
 
 // Start the server
