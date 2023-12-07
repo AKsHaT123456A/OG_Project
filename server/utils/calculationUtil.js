@@ -30,30 +30,33 @@ function calculateDeltaTVD(i1, i2, rf, deltaMD) {
     return Math.round((Math.cos(radI1) + Math.cos(radI2)) * rf * (deltaMD / 2));
 }
 
-function calculateDeltaNS(i1, i2, a1, a2, rf, deltaMD) {
-    const radI1 = (i1 * Math.PI) / 180;
-    const radI2 = (i2 * Math.PI) / 180;
-    const radA1 = (a1 * Math.PI) / 180;
-    const radA2 = (a2 * Math.PI) / 180;
+function calculateDeltaNS(i1, i2, a1, a2, rf, md) {
+    // Convert degrees to radians
+    const i1Rad = i1 * (Math.PI / 180);
+    const i2Rad = i2 * (Math.PI / 180);
+    const a1Rad = a1 * (Math.PI / 180);
+    const a2Rad = a2 * (Math.PI / 180);
 
-    const deltaNS = (Math.sin(radI1) * Math.cos(radA1) + Math.sin(radI2) * Math.cos(radA2)) * rf * (deltaMD / 2);
-    return deltaNS;
+    // Calculate the formula
+    const result = ((Math.sin(i1Rad) * Math.cos(a1Rad)) + (Math.sin(i2Rad) * Math.cos(a2Rad))) * (rf * (md / 2));
+
+    return result;
 }
+function calculateDeltaEW(i1, i2, a1, a2, rf, md) {
+    // Convert degrees to radians
+    const i1Rad = i1 * (Math.PI / 180);
+    const i2Rad = i2 * (Math.PI / 180);
+    const a1Rad = a1 * (Math.PI / 180);
+    const a2Rad = a2 * (Math.PI / 180);
 
-function calculateDeltaEW(i1, i2, a1, a2, rf, deltaMD) {
-    const radI1 = (i1 * Math.PI) / 180;
-    const radI2 = (i2 * Math.PI) / 180;
-    const radA1 = (a1 * Math.PI) / 180;
-    const radA2 = (a2 * Math.PI) / 180;
-
-    const deltaEW = (Math.sin(radI1) * Math.sin(radA1) + Math.sin(radI2) * Math.sin(radA2)) * rf * (deltaMD / 2);
-    return deltaEW;
+    // Calculate the formula
+    const result = ((Math.sin(i1Rad) * Math.sin(a1Rad)) + (Math.sin(i2Rad) * Math.sin(a2Rad))) * (rf * (md /2));
+    return result;
 }
-
 function calculateVS(azimuthTarget, deltaNS, deltaEW) {
     const atanResult = Math.atan2(deltaEW, deltaNS);
+    const atanResultDeg = (atanResult * 180) / Math.PI;
 
-    const atanResultDeg = Math.round((atanResult * 180) / Math.PI);
     let ca;
 
     if (azimuthTarget >= 0 && azimuthTarget < 90) {
@@ -70,12 +73,16 @@ function calculateVS(azimuthTarget, deltaNS, deltaEW) {
 
     const cd = Math.sqrt(deltaNS ** 2 + deltaEW ** 2);
     const dd = azimuthTarget - ca;
-    const vs = cd * Math.cos(dd);
+    const vs = cd * Math.cos((dd * Math.PI) / 180);
 
     return vs;
 }
 
+function customRound(value, precision) {
+    const multiplier = Math.pow(10, precision);
+    return value >= 0
+        ? Math.ceil(value * multiplier) / multiplier
+        : Math.floor(value * multiplier) / multiplier;
+}
 
-
-
-module.exports = { calculateCourseLength, calculateDogLeg, calculateDLS, calculateRF, calculateDeltaTVD, calculateDeltaNS, calculateDeltaEW, calculateVS }
+module.exports = { calculateCourseLength, calculateDogLeg, calculateDLS, calculateRF, calculateDeltaTVD, calculateDeltaNS, calculateDeltaEW, calculateVS, customRound };
