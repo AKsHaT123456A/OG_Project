@@ -17,6 +17,7 @@ const apiPrefix = '/api/v1';
 const authRoute = require("./routes/authRoutes");
 const fieldsRoute = require("./routes/fieldRoutes");
 const surveyRoute = require("./routes/surveyRoutes");
+const logRoute = require("./routes/surveyLogRoute");
 // Database connection
 connectDB();
 
@@ -35,10 +36,14 @@ app.use(
   helmet.contentSecurityPolicy()
 );
 
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
 // Routes
 app.use(`${apiPrefix}/auth`, authRoute);
 app.use(`${apiPrefix}`, fieldsRoute);
 app.use(`${apiPrefix}`, surveyRoute);
+app.use(`${apiPrefix}`, logRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

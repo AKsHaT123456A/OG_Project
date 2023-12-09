@@ -20,6 +20,9 @@ function calculateDLS(dl, cl) {
 }
 
 function calculateRF(dl) {
+    if(dl <= 0.05){
+        return 1;
+    }
     return Math.tan((dl / 2) * (Math.PI / 180)) * (180 / Math.PI) * (2 / dl);
 }
 
@@ -27,7 +30,7 @@ function calculateDeltaTVD(i1, i2, rf, deltaMD) {
     const radI1 = (i1 * Math.PI) / 180;
     const radI2 = (i2 * Math.PI) / 180;
     console.log({ i1, i2, radI1, radI2, rf, deltaMD });
-    return Math.round((Math.cos(radI1) + Math.cos(radI2)) * rf * (deltaMD / 2));
+    return ((Math.cos(radI1) + Math.cos(radI2)) * rf * (deltaMD / 2));
 }
 
 function calculateDeltaNS(i1, i2, a1, a2, rf, md) {
@@ -56,7 +59,6 @@ function calculateDeltaEW(i1, i2, a1, a2, rf, md) {
 function calculateVS(azimuthTarget, deltaNS, deltaEW) {
     const atanResult = Math.atan2(deltaEW, deltaNS);
     const atanResultDeg = (atanResult * 180) / Math.PI;
-
     let ca;
 
     if (azimuthTarget >= 0 && azimuthTarget < 90) {
@@ -70,7 +72,6 @@ function calculateVS(azimuthTarget, deltaNS, deltaEW) {
     } else {
         throw new Error("Invalid azimuth target");
     }
-
     const cd = Math.sqrt(deltaNS ** 2 + deltaEW ** 2);
     const dd = azimuthTarget - ca;
     const vs = cd * Math.cos((dd * Math.PI) / 180);

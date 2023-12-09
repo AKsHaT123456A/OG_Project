@@ -6,29 +6,65 @@ const constants = {
     DATABASE_KEY: process.env.DATABASE_KEY,
     CRYPTO_SECRET_KEY: process.env.SECRET_KEY,
     CACHE_TTL: 7200000,
-    WELLBORE: {
-        "header": 1,
-        "data": 2
-    },
     WELL: {
-        "header": 5,
-        "data": 6
+        "mainHeading":9,
+        "data": 4
     },
-    INSTALLATION: {
-        "header": 13,
-        "data": 14
+    WELLBORE: {
+        "mainHeading": 10,
+        "data": 4
     },
-    FIELD: {
-        "header": 17,
-        "data": 18
+    FIELDNAME: {
+        "mainHeading": 6,
+        "data": 4
     },
-    SLOT: {
-        "header": 9,
-        "data": 10
+    PLANREVSION:{
+        "mainHeading": null,
+        "data": null
     },
-    SURVEY: {
-        "header": 21,
-        "data": 132
+    UTM: {
+        "mainHeading": null,
+        "data": null
+    },
+    NORTHREFERENCE:{
+        "mainHeading": 4,
+        "data": 15
+    },
+    MAGNETICDECLINATION:{
+        "mainHeading":16,
+        "data":4
+    },
+    CONVERGENCE: {
+        "mainHeading": 6,
+        "data": 15
+    },
+    FIELDVERTICALREFERENCE: {
+        "mainHeading":9 ,
+        "data": 15
+    },
+    "ROTARYTOFIELD":{
+        "mainHeading": 10,
+        "data": 15
+    },
+    "ROTARYSUBSEA":{
+        "mainHeading": 11,
+        "data": 15
+    },
+    "ROTARYTOMHL":{
+        "mainHeading": 12,
+        "data": 15
+    },
+    "SECTIONX":{
+        "mainHeading": 13,
+        "data": 15
+    },
+    "SECTIONY":{
+        "mainHeading": 14,
+        "data": 15
+    },
+    "VERTICALSECTIONAZIMUTH":{
+        "mainHeading": 16,
+        "data": 15
     },
 };
 
