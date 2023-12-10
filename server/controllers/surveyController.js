@@ -4,7 +4,7 @@ const detail = require("../models/details");
 const log = require("../models/logs");
 const survey = require("../models/survey");
 const { calculateVS, calculateDLS, calculateDogLeg, calculateDeltaNS } = require("../utils/calculationUtil");
-const saveToDatabase = require("../utils/saveCalculation");
+const { saveToDatabase, saveToDatabaseEdit } = require("../utils/saveCalculation");
 
 const surveyController = async (req, res) => {
 
@@ -17,33 +17,33 @@ const surveyController = async (req, res) => {
         //         error: "Please provide all the required fields"
         //     });
         // }
-            const prevSurvey = await survey.findOne({ fieldNumber });
-            const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
-            if (prevSurvey) {
-                console.log(`Survey ${fieldNumber} already exists`);
-                return res.status(200).json({
-                    message: `Survey ${fieldNumber} already exists`,
-                });
+        const prevSurvey = await survey.findOne({ fieldNumber });
+        const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
+        if (prevSurvey) {
+            console.log(`Survey ${fieldNumber} already exists`);
+            return res.status(200).json({
+                message: `Survey ${fieldNumber} already exists`,
+            });
+        }
+        if (fieldNumber === 1) {
+            let prevDetails = { md: 0, inc: 0, azi: 0, tvd: 0, ns: 0, ew: 0 };
+            const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, verticalSectionAzimuth, logName);
+            if (surveyDetails.bool) {
+                const newSurvey = surveyDetails.newSurvey;
+                console.log(`Survey ${fieldNumber} received`);
+                return res.status(201).json({ message: "Survey added", newSurvey });
             }
-            if (fieldNumber === 1) {
-                let prevDetails = { md: 0, inc: 0, azi: 0, tvd: 0, ns: 0, ew: 0 };
-                const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, verticalSectionAzimuth, logName);
-                if (surveyDetails.bool) {
-                    const newSurvey = surveyDetails.newSurvey;
-                    console.log(`Survey ${fieldNumber} received`);
-                    return res.status(201).json({ message: "Survey added", newSurvey });
-                }
-            }
-                const prevFieldNumber = fieldNumber - 1;
-                const { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew } =
-                    await survey.findOne({ fieldNumber: prevFieldNumber }).select("md inc azi tvd ns ew");
+        }
+        const prevFieldNumber = fieldNumber - 1;
+        const { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew } =
+            await survey.findOne({ fieldNumber: prevFieldNumber }).select("md inc azi tvd ns ew");
 
-                const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
-                const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, verticalSectionAzimuth, logName);
+        const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
+        const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, verticalSectionAzimuth, logName);
 
-                if (surveyDetails.bool) {
-                    console.log(`Survey ${fieldNumber} received`);
-                }
+        if (surveyDetails.bool) {
+            console.log(`Survey ${fieldNumber} received`);
+        }
         return res.status(200).json({
             message: "Calculated",
             newSurvey: surveyDetails.newSurvey,
@@ -80,12 +80,38 @@ const updateSurvey = async (req, res) => {
     }
 };
 const updateSurveyList = async (req, res) => {
-    const { md, azi, inc, fieldNumber } = req.body;
-    if (fieldNumber === "1") {
+    try {
+        const { md, azi, inc, fieldNumber } = req.body;
+        if (fieldNumber === "1") {
+            let prevDetails = { md: 0, inc: 0, azi: 0, tvd: 0, ns: 0, ew: 0 };
+            const surveyDetails = await saveToDatabaseEdit(prevDetails, md, inc, azi, fieldNumber, verticalSectionAzimuth, logName);
+            if (surveyDetails.bool) {
+                const newSurvey = surveyDetails.newSurvey;
+                console.log(`Survey ${fieldNumber} received`);
+                return res.status(201).json({ message: "Survey added", newSurvey });
+            }
+        }
+        const surveys = await survey.findOne({ fieldNumber });
+        const prevFieldNumber = fieldNumber - 1;
+        const { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew } =
+            await survey.findOne({ fieldNumber: prevFieldNumber }).select("md inc azi tvd ns ew");
 
+        const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
+        const surveyDetails = await saveToDatabaseEdit(prevDetails, md, inc, azi, fieldNumber, verticalSectionAzimuth, logName);
+
+        if (surveyDetails.bool) {
+            console.log(`Survey ${fieldNumber} received`);
+        }
+        return res.status(200).json({
+            message: "Calculated",
+            newSurvey: surveyDetails.newSurvey,
+        });
+    } catch (err) {
+        console.error("Error processing surveys:", err.message);
+        return res.status(500).json({
+            message: "Internal server error",
+            error: err.message
+        });
     }
-    const surveys = await survey.findOne({ fieldNumber });
-
-
-}
-module.exports = { surveyController, updateSurvey, hi };
+};
+module.exports = { surveyController, updateSurveyList, hi ,updateSurvey};
