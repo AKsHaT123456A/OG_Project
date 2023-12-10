@@ -11,26 +11,23 @@ const LabelSelect = ({ fieldName, fieldLabel, fieldValue, fieldStatus, fieldArra
     const handleChange = (e) => {
         const { name, value } = e.target;
         const obj = name.split('.');
-        const first = obj[1];
-        const second = obj[2];
+        const second = obj[1];
         updateSetUp({
-            ...setUp, [first]: { ...setUp[first], [second]: value },
+            ...setUp, [second]: value
         })
     }
     return (
         <Stack component={"label"} direction="column" style={{
-            fontSize: "0.95rem",
-            fontWeight: "600",
-            fontFamily: '\'Ubuntu\', sans-serif',
+            fontSize: '15.2px',
+            fontWeight: 500,
+            fontFamily: '\'Poppins\', sans-serif',
             gap: "0.3rem",
         }}>
             {fieldLabel}
             <Select
                 sx={{
-                    fontSize: 17.2,
-                    fontFamily: '\'Ubuntu\', sans-serif',
+                    fontSize: '15.2px',
                 }}
-
                 disabled={fieldStatus ? true : false}
                 displayEmpty
                 value={fieldValue}

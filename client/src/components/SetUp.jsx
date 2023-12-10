@@ -1,11 +1,12 @@
 import { Box, Stack, Button, Typography, Paper } from '@mui/material';
 import { useMatchStore } from '../store/store';
-import { VisuallyHiddenInput, uploadFile } from '../store/constant';
+import { VisuallyHiddenInput, updateDate, uploadFile } from './constant';
 import LabelInput from './SetUp/LabelInput';
 import BoxHeader from './SetUp/BoxHeader';
-import LabelSelect from './SetUp/LabelSelect';
 import CircularProgress from '@mui/material/CircularProgress';
 import LabelDateInput from './SetUp/LabelDateInput';
+import SetUpTable from './SetUp/SetUpTable';
+import LabelSelect from './SetUp/LabelSelect';
 
 
 
@@ -15,62 +16,33 @@ const SetUp = () => {
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      console.log(file);
-      updateSetUp({ ...setUp, loading: true, enteries: false, uploadFile: file.name })
+      updateSetUp({ ...setUp, loading: true, enteries: false })
       const data = await uploadFile(file);
       if (data) {
         updateSetUp({
-          ...data.setup, loading: false, enteries: true,
-          additional: {
-            Units: "",
-            VerticalSectionAzimuth: "",
-            SurveyReferencePoint: ""
-          },
-          uploadFile: file.name
+          ...data.newField, loading: false, enteries: true, uploadFile: file.name, LastRevised: updateDate()
         });
       } else {
         updateSetUp({
-          wellbore: {
-            Name: "",
-            Created: "dd-mm-yy",
-            LastRevised: "dd-mm-yy",
-          },
-          well: {
-            Name: "",
-            GovernmentId: "",
-            LastRevised: "dd-mm-yy",
-          },
-          slot: {
-            Name: "",
-            GridNorthing: "",
-            GridEasting: "",
-            Latitude: "",
-            Longitude: "",
-            North: "",
-            East: ""
-          },
-          installation: {
-            Name: "",
-            Easting: "",
-            Northing: "",
-            MapName: "",
-            NorthAlignment: ""
-          },
-          field: {
-            Name: "",
-            Easting: "",
-            Northing: "",
-            MapName: "",
-            NorthAlignment: ""
-          },
-          additional: {
-            Units: "",
-            VerticalSectionAzimuth: "",
-            SurveyReferencePoint: ""
-          },
+          uploadFile: "",
+          well: "",
+          wellbore: "",
+          planRevision: "",
+          fieldName: "",
+          utm: "",
+          northReference: "",
+          magneticDeclination: "",
+          convergence: "",
+          fieldVerticalReference: "",
+          rotaryToField: "",
+          rotarySubsea: "",
+          rotaryToMHL: "",
+          sectionX: "",
+          sectionY: "",
+          verticalSectionAzimuth: "",
+          LastRevised: "dd-mm-yy",
           enteries: false,
-          loading: false,
-          uploadedFile: ""
+          loading: false
         });
         alert('File not supported!');
       }
@@ -80,28 +52,33 @@ const SetUp = () => {
   return (
     <Box mt={2.5} component="div">
 
-      <Stack alignItems={{ md: "center", xs: "space-between" }} justifyContent={'space-between'} spacing={4} direction={{ md: 'row', xs: 'column-reverse' }}>
-        <Typography variant='h5' fontWeight={500} width={'100%'} >
-          {
-            (!setUp.enteries) ? "Import Well Plan" : "Current Well Plan"
-          }
-        </Typography>
-        <Stack direction={{ sm: 'row', xs: 'row-reverse' }} width={'100%'} justifyContent={{ sm: "flex-end", xs: "space-between" }} alignItems='center' gap={{ sm: 8, xs: 2 }} alignSelf={{ sm: "flex-end", xs: "flex-start" }}>
-          {
-            (setUp.enteries) && <Typography variant='h5' fontWeight={500} color="#009B4D">{setUp.uploadFile}</Typography>
-          }
-          {
-            (setUp.loading) && <CircularProgress size={28} />
-          }
 
-          <Button variant="contained" onClick={() => document.getElementById('fileInput').click()}>
-            Select File
-            <VisuallyHiddenInput id="fileInput" type="file" accept=".xlsx, .xls" onChange={handleFileChange} />
-          </Button>
-        </Stack>
+      <Stack direction={{ sm: 'row' }} width={'100%'} spacing={5} alignItems='center'  >
+
+        <Button variant="contained" onClick={() => document.getElementById('fileInput').click()} sx={{
+          "&.MuiButtonBase-root:hover": {
+            bgcolor: "#0abd61"
+          }
+        }}>
+          Import Plan
+          <VisuallyHiddenInput id="fileInput" type="file" accept=".xlsx, .xls" onChange={handleFileChange} />
+        </Button>
+        {
+          (setUp.enteries) && <Typography sx={{
+            fontSize: '15.2px',
+          }} fontWeight={500} color="#009B4D">{setUp.uploadFile}</Typography>
+        }
+        {
+          (!setUp.enteries && !setUp.loading) && <Typography variant='body1' sx={{
+            fontSize: '15.2px',
+          }} fontWeight={500} justifySelf={'center'} >Upload well plan (xlsx format) to get started.</Typography>
+        }
+        {
+          (setUp.loading) && <CircularProgress size={26} />
+        }
       </Stack>
 
-      <Stack component='div' my={6} direction='column' spacing={4} >
+      {/* <Stack component='div' my={6} direction='column' spacing={4} >
 
         <Paper square={false} elevation={0} sx={{
           border: "1px solid #a8a4a48f"
@@ -112,7 +89,7 @@ const SetUp = () => {
 
             <Stack display={'grid'} padding={{ md: "20px 28px", sm: "20px 20px", xs: "20px 18px" }} gridTemplateColumns={{ lg: "1fr 1fr 1fr 1fr", md: "1fr 1fr 1fr", sm: "1fr 1fr" }} gap={4}>
 
-              <LabelInput fieldLabel="Name" fieldStatus={!setUp.enteries} fieldValue={setUp.wellbore.Name} fieldName="setUp.wellbore.Name" />
+              <LabelInput fieldLabel="Name" fieldStatus={!setUp.enteries} fieldValue={""} fieldName="setUp.wellbore.Name" />
 
               <LabelDateInput fieldLabel="Created" fieldStatus={!setUp.enteries} fieldValue={(setUp.wellbore.Created.includes('T')) ? setUp.wellbore.Created.split('T')[0] : (setUp.wellbore.Created)} fieldName="setUp.wellbore.Created" />
 
@@ -233,7 +210,50 @@ const SetUp = () => {
           </Stack>
         </Paper>
 
+      </Stack> */}
+      <Stack component='div' my={6} direction='column' spacing={6} >
+        <Paper square={false} elevation={0} sx={{
+          border: "1px solid #a8a4a48f"
+        }}>
+          <Stack direction='column' alignItems={'stretch'} width={'100%'}>
+
+            <BoxHeader boxHead="Well Details" />
+
+            <Stack display={'grid'} padding={{ md: "20px 28px", sm: "20px 20px", xs: "20px 18px" }} gridTemplateColumns={{ xl: "1fr 1fr 1fr 1fr 1fr", lg: "1fr 1fr 1fr 1fr", md: "1fr 1fr 1fr ", sm: "1fr 1fr " }} gap={4}>
+
+              <LabelInput fieldLabel="Well Name" fieldStatus={!setUp.enteries} fieldValue={setUp.well} fieldName="setUp.well" />
+              <LabelInput fieldLabel="Magnetic Declination" fieldStatus={!setUp.enteries} fieldValue={setUp.magneticDeclination} fieldName="setUp.magneticDeclination" />
+              <LabelInput fieldLabel="UTM Zone" fieldStatus={!setUp.enteries} fieldValue={setUp.utm} fieldName="setUp.utm" />
+              <LabelInput fieldLabel="Rotary to Facility Vertical Datum" fieldStatus={!setUp.enteries} fieldValue={setUp.rotaryToField} fieldName="setUp.rotaryToField" />
+              <LabelInput fieldLabel="Section Origin X" fieldStatus={!setUp.enteries} fieldValue={setUp.sectionX} fieldName="setUp.sectionX" />
+              <LabelInput fieldLabel="Plan Revision" fieldStatus={!setUp.enteries} fieldValue={setUp.planRevision} fieldName="setUp.planRevision" />
+              <LabelInput fieldLabel="Grid Convergence" fieldStatus={!setUp.enteries} fieldValue={setUp.convergence} fieldName="setUp.convergence" />
+              <LabelSelect fieldArray={["Grid", "True", "Magnetic"]} fieldLabel="North Reference" fieldStatus={!setUp.enteries} fieldValue={setUp.northReference} fieldName="setUp.northReference" />
+              <LabelInput fieldLabel="Rotary to Sub Sea" fieldStatus={!setUp.enteries} fieldValue={setUp.rotarySubsea} fieldName="setUp.rotarySubsea" />
+              <LabelInput fieldLabel="Section Origin Y" fieldStatus={!setUp.enteries} fieldValue={setUp.sectionY} fieldName="setUp.sectionY" />
+              <LabelInput fieldLabel="Field Name" fieldStatus={!setUp.enteries} fieldValue={setUp.fieldName} fieldName="setUp.fieldName" />
+              <LabelInput fieldLabel="Vertical Section Azimuth" fieldStatus={!setUp.enteries} fieldValue={setUp.verticalSectionAzimuth} fieldName="setUp.verticalSectionAzimuth" />
+              <LabelInput fieldLabel="Field Vertical Reference" fieldStatus={!setUp.enteries} fieldValue={setUp.fieldVerticalReference} fieldName="setUp.fieldVerticalReference" />
+              <LabelInput fieldLabel="Rotary to Mud Return Line" fieldStatus={!setUp.enteries} fieldValue={setUp.rotaryToMHL} fieldName="setUp.wellbore.Name" />
+              <LabelDateInput fieldLabel="Last Revised" fieldStatus={!setUp.enteries} fieldValue={setUp.LastRevised} fieldName="setUp.LastRevised" />
+
+            </Stack>
+          </Stack>
+        </Paper>
+
+        <Paper square={false} elevation={0} sx={{
+          border: "1px solid #a8a4a48f"
+        }}>
+          <Stack direction='column' alignItems={'stretch'} width={'100%'}>
+
+            <BoxHeader boxHead="Location Coordinates" />
+            <Box>
+              <SetUpTable />
+            </Box>
+          </Stack>
+        </Paper>
       </Stack>
+
     </Box>
   )
 }

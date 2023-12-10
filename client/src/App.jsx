@@ -6,8 +6,12 @@ import Box from '@mui/material/Box';
 import SetUp from "./components/SetUp";
 import PlannedWellPath from "./components/PlannedWellPath";
 import Interpolate from "./components/Interpolate";
-import ActualSurveys from "./components/ActualSurveys";
 import Comparison from "./components/Comparison"
+import ActualWellPath from './components/ActualWellPath';
+import AddNew from './components/ActualWellPath/AddNew'
+import EditNew from './components/ActualWellPath/EditNew'
+import DelNew from './components/ActualWellPath/DelNew'
+import { useMatchStore } from './store/store';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -44,19 +48,22 @@ function a11yProps(index) {
 
 export default function BasicTabs() {
   const [value, setValue] = React.useState(0);
-
+  const { open } = useMatchStore();
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   return (
-    <Box component="main" maxWidth={"1500px"} marginInline={"auto"} >
+    <Box component="main" maxWidth={"1920px"} marginInline={"auto"} >
+      {(open.text === 'Add') && <AddNew />}
+      {(open.text === 'Edit') && <EditNew />}
+      {(open.text === 'Remove') && <DelNew />}
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} variant='scrollable' allowScrollButtonsMobile aria-label="basic tabs example">
           <Tab label="Set Up" sx={{ fontSize: "16px" }}  {...a11yProps(0)} />
           <Tab label="Planned Well Path" sx={{ fontSize: "16px" }}  {...a11yProps(1)} />
           <Tab label="Interpolate" sx={{ fontSize: "16px" }}  {...a11yProps(2)} />
-          <Tab label="Actual Surveys" sx={{ fontSize: "16px" }}  {...a11yProps(3)} />
+          <Tab label="Actual Well Path" sx={{ fontSize: "16px" }}  {...a11yProps(3)} />
           <Tab label="Comparison" sx={{ fontSize: "16px" }}  {...a11yProps(4)} />
         </Tabs>
       </Box>
@@ -70,7 +77,7 @@ export default function BasicTabs() {
         <Interpolate />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
-        <ActualSurveys />
+        <ActualWellPath />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={4}>
         <Comparison />

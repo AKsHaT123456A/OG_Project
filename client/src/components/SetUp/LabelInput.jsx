@@ -1,5 +1,6 @@
 import { Stack, TextField } from '@mui/material';
 import { useMatchStore } from '../../store/store';
+import { updateDate } from '../constant';
 
 const LabelInput = ({ fieldName, fieldLabel, fieldValue, fieldStatus }) => {
 
@@ -8,18 +9,17 @@ const LabelInput = ({ fieldName, fieldLabel, fieldValue, fieldStatus }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     const obj = name.split('.');
-    const first = obj[1];
-    const second = obj[2];
+    const second = obj[1];
     updateSetUp({
-      ...setUp, [first]: { ...setUp[first], [second]: value },
+      ...setUp, [second]: value
     })
   }
 
   return (
     <Stack direction="column" style={{
-      fontSize: "0.95rem",
-      fontWeight: "600",
-      fontFamily: '\'Ubuntu\', sans-serif',
+      fontSize: '15.2px',
+      fontWeight: 500,
+      fontFamily: '\'Poppins\', sans-serif',
       gap: "0.3rem",
     }}>
       {fieldLabel}
@@ -30,7 +30,7 @@ const LabelInput = ({ fieldName, fieldLabel, fieldValue, fieldStatus }) => {
         name={fieldName}
         disabled={fieldStatus}
         value={fieldValue || ''}
-        inputProps={{ style: { fontSize: 17.2, fontFamily: '\'Ubuntu\', sans-serif', } }}
+        inputProps={{ style: { fontSize: '15.2px', height: '15px', padding: '13px 10px' } }}
         size="small"
       />
     </Stack>
