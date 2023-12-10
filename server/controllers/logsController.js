@@ -49,7 +49,9 @@ const deleteLog = async (req, res) => {
     try {
         const { logName } = req.body;
         const prevLog = await log.findOne({ logName });
-        const { id } = req.cookies;
+        // const { id } = req.cookies;
+        const id  = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+
 
         const user = await User.findOne({ id: id });
 
