@@ -1,52 +1,47 @@
 import { create } from 'zustand'
 
 export const useMatchStore = create((set) => ({
+    //object variable of actualWellPath
+    logArray: [],
+    setLog: (log) => set(state => ({ logArray: log })),
 
+    //object vairable for plannedwellPath
+    plannedWell: {
+        uploadFile: "",
+        enteries: false,
+        loading: false
+    },
+    setPlannedWell: (splan) => set(state => ({ plannedWell: splan })),
 
     //variable for edit modal for setUp
-    open: false,
+    open: {
+        show: false,
+        text: '',
+        id: -1
+    },
+
     setOpen: (sopen) => set(state => ({ open: sopen })),
     //object variable for setUp Tab
     setUp: {
-        uploadedFile: "",
-        wellbore: {
-            name: "",
-            created: "",
-            lastRevised: "",
-        },
-        well: {
-            name: "",
-            governmentId: "",
-            lastRevised: "",
-        },
-        slot: {
-            name: "",
-            gridNorthing: "",
-            gridEasting: "",
-            latitude: "",
-            longitude: "",
-            north: "",
-            east: ""
-        },
-        installation: {
-            name: "",
-            easting: "",
-            northing: "",
-            mapName: "",
-            northAlignment: ""
-        },
-        field: {
-            name: "",
-            easting: "",
-            northing: "",
-            mapName: "",
-            northAlignment: ""
-        },
-        additional: {
-            units: "",
-            verticalSectionAzimuth: "",
-            surveyReferencePoint: ""
-        }
+        uploadFile: "",
+        well: "",
+        wellbore: "",
+        planRevision: "",
+        fieldName: "",
+        utm: "",
+        northReference: "",
+        magneticDeclination: "",
+        convergence: "",
+        fieldVerticalReference: "",
+        rotaryToField: "",
+        rotarySubsea: "",
+        rotaryToMHL: "",
+        sectionX: "",
+        sectionY: "",
+        verticalSectionAzimuth: "",
+        LastRevised: "dd-mm-yy",
+        enteries: false,
+        loading: false,
     },
 
     //variable to update set up tab

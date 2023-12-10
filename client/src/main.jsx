@@ -29,28 +29,38 @@ const theme = createTheme({
   },
   components: {
     MuiButton: {
+      
       styleOverrides: {
         root: {
-          color: "#fcfcfc"
+          color: "#fcfcfc",
+          boxShadow: 'none',
+          '&:hover': {
+            boxShadow: 'none',
+          },
+          '&:active': {
+            boxShadow: 'none',
+          },
         }
       }
     },
     MuiOutlinedInput: {
       styleOverrides: {
+
         // root: {
-          // '& fieldset': {
-          //   borderColor: '#b8b4b48f !important',
-          //    borderWidth: 2,
-          // },
-          // '&:focus-within fieldset': {
-          //   borderColor: '#009B4D !important',
-          // },
+        //   // '& fieldset': {
+        //   //   borderColor: '#b8b4b48f !important',
+        //   //    borderWidth: 2,
+        //   // },
+        //   // '&:focus-within fieldset': {
+        //   //   borderColor: '#009B4D !important',
+        //   // },
+
         // },
       },
     },
   },
   typography: {
-    fontFamily: '\'Ubuntu\', sans-serif',
+    fontFamily: '\'Poppins\', sans-serif',
     body1: {
       fontSize: '0.92rem',
       fontWeight: 400,
@@ -123,7 +133,7 @@ const theme = createTheme({
       lineHeight: 1.2
     },
     h5: {
-      fontFamily: '\'Ubuntu\', sans-serif',
+      fontFamily: '\'Poppins\', sans-serif',
       fontSize: '1.2rem',
       '@media (max-width:800px)': {
         fontSize: '1.1rem',
