@@ -7,11 +7,13 @@ function calculateDogLeg(i1, i2, a1, a2) {
     const radI2 = (i2 * Math.PI) / 180;
     const radA1 = (a1 * Math.PI) / 180;
     const radA2 = (a2 * Math.PI) / 180;
-
-    const dogLeg = (180 / Math.PI) * Math.acos(
-        (Math.sin(radI1) * Math.sin(radI2) * Math.cos(radA2 - radA1)) +
-        (Math.cos(radI1) * Math.cos(radI2))
-    );
+    console.log({ radI1, radI2, radA1, radA2 });
+    console.log({ sinI1: Math.sin(radI1), sinI2: Math.sin(radI2), cosA2A1: Math.cos(radA2 - radA1), cosI1: Math.cos(radI1), cosI2: Math.cos(radI2) });
+    const cose = (Math.sin(radI1) * Math.sin(radI2) * Math.cos(radA2 - radA1)) + (Math.cos(radI1) * Math.cos(radI2));
+    console.log({ cose });
+    const clampedValue = Math.max(-1, Math.min(1, cose));
+    const dogLeg = (180 / Math.PI) * Math.acos(clampedValue);
+    console.log({ dogLeg });
     return dogLeg;
 }
 
@@ -20,7 +22,7 @@ function calculateDLS(dl, cl) {
 }
 
 function calculateRF(dl) {
-    if(dl <= 0.05){
+    if (dl <= 0.15) {
         return 1;
     }
     return Math.tan((dl / 2) * (Math.PI / 180)) * (180 / Math.PI) * (2 / dl);
@@ -53,7 +55,7 @@ function calculateDeltaEW(i1, i2, a1, a2, rf, md) {
     const a2Rad = a2 * (Math.PI / 180);
 
     // Calculate the formula
-    const result = ((Math.sin(i1Rad) * Math.sin(a1Rad)) + (Math.sin(i2Rad) * Math.sin(a2Rad))) * (rf * (md /2));
+    const result = ((Math.sin(i1Rad) * Math.sin(a1Rad)) + (Math.sin(i2Rad) * Math.sin(a2Rad))) * (rf * (md / 2));
     return result;
 }
 function calculateVS(azimuthTarget, deltaNS, deltaEW) {

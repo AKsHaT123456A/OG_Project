@@ -4,7 +4,7 @@ const { calculateCourseLength, calculateDogLeg, calculateDLS, calculateRF, calcu
 
 const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName) => {
     try {
-        console.log({ fieldNumber, prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth });
+        console.log({ fieldNumber, prevDetails, md2, i2, a2, verticalSectionAzimuth });
         const cl = calculateCourseLength(prevDetails.md, md2);
         const dl = calculateDogLeg(prevDetails.inc, i2, prevDetails.azi, a2);
         const dls = calculateDLS(dl, cl);
@@ -18,18 +18,18 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
         const ns = prevDetails.ns + deltaNS;
         const vs = calculateVS(verticalSectionAzimuth, ns, ew);
         const newSurvey = new survey({
-            md: customRound(md2, 2),
+            md: md2,
             inc: i2,
             azi: a2,
             fieldNumber: customRound(fieldNumber, 0),
             cl,
-            dl: customRound(dl, 2),
-            dls: customRound(dls, 2),
+            dl: dl,
+            dls,
             rf,
-            tvd: tvd.toFixed(2),
-            ns: customRound(ns, 2),
-            ew: customRound(ew, 2),
-            vs: customRound(vs, 2)
+            tvd,
+            ns,
+            ew,
+            vs
         });
 
         console.log({
@@ -63,6 +63,7 @@ const allSurvey = async (req, res) => {
     } catch (error) {
 
     }
-}
+};
+
 
 module.exports = saveToDatabase;
