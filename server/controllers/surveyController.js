@@ -11,17 +11,17 @@ const surveyController = async (req, res) => {
     try {
         const { md, inc, azi, fieldNumber, logName, well } = req.body;
 
-        if (!md || !inc || !azi || !fieldNumber || !logName) {
-            return res.status(400).json({
-                message: "Bad request",
-                error: "Please provide all the required fields"
-            });
-        }
+        // if (!md || !inc || !azi || !fieldNumber || !logName) {
+        //     return res.status(400).json({
+        //         message: "Bad request",
+        //         error: "Please provide all the required fields"
+        //     });
+        // }
             const prevSurvey = await survey.findOne({ fieldNumber });
             const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
             if (prevSurvey) {
                 console.log(`Survey ${fieldNumber} already exists`);
-                return res.status(409).json({
+                return res.status(200).json({
                     message: `Survey ${fieldNumber} already exists`,
                 });
             }
@@ -39,14 +39,14 @@ const surveyController = async (req, res) => {
                     await survey.findOne({ fieldNumber: prevFieldNumber }).select("md inc azi tvd ns ew");
 
                 const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
-                const surveyDetails = await saveToDatabase(prevDetails, MD, Inclination, Azimuth, fieldNumber, 17.50, "12.5'' ST MWD Surveys");
+                const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, verticalSectionAzimuth, logName);
 
                 if (surveyDetails.bool) {
                     console.log(`Survey ${fieldNumber} received`);
                 }
         return res.status(200).json({
             message: "Calculated",
-            // newSurvey: surveyDetails.newSurvey,
+            newSurvey: surveyDetails.newSurvey,
         });
 
     } catch (err) {
