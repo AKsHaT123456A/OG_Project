@@ -54,15 +54,15 @@ const fieldController = async (req, res) => {
     }
 }
 const getAllFields = async (req, res) => {
-    try {
-        const fieldsArray = [well, wellbore, installation, field, slot];
-        const fields = await Promise.all(fieldsArray.map(async (element) => {
-            const data = await element.findOne({});
-            return data;
-        }));
-        return res.status(200).json({ message: "Details fetched", fields });
+     try {
+        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+        const { excelName } = req.body;
+        const details = await detail.find({ excelName, userId: id });
+        return res.status(200).json({
+            message: "Send All Details",
+            details
+        });
     } catch (error) {
-
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 };
