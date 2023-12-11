@@ -56,7 +56,7 @@ const fieldController = async (req, res) => {
 const getAllFields = async (req, res) => {
      try {
         const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const { excelName } = req.body;
+        const { excelName } = req.query;
         const details = await detail.find({ excelName, userId: id });
         return res.status(200).json({
             message: "Send All Details",
