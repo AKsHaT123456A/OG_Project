@@ -18,7 +18,7 @@ const surveyController = async (req, res) => {
         //     });
         // }
 
-        const prevSurvey = await survey.findOne({ fieldNumber, userId });
+        const prevSurvey = await survey.findOne({ fieldNumber, userId:id });
         const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
         if (prevSurvey) {
             console.log(`Survey ${fieldNumber} already exists`);
