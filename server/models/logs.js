@@ -6,6 +6,7 @@ const logSchema = new mongoose.Schema(
         usedBy: { type: Number, trim: true, required: true },
         usedFrom: { type: Number, trim: true, default: 0 },
         surveys: [{ type: mongoose.Schema.Types.ObjectId, ref: 'survey', default: [] }],
+        userId: { type: String, trim: true, default: '' }
     },
     { versionKey: false }
 );

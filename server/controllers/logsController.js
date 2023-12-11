@@ -92,5 +92,14 @@ const editLog = async (req, res) => {
     });
 }
 
+const getAllLogs = async (req, res) => {
+    const { id } = req.cookies;
+    const allLogs = await log.find({ userId: id });
+    return res.status(200).json({
+        message: "All logs",
+        logs: allLogs,
+    });
+
+}
 
 module.exports = { createLog, deleteLog, editLog };
