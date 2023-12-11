@@ -5,7 +5,8 @@ const { getCompleteLogsByIds } = require("../utils/arrayLogs");
 const createLog = async (req, res) => {
     try {
         const { logName, usedFrom, usedBy } = req.body;
-        const { id } = req.cookies;
+        // const { id } = req.cookies;
+        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
         console.log(id);
         const user = await User.findOne({ id: id });
         console.log(user);
@@ -49,8 +50,8 @@ const deleteLog = async (req, res) => {
     try {
         const { logName } = req.body;
         const prevLog = await log.findOne({ logName });
-        const { id } = req.cookies;
-        // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+        // const { id } = req.cookies;
+        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
 
 
         const user = await User.findOne({ id: id });
@@ -94,7 +95,7 @@ const editLog = async (req, res) => {
 
 const getAllLogs = async (req, res) => {
     const { id } = req.cookies;
-    const userId = id?id:"d80defd4-3398-4745-8c03-8e0f6825afc3";
+    const userId =" d80defd4-3398-4745-8c03-8e0f6825afc3";
     const allLogs = await log.find({ userId: userId });
     return res.status(200).json({
         message: "All logs",
