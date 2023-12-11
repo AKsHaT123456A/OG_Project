@@ -95,7 +95,7 @@ const editLog = async (req, res) => {
 const getAllLogs = async (req, res) => {
     const { id } = req.cookies;
     const userId = id?id:"d80defd4-3398-4745-8c03-8e0f6825afc3";
-    const allLogs = await log.find({ userId: id });
+    const allLogs = await log.find({ userId: userId });
     return res.status(200).json({
         message: "All logs",
         logs: allLogs,
