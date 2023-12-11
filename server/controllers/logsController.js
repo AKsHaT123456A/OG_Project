@@ -15,7 +15,7 @@ const createLog = async (req, res) => {
                 message: "User not found",
             });
         };
-        const surveyLog = await log.findOne({ logName: logName });
+        const surveyLog = await log.findOne({ logName: logName, userId: id});
         if (surveyLog) {
             const completeLogs = await getCompleteLogsByIds(user.logs);
             return res.status(409).json({
@@ -28,6 +28,7 @@ const createLog = async (req, res) => {
             logName,
             usedFrom,
             usedBy,
+            userId:id
         });
         await newLog.save();
         user.logs.push(newLog._id);

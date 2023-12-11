@@ -11,6 +11,8 @@ const detail = require("../models/details");
 
 const fieldController = async (req, res) => {
     try {
+        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+        const { excelName } = req.query;
         const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
         const excelArray = [
             { name: 'well', data: constants.WELL },
@@ -40,14 +42,14 @@ const fieldController = async (req, res) => {
             if (mergedObject.hasOwnProperty(key) && mergedObject[key] === undefined) {
                 mergedObject[key] = '';
             }
-        } 
+        }
         console.log(mergedObject);
         const newMerge = await detail.findOne({ well: mergedObject.well });
 
         if (newMerge) {
             return res.status(200).json({ message: "Details already exists", newField: newMerge });
         }
-        const newField = await detail.create({ ...mergedObject });
+        const newField = await detail.create({ ...mergedObject, excelName, userId: id });
         return res.status(201).json({ message: "Details added", newField });
     } catch (error) {
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
@@ -55,14 +57,14 @@ const fieldController = async (req, res) => {
 }
 const getAllFields = async (req, res) => {
     try {
-        const fieldsArray = [well, wellbore, installation, field, slot];
-        const fields = await Promise.all(fieldsArray.map(async (element) => {
-            const data = await element.findOne({});
-            return data;
-        }));
-        return res.status(200).json({ message: "Details fetched", fields });
+        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+        const { excelName } = req.query;
+        const details = await detail.find({ excelName, userId: id });
+        return res.status(200).json({
+            message: "Send All Details",
+            details
+        });
     } catch (error) {
-
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 };
