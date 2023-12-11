@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const detailSchema = new mongoose.Schema(
     {
+        excelName: { type: String, trim: true, required: true },
         well: { type: String, trim: true, unique: true },
         wellbore: { type: String, trim: true },
         planRevision: { type: String, trim: true },
@@ -17,6 +18,7 @@ const detailSchema = new mongoose.Schema(
         sectionX: { type: String, trim: true },
         sectionY: { type: String, trim: true },
         verticalSectionAzimuth: { type: String, trim: true },
+        userId: { type: String, trim: true, default: '' },
     },
     { versionKey: false }
 );
