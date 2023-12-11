@@ -102,4 +102,4 @@ const getAllLogs = async (req, res) => {
 
 }
 
-module.exports = { createLog, deleteLog, editLog };
+module.exports = { createLog, deleteLog, editLog ,getAllLogs};
