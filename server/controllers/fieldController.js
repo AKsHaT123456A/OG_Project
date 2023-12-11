@@ -56,7 +56,11 @@ const fieldController = async (req, res) => {
     }
 }
 const getAllFields = async (req, res) => {
+<<<<<<< HEAD
     try {
+=======
+     try {
+>>>>>>> 8b4ab4a084e4903db8f166c39c2a128f71612467
         const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
         const { excelName } = req.query;
         const details = await detail.find({ excelName, userId: id });
