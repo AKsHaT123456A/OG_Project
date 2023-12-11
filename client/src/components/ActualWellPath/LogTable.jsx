@@ -18,12 +18,13 @@ export default function LogTable() {
 
     const handleButton = (val, idx) => {
         setOpen({ show: true, text: val, id: idx });
+        
     }
 
     const handleRowClick = (e) => {
         const rowIndex = parseInt(e.currentTarget.getAttribute('data-row-index'));
         setSelectedRowIndex(rowIndex);
-      };
+    };
     return (
         <TableContainer component={Paper} elevation={0} >
             <Table aria-label="simple table" >

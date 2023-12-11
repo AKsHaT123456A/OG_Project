@@ -160,7 +160,6 @@ export default function SurveyTable() {
         const allRowsFilled = rows.slice(1).every((row) =>
             Object.values(row).every((value) => value !== '')
         );
-
         if (allRowsFilled) {
             // If all rows (excluding header and row 1) are filled, add a new empty row
             const newRow = {
@@ -180,7 +179,7 @@ export default function SurveyTable() {
         }
     }, [rows]);
 
-
+console.log({rows});
     return (
         <Box component={'div'} sx={{ height: 702, width: '100%' }}>
             <StyledDataGrid
