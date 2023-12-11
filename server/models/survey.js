@@ -14,6 +14,7 @@ const surveySchema = new mongoose.Schema(
         vs: { type: Number, trim: true, default: 0 },
         rf: { type: Number, trim: true, default: 0 },
         dls: { type: Number, trim: true, default: 0 },
+        userId: { type: String, trim: true, default: '' }
     },
     { versionKey: false }
 );

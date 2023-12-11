@@ -2,7 +2,7 @@ const log = require("../models/logs");
 const survey = require("../models/survey");
 const { calculateCourseLength, calculateDogLeg, calculateDLS, calculateRF, calculateDeltaTVD, calculateDeltaNS, calculateDeltaEW, calculateVS, customRound } = require("../utils/calculationUtil");
 
-const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName) => {
+const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName,id) => {
     try {
         console.log({ fieldNumber, prevDetails, md2, i2, a2, verticalSectionAzimuth });
         const cl = calculateCourseLength(prevDetails.md, md2);
@@ -29,7 +29,8 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
             tvd,
             ns,
             ew,
-            vs
+            vs,
+            userId:id
         });
 
         console.log({
@@ -56,7 +57,7 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
     }
 };
 
-const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName) => {
+const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName,id) => {
     try {
         console.log({ fieldNumber, prevDetails, md2, i2, a2, verticalSectionAzimuth });
         const cl = calculateCourseLength(prevDetails.md, md2);
@@ -71,7 +72,7 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
         const ew = prevDetails.ew + deltaEW;
         const ns = prevDetails.ns + deltaNS;
         const vs = calculateVS(verticalSectionAzimuth, ns, ew);
-        const newSurvey = await survey.findOne({ fieldNumber: fieldNumber });
+        const newSurvey = await survey.findOne({  fieldNumber,userId:id });
         newSurvey.md = md2;
         newSurvey.inc = i2;
         newSurvey.azi = a2;
