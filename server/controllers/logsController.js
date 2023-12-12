@@ -1,4 +1,5 @@
 const log = require("../models/logs");
+const survey = require("../models/survey");
 const User = require("../models/user");
 const { getCompleteLogsByIds } = require("../utils/arrayLogs");
 
@@ -51,6 +52,7 @@ const deleteLog = async (req, res) => {
     try {
         const { logName } = req.body;
         const prevLog = await log.findOne({ logName });
+        console.log({prevLog});
         // const { id } = req.cookies;
         const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
 
@@ -62,7 +64,7 @@ const deleteLog = async (req, res) => {
                 message: "User not found",
             });
         }
-
+        
         const index = user.logs.indexOf(prevLog._id);
         if (index > -1) {
             user.logs.splice(index, 1);
