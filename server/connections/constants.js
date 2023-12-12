@@ -66,42 +66,102 @@ const constants = {
         "mainHeading": 16,
         "data": 15
     },
-    "SLOTLOCATION": {field:[
-        {
-            localNorth: { mainHeading: 22, data: 4 },
-            localEast: { mainHeading: 22, data: 6 },
-            gridEast: { mainHeading: 22, data: 8 },
-            gridNorth: { mainHeading: 22, data: 10 },
-            latitude: { mainHeading: 22, data: 12 },
-            longitude: { mainHeading: 22, data: 14 },
-            horz: { mainHeading: 22, data: 16 },
-            vert: { mainHeading: 22, data: 18 }
-        }
-    ]},
-    "FACILITYREFERENCEPOINT": [
-        {
-            localNorth: { mainHeading: 23, data: 4 },
-            localEast: { mainHeading: 23, data: 6 },
-            gridEast: { mainHeading: 23, data: 8 },
-            gridNorth: { mainHeading: 23, data: 10 },
-            latitude: { mainHeading: 23, data: 12 },
-            longitude: { mainHeading: 23, data: 14 },
-            horz: { mainHeading: 23, data: 16 },
-            vert: { mainHeading: 23, data: 18 }
-        }
-    ],
-    "FIELDREFERENCEPOINT": [
-        {
-            localNorth: { mainHeading: 24, data: 4 },
-            localEast: { mainHeading: 24, data: 6 },
-            gridEast: { mainHeading: 24, data: 8 },
-            gridNorth: { mainHeading: 24, data: 10 },
-            latitude: { mainHeading: 24, data: 12 },
-            longitude: { mainHeading: 24, data: 14 },
-            horz: { mainHeading: 24, data: 16 },
-            vert: { mainHeading: 24, data: 18 }
-        }
-    ]
+    "LOCALNORTHSLOTLOCATION":{
+        "mainHeading": 22,
+        "data": 4
+    },
+    "LOCALEASTSLOTLOCATION":{
+        "mainHeading": 22,
+        "data": 6
+    },
+    "GRIDEASTSLOTLOCATION":{
+        "mainHeading": 22,
+        "data": 8
+    },
+    "GRIDNORTHSLOTLOCATION":{
+        "mainHeading": 22,
+        "data": 10
+    },
+    "LATITUDESLOTLOCATION":{
+        "mainHeading": 22,
+        "data": 12
+    },
+    "LONGITUDESLOTLOCATION":{
+        "mainHeading": 22,
+        "data": 14
+    },
+    "HORZSLOTLOCATION":{
+        "mainHeading": 22,
+        "data": 16
+    },
+    "VERTSLOTLOCATION":{
+        "mainHeading": 22,
+        "data": 18
+    },
+    "LOCALNORTHFACILITYREFERENCEPOINT":{
+        "mainHeading": 23,
+        "data": 4
+    },
+    "LOCALEASTFACILITYREFERENCEPOINT":{
+        "mainHeading": 23,
+        "data": 6
+    },
+    "GRIDEASTFACILITYREFERENCEPOINT":{
+        "mainHeading": 23,
+        "data": 8
+    },
+    "GRIDNORTHFACILITYREFERENCEPOINT":{
+        "mainHeading": 23,
+        "data": 10
+    },
+    "LATITUDEFACILITYREFERENCEPOINT":{
+        "mainHeading": 23,
+        "data": 12
+    },
+    "LONGITUDEFACILITYREFERENCEPOINT":{
+        "mainHeading": 23,
+        "data": 14
+    },
+    "HORZFACILITYREFERENCEPOINT":{
+        "mainHeading": 23,
+        "data": 16
+    },
+    "VERTFACILITYREFERENCEPOINT":{
+        "mainHeading": 23,
+        "data": 18
+    },
+    "LOCALNORTHFIELDREFERENCEPOINT":{
+        "mainHeading": 24,
+        "data": 4
+    },
+    "LOCALEASTFIELDREFERENCEPOINT":{
+        "mainHeading": 24,
+        "data": 6
+    },
+    "GRIDEASTFIELDREFERENCEPOINT":{
+        "mainHeading": 24,
+        "data": 8
+    },
+    "GRIDNORTHFIELDREFERENCEPOINT":{
+        "mainHeading": 24,
+        "data": 10
+    },
+    "LATITUDEFIELDREFERENCEPOINT":{
+        "mainHeading": 24,
+        "data": 12
+    },
+    "LONGITUDEFIELDREFERENCEPOINT":{
+        "mainHeading": 24,
+        "data": 14
+    },
+    "HORZFIELDREFERENCEPOINT":{
+        "mainHeading": 24,
+        "data": 16
+    },
+    "VERTFIELDREFERENCEPOINT":{
+        "mainHeading": 24,
+        "data": 18
+    },
 };
 
 module.exports = constants;

@@ -15,6 +15,7 @@ const fieldController = async (req, res) => {
         const { excelName } = req.query;
         const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
         const excelArray = [
+            { name: 'excelName', data: constants.PORT },
             { name: 'well', data: constants.WELL },
             { name: 'wellbore', data: constants.WELLBORE },
             { name: 'planRevision', data: constants.PLANREVSION },
@@ -30,7 +31,34 @@ const fieldController = async (req, res) => {
             { name: 'sectionX', data: constants.SECTIONX },
             { name: 'sectionY', data: constants.SECTIONY },
             { name: 'verticalSectionAzimuth', data: constants.VERTICALSECTIONAZIMUTH },
+            { name: 'userId', data: constants.PORT },
+            { name: 'localNorthSlotLocation', data: constants.LOCALNORTHSLOTLOCATION },
+            { name: 'localEastSlotLocation', data: constants.LOCALEASTSLOTLOCATION },
+            { name: 'localGridNorthSlotLocation', data: constants.GRIDNORTHSLOTLOCATION },
+            { name: 'localGridEastSlotLocation', data: constants.GRIDEASTSLOTLOCATION },
+            { name: 'localLongitudeSlotLocation', data: constants.LONGITUDESLOTLOCATION },
+            { name: 'localLatitudeSlotLocation', data: constants.LATITUDESLOTLOCATION },
+            { name: 'localHorizSlotLocation', data: constants.HORZSLOTLOCATION },
+            { name: 'localVertSlotLocation', data: constants.VERTSLOTLOCATION },
+            { name: 'localNorthFacilityReferencePt', data: constants.LOCALNORTHFACILITYREFERENCEPOINT },
+            { name: 'localEastFacilityReferencePt', data: constants.LOCALEASTFACILITYREFERENCEPOINT },
+            { name: 'localGridNorthFacilityReferencePt', data: constants.GRIDNORTHFACILITYREFERENCEPOINT },
+            { name: 'localGridEastFacilityReferencePt', data: constants.GRIDEASTFACILITYREFERENCEPOINT },
+            { name: 'localLongitudeFacilityReferencePt', data: constants.LONGITUDEFACILITYREFERENCEPOINT },
+            { name: 'localLatitudeFacilityReferencePt', data: constants.LATITUDEFACILITYREFERENCEPOINT },
+            { name: 'localHorizFacilityReferencePt', data: constants.HORZFACILITYREFERENCEPOINT },
+            { name: 'localVertFacilityReferencePt', data: constants.VERTFACILITYREFERENCEPOINT },
+            { name: 'localNorthFieldReferencePt', data: constants.LOCALNORTHFIELDREFERENCEPOINT },
+            { name: 'localEastFieldReferencePt', data: constants.LOCALEASTFIELDREFERENCEPOINT },
+            { name: 'localGridNorthFieldReferencePt', data: constants.GRIDNORTHFIELDREFERENCEPOINT },
+            { name: 'localGridEastFieldReferencePt', data: constants.GRIDEASTFIELDREFERENCEPOINT },
+            { name: 'localLongitudeFieldReferencePt', data: constants.LONGITUDEFIELDREFERENCEPOINT },
+            { name: 'localLatitudeFieldReferencePt', data: constants.LATITUDEFIELDREFERENCEPOINT },
+            { name: 'localHorizFieldReferencePt', data: constants.HORZFIELDREFERENCEPOINT },
+            { name: 'localVertFieldReferencePt', data: constants.VERTFIELDREFERENCEPOINT },
         ];
+                
+        
         const sheetName = workbook.SheetNames[0];
 
         const arra = await Promise.all(excelArray.map(async (element) => {

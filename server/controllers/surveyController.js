@@ -84,7 +84,7 @@ const updateSurvey = async (req, res) => {
 const updateSurveyList = async (req, res) => {
     try {
         const { md, azi, inc, fieldNumber } = req.body;
-        if (fieldNumber === "1") {
+        if (fieldNumber == "1") {
             let prevDetails = { md: 0, inc: 0, azi: 0, tvd: 0, ns: 0, ew: 0 };
             const surveyDetails = await saveToDatabaseEdit(prevDetails, md, inc, azi, fieldNumber, verticalSectionAzimuth, logName);
             if (surveyDetails.bool) {
