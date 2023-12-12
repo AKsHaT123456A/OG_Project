@@ -1,4 +1,5 @@
 const xlsx = require("xlsx");
+const WellPannedExcelModel = require("../models/wellPlannedSchema");
 
 const parseExcelData = async (sheet, excelData) => {
     const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
@@ -24,30 +25,46 @@ const parseExcelData = async (sheet, excelData) => {
     }
 };
 
-const parseCompleteExcelData = async (sheet, excelData) => {
-    console.log({ e: excelData.data });
+const parseCompleteExcelData = async (sheet, excelData,excelName,userId) => {
     const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
-    console.log({ data });
     const mainHeading1 = excelData.data.mainHeading1;
     const mainHeading2 = excelData.data.mainHeading2;
     const dataColumns = excelData.data.data;
 
     // Extract data from rows 38 to 232 and the first 20 columns
     const resultData = [];
-    for (let i = mainHeading1; i <= mainHeading2; i++) {
-        if (i == 1) {
-            continue;
-        }
+    for (let i = 40; i <= 231; i++) {
         const rowData = data[i] && data[i].slice(0, dataColumns);
-        console.log({ rowData: rowData[i] });
-        if (Array.isArray(rowData)) {
-            resultData.push(rowData);
+        const id = i - 39;
+        const prevWell = await WellPannedExcelModel.findOne({userId,excelName,id});
+        if(prevWell){
+            return prevWell;
         }
+        const wellPlanned = await WellPannedExcelModel.create( {
+            userId,
+            excelName,
+            id,
+            fieldNumber: id,
+            md: rowData[0],
+            inc: rowData[1],
+            azi: rowData[2],
+            tvd: rowData[3],
+            tvdss: rowData[4],
+            north: rowData[5],
+            east: rowData[6],
+            dls: rowData[7],
+            toolface: rowData[8],
+            buildrate: rowData[9],
+            turnrate: rowData[10],
+            vs: rowData[11],
+            comments: rowData[12]
+        });
     }
+    return wellPlanned;
 
     // Create a result object with the parsed data
     const resultObject = {
-        [excelData.data.name]: resultData,
+        [excelData.data.name]: resultData[0],
     };
     console.log({ resultObject });
     return resultObject;

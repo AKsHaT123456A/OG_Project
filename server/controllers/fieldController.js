@@ -9,6 +9,7 @@ const { parseExcelData, parseCompleteExcelData } = require("../utils/parseUtil")
 const constants = require("../connections/constants");
 const detail = require("../models/details");
 const parseConstants = require("../connections/parseConstants");
+const WellPannedExcelModel = require("../models/wellPlannedSchema");
 
 const fieldController = async (req, res) => {
     try {
@@ -57,7 +58,7 @@ const fieldController = async (req, res) => {
             { name: 'localHorizFieldReferencePt', data: constants.HORZFIELDREFERENCEPOINT },
             { name: 'localVertFieldReferencePt', data: constants.VERTFIELDREFERENCEPOINT },
         ];
-        const excelArray1 =  { name: 'parsing', data: parseConstants.PARSING }
+        const excelArray1 = { name: 'parsing', data: parseConstants.PARSING }
 
         const sheetName = workbook.SheetNames[0];
 
@@ -65,7 +66,7 @@ const fieldController = async (req, res) => {
             const parsedData = await parseExcelData(workbook.Sheets[sheetName], element);
             return parsedData;
         }));
-        // parseCompleteExcelData(workbook.Sheets[sheetName], excelArray1);
+        parseCompleteExcelData(workbook.Sheets[sheetName], excelArray1, excelName, id);
         const mergedObject = Object.assign({}, ...arra);
         for (const key in mergedObject) {
             if (mergedObject.hasOwnProperty(key) && mergedObject[key] === undefined) {
@@ -88,7 +89,6 @@ const getAllFields = async (req, res) => {
     try {
         const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
         const { excelName } = req.query;
-        console.log({ excelName });
         const details = await detail.findOne({ excelName, userId: id });
         console.log({ details });
         return res.status(200).json({
@@ -100,6 +100,16 @@ const getAllFields = async (req, res) => {
     }
 };
 
+const getAllWellStructuredData = async (req, res) => {
+    try{
+    const { excelName } = req.query;
+    const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+    const plan = await WellPannedExcelModel.find({ excelName, userId: id });
+    return res.status(200).json({plan});
+    }catch(err){
+        return res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+}
 const additionalField = async (req, res) => {
     const additionalBody = await additional.create(req.body);
     const _id = additionalBody._id;
@@ -108,4 +118,4 @@ const additionalField = async (req, res) => {
 
 }
 
-module.exports = { fieldController, getAllFields, additionalField };
+module.exports = { fieldController, getAllFields, additionalField, getAllFields, getAllWellStructuredData };
