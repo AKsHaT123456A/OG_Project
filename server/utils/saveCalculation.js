@@ -18,6 +18,7 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
         const ns = prevDetails.ns + deltaNS;
         const vs = calculateVS(verticalSectionAzimuth, ns, ew);
         const newSurvey = new survey({
+            logName,
             md: md2,
             inc: i2,
             azi: a2,
@@ -46,8 +47,8 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
 
         await newSurvey.save();
         const logs = await log.findOne({ logName });
-        logs.surveys.push(newSurvey._id);
-        await logs.save();
+        // logs.surveys.push(newSurvey._id);
+        // await logs.save();
         await log.findOne({ logName }).populate("surveys").select("-_id -__v");
         return { bool: true, newSurvey };
     }

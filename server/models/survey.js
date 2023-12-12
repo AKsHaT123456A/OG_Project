@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const surveySchema = new mongoose.Schema(
     {
+        logName: { type: 'String', trim: true, required: true },
         fieldNumber: { type: 'String', trim: true, required: true },
         md: { type: Number, trim: true, required: true },
         cl: { type: Number, trim: true, default: 0 },

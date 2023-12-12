@@ -11,7 +11,7 @@ const surveyController = async (req, res) => {
     try {
         const { md, inc, azi, fieldNumber, logName, well } = req.body;
         const { id } = req.cookies;
-        console.log({ well })
+        
         const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
         // if (!md || !inc || !azi || !fieldNumber || !logName) {
         //     return res.status(400).json({
@@ -46,7 +46,7 @@ const surveyController = async (req, res) => {
 
         const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
         const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, angleWithoutDegree, logName, userId);
-
+        console.log(surveyDetails);
         if (surveyDetails.bool) {
             console.log(`Survey ${fieldNumber} received`);
         }
