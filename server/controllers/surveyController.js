@@ -11,6 +11,7 @@ const surveyController = async (req, res) => {
     try {
         const { md, inc, azi, fieldNumber, logName, well } = req.body;
         const { id } = req.cookies;
+        const userId =" d80defd4-3398-4745-8c03-8e0f6825afc3";
         // if (!md || !inc || !azi || !fieldNumber || !logName) {
         //     return res.status(400).json({
         //         message: "Bad request",
@@ -18,7 +19,7 @@ const surveyController = async (req, res) => {
         //     });
         // }
 
-        const prevSurvey = await survey.findOne({ fieldNumber, userId:id });
+        const prevSurvey = await survey.findOne({ fieldNumber, userId });
         const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
         if (prevSurvey) {
             console.log(`Survey ${fieldNumber} already exists`);

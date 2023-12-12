@@ -84,6 +84,13 @@ const deleteLog = async (req, res) => {
     }
 };
 
+const deleteAllLogs = async (req,res) =>{
+    const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+    await log.deleteMany({userId: id});
+    return res.status(200).json({
+        message:"Log deleted",
+    })
+}
 const editLog = async (req, res) => {
     const { logName } = req.body;
     const { editLogName, usedBy, usedFrom } = req.body;
@@ -105,4 +112,4 @@ const getAllLogs = async (req, res) => {
 
 }
 
-module.exports = { createLog, deleteLog, editLog ,getAllLogs};
+module.exports = { createLog, deleteLog, editLog ,getAllLogs , deleteAllLogs};
