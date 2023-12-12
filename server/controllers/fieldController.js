@@ -5,9 +5,10 @@ const installation = require("../models/installation");
 const slot = require("../models/slot");
 const well = require("../models/well");
 const wellbore = require("../models/wellbore");
-const parseExcelData = require("../utils/parseUtil");
+const { parseExcelData, parseCompleteExcelData } = require("../utils/parseUtil");
 const constants = require("../connections/constants");
 const detail = require("../models/details");
+const parseConstants = require("../connections/parseConstants");
 
 const fieldController = async (req, res) => {
     try {
@@ -15,7 +16,6 @@ const fieldController = async (req, res) => {
         const { excelName } = req.query;
         const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
         const excelArray = [
-            { name: 'excelName', data: constants.PORT },
             { name: 'well', data: constants.WELL },
             { name: 'wellbore', data: constants.WELLBORE },
             { name: 'planRevision', data: constants.PLANREVSION },
@@ -57,14 +57,15 @@ const fieldController = async (req, res) => {
             { name: 'localHorizFieldReferencePt', data: constants.HORZFIELDREFERENCEPOINT },
             { name: 'localVertFieldReferencePt', data: constants.VERTFIELDREFERENCEPOINT },
         ];
-                
-        
+        const excelArray1 =  { name: 'parsing', data: parseConstants.PARSING }
+
         const sheetName = workbook.SheetNames[0];
 
         const arra = await Promise.all(excelArray.map(async (element) => {
             const parsedData = await parseExcelData(workbook.Sheets[sheetName], element);
             return parsedData;
         }));
+        // parseCompleteExcelData(workbook.Sheets[sheetName], excelArray1);
         const mergedObject = Object.assign({}, ...arra);
         for (const key in mergedObject) {
             if (mergedObject.hasOwnProperty(key) && mergedObject[key] === undefined) {
@@ -84,12 +85,12 @@ const fieldController = async (req, res) => {
     }
 }
 const getAllFields = async (req, res) => {
-     try {
+    try {
         const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
         const { excelName } = req.query;
-        console.log({excelName});
+        console.log({ excelName });
         const details = await detail.findOne({ excelName, userId: id });
-        console.log({details});
+        console.log({ details });
         return res.status(200).json({
             message: "Send All Details",
             details
@@ -106,4 +107,5 @@ const additionalField = async (req, res) => {
     return res.status(201).json({ additional: additionalData._doc });
 
 }
+
 module.exports = { fieldController, getAllFields, additionalField };

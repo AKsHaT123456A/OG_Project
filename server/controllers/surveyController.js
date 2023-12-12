@@ -24,10 +24,10 @@ const surveyController = async (req, res) => {
         if (prevSurvey) {
             console.log(`Survey ${fieldNumber} already exists`);
             return res.status(200).json({
-                message: `Survey ${fieldNumber} already exists`,
+                message: `Survey ${fieldNumber} already exists `,
             });
         }
-        if (fieldNumber === 1) {
+        if (fieldNumber == 1) {
             let prevDetails = { md: 0, inc: 0, azi: 0, tvd: 0, ns: 0, ew: 0 };
             const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, verticalSectionAzimuth, logName, id);
             if (surveyDetails.bool) {
