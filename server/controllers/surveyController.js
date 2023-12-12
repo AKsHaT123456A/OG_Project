@@ -11,6 +11,7 @@ const surveyController = async (req, res) => {
     try {
         const { md, inc, azi, fieldNumber, logName, well } = req.body;
         const { id } = req.cookies;
+        console.log({well})
         const userId =" d80defd4-3398-4745-8c03-8e0f6825afc3";
         // if (!md || !inc || !azi || !fieldNumber || !logName) {
         //     return res.status(400).json({
@@ -20,7 +21,10 @@ const surveyController = async (req, res) => {
         // }
 
         const prevSurvey = await survey.findOne({ fieldNumber, userId });
+        console.log({ md,inc,prevSurvey,userId,well });
         const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
+        let angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
+        console.log({ verticalSectionAzimuth });
         if (prevSurvey) {
             console.log(`Survey ${fieldNumber} already exists`);
             return res.status(200).json({
@@ -29,7 +33,7 @@ const surveyController = async (req, res) => {
         }
         if (fieldNumber == 1) {
             let prevDetails = { md: 0, inc: 0, azi: 0, tvd: 0, ns: 0, ew: 0 };
-            const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, verticalSectionAzimuth, logName, id);
+            const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, angleWithoutDegree, logName, id);
             if (surveyDetails.bool) {
                 const newSurvey = surveyDetails.newSurvey;
                 console.log(`Survey ${fieldNumber} received`);
@@ -41,7 +45,7 @@ const surveyController = async (req, res) => {
             await survey.findOne({ fieldNumber: prevFieldNumber }).select("md inc azi tvd ns ew");
 
         const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
-        const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, verticalSectionAzimuth, logName, id);
+        const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, angleWithoutDegree, logName, id);
 
         if (surveyDetails.bool) {
             console.log(`Survey ${fieldNumber} received`);
