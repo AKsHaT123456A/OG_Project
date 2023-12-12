@@ -6,6 +6,7 @@ router.post("/surveyDelete", deleteLog);
 router.post("/surveyEdit", editLog);
 router.get("/allLogs",getAllLogs);
 router.delete("/deleteAll",deleteAllLogs);
+router.delete("/deleteALog",deleteLog);
 
 
 module.exports = router;
