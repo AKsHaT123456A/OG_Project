@@ -11,8 +11,8 @@ const surveyController = async (req, res) => {
     try {
         const { md, inc, azi, fieldNumber, logName, well } = req.body;
         const { id } = req.cookies;
-        console.log({well})
-        const userId =" d80defd4-3398-4745-8c03-8e0f6825afc3";
+        console.log({ well })
+        const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
         // if (!md || !inc || !azi || !fieldNumber || !logName) {
         //     return res.status(400).json({
         //         message: "Bad request",
@@ -21,7 +21,7 @@ const surveyController = async (req, res) => {
         // }
 
         const prevSurvey = await survey.findOne({ fieldNumber, userId });
-        console.log({ md,inc,prevSurvey,userId,well });
+        console.log({ md, inc, prevSurvey, userId, well });
         const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
         let angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
         console.log({ verticalSectionAzimuth });
@@ -33,7 +33,7 @@ const surveyController = async (req, res) => {
         }
         if (fieldNumber == 1) {
             let prevDetails = { md: 0, inc: 0, azi: 0, tvd: 0, ns: 0, ew: 0 };
-            const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, angleWithoutDegree, logName, id);
+            const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, angleWithoutDegree, logName, userId);
             if (surveyDetails.bool) {
                 const newSurvey = surveyDetails.newSurvey;
                 console.log(`Survey ${fieldNumber} received`);
@@ -45,7 +45,7 @@ const surveyController = async (req, res) => {
             await survey.findOne({ fieldNumber: prevFieldNumber }).select("md inc azi tvd ns ew");
 
         const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
-        const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, angleWithoutDegree, logName, id);
+        const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, angleWithoutDegree, logName, userId);
 
         if (surveyDetails.bool) {
             console.log(`Survey ${fieldNumber} received`);
@@ -85,6 +85,16 @@ const updateSurvey = async (req, res) => {
         return res.status(500).json({ err: err.message });
     }
 };
+
+const getAllSurveys = async (req, res) => {
+    try {
+        const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
+        const surveys = await survey.find({ userId });
+        return res.status(200).json({ surveys });
+    } catch (err) {
+        return res.status(500).json({ err: err.message });
+    }
+}
 const updateSurveyList = async (req, res) => {
     try {
         const { md, azi, inc, fieldNumber } = req.body;
@@ -120,4 +130,4 @@ const updateSurveyList = async (req, res) => {
         });
     }
 };
-module.exports = { surveyController, updateSurveyList, hi, updateSurvey };
+module.exports = { surveyController, updateSurveyList, hi, updateSurvey, getAllSurveys };
