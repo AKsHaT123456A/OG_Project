@@ -11,7 +11,7 @@ const surveyController = async (req, res) => {
     try {
         const { md, inc, azi, fieldNumber, logName, well } = req.body;
         const { id } = req.cookies;
-        
+
         const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
         // if (!md || !inc || !azi || !fieldNumber || !logName) {
         //     return res.status(400).json({
@@ -89,7 +89,8 @@ const updateSurvey = async (req, res) => {
 const getAllSurveys = async (req, res) => {
     try {
         const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const surveys = await survey.find({ userId });
+        const { logName } = req.query;
+        const surveys = await survey.find({ userId, logName });
         return res.status(200).json({ surveys });
     } catch (err) {
         return res.status(500).json({ err: err.message });
