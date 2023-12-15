@@ -22,7 +22,7 @@ function calculateDLS(dl, cl) {
 }
 
 function calculateRF(dl) {
-    if (dl <= 0.15) {
+    if (dl == 0 ) {
         return 1;
     }
     return Math.tan((dl / 2) * (Math.PI / 180)) * (180 / Math.PI) * (2 / dl);
@@ -41,7 +41,7 @@ function calculateDeltaNS(i1, i2, a1, a2, rf, md) {
     const i2Rad = i2 * (Math.PI / 180);
     const a1Rad = a1 * (Math.PI / 180);
     const a2Rad = a2 * (Math.PI / 180);
-
+    console.log({ rt: (Math.sin(i1Rad) * Math.cos(a1Rad)) + (Math.sin(i2Rad) * Math.cos(a2Rad)) });
     // Calculate the formula
     const result = ((Math.sin(i1Rad) * Math.cos(a1Rad)) + (Math.sin(i2Rad) * Math.cos(a2Rad))) * (rf * (md / 2));
 
@@ -81,6 +81,7 @@ function calculateVS(azimuthTarget, deltaNS, deltaEW) {
     return vs;
 }
 
+
 function customRound(value, precision) {
     const multiplier = Math.pow(10, precision);
     return value >= 0
@@ -89,3 +90,7 @@ function customRound(value, precision) {
 }
 
 module.exports = { calculateCourseLength, calculateDogLeg, calculateDLS, calculateRF, calculateDeltaTVD, calculateDeltaNS, calculateDeltaEW, calculateVS, customRound };
+
+
+//dision by zero dogleg=0 and rf =1
+// rf will not be 1 if dogleg is greater than 0.15  

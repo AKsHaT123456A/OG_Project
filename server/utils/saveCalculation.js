@@ -87,7 +87,6 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
         newSurvey.vs = vs;
 
 
-
         await newSurvey.save();
         const logs = await log.findOne({ logName });
         logs.surveys.push(newSurvey._id);

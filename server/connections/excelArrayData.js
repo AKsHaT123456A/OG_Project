@@ -1,5 +1,4 @@
 const surveyData = [
-    { MD: 0.00, Inclination: 0.00, Azimuth: 330.00 },
     { MD: 100.00, Inclination: 0.00, Azimuth: 330.00 },
     { MD: 200.00, Inclination: 0.00, Azimuth: 330.00 },
     { MD: 300.00, Inclination: 0.00, Azimuth: 330.00 },
