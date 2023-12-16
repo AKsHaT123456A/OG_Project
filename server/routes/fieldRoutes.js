@@ -6,6 +6,6 @@ const upload = multer({ storage: storage });
 router.post("/fields", upload.single('excelFile'), fieldController);
 router.get("/getWellPlanned", getAllWellStructuredData)
 router.get("/getAllFields", getAllFields);
-router.update("/updateFields", updateFields);
+router.patch("/updateFields", updateFields);
 router.post("/additional", additionalField);
 module.exports = router;
