@@ -18,7 +18,7 @@ const wellPannedExcelSchema = new mongoose.Schema(
         buildrate: { type: String, trim: true, required: true },
         turnrate: { type: String, trim: true, required: true },
         vs: { type: String, trim: true, required: true },
-        comments: { type: String, trim: true, required: true },
+        comments: { type: String, trim: true },
     },
     { versionKey: false }
 );

@@ -57,6 +57,7 @@ const fieldController = async (req, res) => {
             { name: 'localLatitudeFieldReferencePt', data: constants.LATITUDEFIELDREFERENCEPOINT },
             { name: 'localHorizFieldReferencePt', data: constants.HORZFIELDREFERENCEPOINT },
             { name: 'localVertFieldReferencePt', data: constants.VERTFIELDREFERENCEPOINT },
+            { name: 'lastRevised', data: constants.LASTREVISED }
         ];
         const excelArray1 = { name: 'parsing', data: parseConstants.PARSING }
 
@@ -101,12 +102,12 @@ const getAllFields = async (req, res) => {
 };
 
 const getAllWellStructuredData = async (req, res) => {
-    try{
-    const { excelName } = req.query;
-    const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-    const plan = await WellPannedExcelModel.find({ excelName, userId: id });
-    return res.status(200).json({plan});
-    }catch(err){
+    try {
+        const { excelName } = req.query;
+        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+        const plan = await WellPannedExcelModel.find({ excelName, userId: id });
+        return res.status(200).json({ plan });
+    } catch (err) {
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 }

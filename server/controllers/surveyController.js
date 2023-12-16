@@ -219,4 +219,6 @@ const updateSurveyList = async (req, res) => {
         });
     }
 };
+
+
 module.exports = { surveyController, updateSurveyList, hi, uploadSurvey, updateSurvey, getAllSurveys };

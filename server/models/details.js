@@ -43,6 +43,7 @@ const detailSchema = new mongoose.Schema(
         localLatitudeFieldReferencePt: { type: String, trim: true },
         localHorizFieldReferencePt: { type: String, trim: true },
         localVertFieldReferencePt: { type: String, trim: true },
+        lastRevised:{ type: String, trim: true}
         
 
     },

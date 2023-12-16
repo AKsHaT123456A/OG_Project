@@ -19,12 +19,12 @@ const constants = {
         "data": 4
     },
     PLANREVSION: {
-        "mainHeading": null,
-        "data": null
+        "mainHeading": 11,
+        "data": 4
     },
     UTM: {
-        "mainHeading": null,
-        "data": null
+        "mainHeading": 3,
+        "data": 15
     },
     NORTHREFERENCE: {
         "mainHeading": 4,
@@ -39,27 +39,27 @@ const constants = {
         "data": 15
     },
     FIELDVERTICALREFERENCE: {
-        "mainHeading": 9,
-        "data": 15
-    },
-    "ROTARYTOFIELD": {
         "mainHeading": 10,
         "data": 15
     },
-    "ROTARYSUBSEA": {
+    "ROTARYTOFIELD": {
         "mainHeading": 11,
         "data": 15
     },
-    "ROTARYTOMHL": {
+    "ROTARYSUBSEA": {
         "mainHeading": 12,
         "data": 15
     },
-    "SECTIONX": {
+    "ROTARYTOMHL": {
         "mainHeading": 13,
         "data": 15
     },
-    "SECTIONY": {
+    "SECTIONX": {
         "mainHeading": 14,
+        "data": 15
+    },
+    "SECTIONY": {
+        "mainHeading": 15,
         "data": 15
     },
     "VERTICALSECTIONAZIMUTH": {
@@ -88,15 +88,15 @@ const constants = {
     },
     "LONGITUDESLOTLOCATION":{
         "mainHeading": 22,
-        "data": 14
+        "data": 15
     },
     "HORZSLOTLOCATION":{
         "mainHeading": 22,
-        "data": 16
+        "data": 18
     },
     "VERTSLOTLOCATION":{
         "mainHeading": 22,
-        "data": 18
+        "data": 20
     },
     "LOCALNORTHFACILITYREFERENCEPOINT":{
         "mainHeading": 23,
@@ -120,15 +120,15 @@ const constants = {
     },
     "LONGITUDEFACILITYREFERENCEPOINT":{
         "mainHeading": 23,
-        "data": 14
+        "data": 15
     },
     "HORZFACILITYREFERENCEPOINT":{
         "mainHeading": 23,
-        "data": 16
+        "data": 18
     },
     "VERTFACILITYREFERENCEPOINT":{
         "mainHeading": 23,
-        "data": 18
+        "data": 20
     },
     "LOCALNORTHFIELDREFERENCEPOINT":{
         "mainHeading": 24,
@@ -151,16 +151,20 @@ const constants = {
         "data": 12
     },
     "LONGITUDEFIELDREFERENCEPOINT":{
-        "mainHeading": 24,
-        "data": 14
+        "mainHeading": 25,
+        "data": 15
     },
     "HORZFIELDREFERENCEPOINT":{
         "mainHeading": 24,
-        "data": 16
+        "data": 18
     },
     "VERTFIELDREFERENCEPOINT":{
         "mainHeading": 24,
-        "data": 18
+        "data": 20
+    },
+    "LASTREVISED":{
+        "mainHeading": 25,
+        "data": 4
     },
 };
 

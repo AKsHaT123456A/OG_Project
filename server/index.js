@@ -18,6 +18,7 @@ const authRoute = require("./routes/authRoutes");
 const fieldsRoute = require("./routes/fieldRoutes");
 const surveyRoute = require("./routes/surveyRoutes");
 const logRoute = require("./routes/surveyLogRoute");
+const interpolateRoute = require("./routes/interpolateRoute");
 // Database connection
 connectDB();
 
@@ -44,6 +45,7 @@ app.use(`${apiPrefix}/auth`, authRoute);
 app.use(`${apiPrefix}`, fieldsRoute);
 app.use(`${apiPrefix}`, surveyRoute);
 app.use(`${apiPrefix}`, logRoute);
+app.use(`${apiPrefix}`, interpolateRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

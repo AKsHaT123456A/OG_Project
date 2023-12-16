@@ -5,42 +5,57 @@ const parseExcelData = async (sheet, excelData) => {
     const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
     const mainHeading = excelData.data.mainHeading;
     const name = excelData.name;
-    console.log({ excelData });
     const mainData = excelData.data.data;
-    const specificValue = data[mainHeading] && data[mainHeading][mainData];
-    if (Array.isArray(specificValue)) {
 
-        const resultObject = {
+    const specificValue = data[mainHeading] && data[mainHeading][mainData];
+
+    if (Array.isArray(specificValue)) {
+        return {
             [name]: specificValue[0],
         };
-        return resultObject;
     }
+
     if (specificValue !== null) {
-        const resultObject = {
+        return {
             [name]: specificValue,
         };
-        return resultObject;
-    } else {
-        return {};
     }
+
+    return {};
 };
 
-const parseCompleteExcelData = async (sheet, excelData,excelName,userId) => {
+const parseCompleteExcelData = async (sheet, excelData, excelName, userId) => {
     const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
-    const mainHeading1 = excelData.data.mainHeading1;
-    const mainHeading2 = excelData.data.mainHeading2;
     const dataColumns = excelData.data.data;
 
-    // Extract data from rows 38 to 232 and the first 20 columns
-    const resultData = [];
-    for (let i = 40; i <= 231; i++) {
-        const rowData = data[i] && data[i].slice(0, dataColumns);
-        const id = i - 39;
-        const prevWell = await WellPannedExcelModel.findOne({userId,excelName,id});
-        if(prevWell){
-            return prevWell;
+    let startIndex = -1;
+
+    // Find the index where "md" is located in the first column
+    for (let i = 0; i <= 231; i++) {
+        const mdCellValue = data[i] && data[i][0];
+
+        if (mdCellValue && mdCellValue.toString().toLowerCase() === 'md') {
+            console.log({ i, mdCellValue });
+            startIndex = i;
+            break;  // Stop searching once "md" is found
         }
-        const wellPlanned = await WellPannedExcelModel.create( {
+    }
+
+    console.log({ startIndex: startIndex });
+
+    if (startIndex === -1) {
+        console.log("Couldn't find 'md' in the specified range.");
+        return null;
+    }
+
+    // Start the loop from the row where "md" is found
+    let i = startIndex + 2; // Starting from the third row after "md"
+    while (data[i] && data[i][0] !== undefined) {
+        const rowData = data[i].slice(0, dataColumns);
+        const id = i - startIndex + 1;
+
+
+        const wellPlanned = await WellPannedExcelModel.create({
             userId,
             excelName,
             id,
@@ -52,22 +67,17 @@ const parseCompleteExcelData = async (sheet, excelData,excelName,userId) => {
             tvdss: rowData[4],
             north: rowData[5],
             east: rowData[6],
-            dls: rowData[7],
-            toolface: rowData[8],
-            buildrate: rowData[9],
-            turnrate: rowData[10],
-            vs: rowData[11],
-            comments: rowData[12]
+            dls: rowData[11],
+            toolface: rowData[12],
+            buildrate: rowData[13],
+            turnrate: rowData[14],
+            vs: rowData[15],
+            comments: data[i][20]
         });
-    }
-    return wellPlanned;
 
-    // Create a result object with the parsed data
-    const resultObject = {
-        [excelData.data.name]: resultData[0],
-    };
-    console.log({ resultObject });
-    return resultObject;
+
+        i++;
+    }
 };
 
 module.exports = { parseExcelData, parseCompleteExcelData };
