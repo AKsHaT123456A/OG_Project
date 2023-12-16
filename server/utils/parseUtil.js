@@ -56,7 +56,7 @@ const parseCompleteExcelData = async (sheet, excelData, excelName, userId) => {
 
         const prevDetails = WellPannedExcelModel.findOne({ userId, excelName, id });
         if (prevDetails) {
-            return res.status(200).json({ message: "Details already exists", newField: prevDetails });
+            return ;
         }
         const wellPlanned = await WellPannedExcelModel.create({
             userId,
@@ -81,6 +81,7 @@ const parseCompleteExcelData = async (sheet, excelData, excelName, userId) => {
 
         i++;
     }
+    
 };
 
 module.exports = { parseExcelData, parseCompleteExcelData };

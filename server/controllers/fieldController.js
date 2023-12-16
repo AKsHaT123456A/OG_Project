@@ -67,7 +67,7 @@ const fieldController = async (req, res) => {
             const parsedData = await parseExcelData(workbook.Sheets[sheetName], element);
             return parsedData;
         }));
-        parseCompleteExcelData(workbook.Sheets[sheetName], excelArray1, excelName, id);
+        const paredItems = await parseCompleteExcelData(workbook.Sheets[sheetName], excelArray1, excelName, id);
         const mergedObject = Object.assign({}, ...arra);
         for (const key in mergedObject) {
             if (mergedObject.hasOwnProperty(key) && mergedObject[key] === undefined) {
