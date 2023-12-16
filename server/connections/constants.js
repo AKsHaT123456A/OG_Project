@@ -151,7 +151,7 @@ const constants = {
         "data": 12
     },
     "LONGITUDEFIELDREFERENCEPOINT":{
-        "mainHeading": 25,
+        "mainHeading": 24,
         "data": 15
     },
     "HORZFIELDREFERENCEPOINT":{
