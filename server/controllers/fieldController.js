@@ -67,7 +67,7 @@ const fieldController = async (req, res) => {
             const parsedData = await parseExcelData(workbook.Sheets[sheetName], element);
             return parsedData;
         }));
-        const paredItems =  parseCompleteExcelData(workbook.Sheets[sheetName], excelArray1, excelName, id);
+        const paredItems = parseCompleteExcelData(workbook.Sheets[sheetName], excelArray1, excelName, id);
         const mergedObject = Object.assign({}, ...arra);
         for (const key in mergedObject) {
             if (mergedObject.hasOwnProperty(key) && mergedObject[key] === undefined) {
@@ -110,6 +110,17 @@ const getAllWellStructuredData = async (req, res) => {
     } catch (err) {
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
+};
+
+const updateFields = async (req, res) => {
+    try {
+        const { excelName } = req.query;
+        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+        const newField = await detail.findOneAndUpdate({ excelName,userId:id}, { ...req.body });
+        return res.status(200).json({ message: "Details Updated", newField });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
 }
 const additionalField = async (req, res) => {
     const additionalBody = await additional.create(req.body);
@@ -119,4 +130,4 @@ const additionalField = async (req, res) => {
 
 }
 
-module.exports = { fieldController, getAllFields, additionalField, getAllFields, getAllWellStructuredData };
+module.exports = { fieldController, getAllFields, additionalField, getAllFields, getAllWellStructuredData ,updateFields};
