@@ -13,7 +13,8 @@ const WellPannedExcelModel = require("../models/wellPlannedSchema");
 
 const fieldController = async (req, res) => {
     try {
-        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+        const { id } = req.cookies;
+        const userId = id || "d80defd4-3398-4745-8c03-8e0f6825afc3";
         const { excelName } = req.query;
         const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
         const excelArray = [
@@ -67,7 +68,7 @@ const fieldController = async (req, res) => {
             const parsedData = await parseExcelData(workbook.Sheets[sheetName], element);
             return parsedData;
         }));
-        const paredItems =  parseCompleteExcelData(workbook.Sheets[sheetName], excelArray1, excelName, id);
+        const paredItems =  parseCompleteExcelData(workbook.Sheets[sheetName], excelArray1, excelName, userId);
         const mergedObject = Object.assign({}, ...arra);
         for (const key in mergedObject) {
             if (mergedObject.hasOwnProperty(key) && mergedObject[key] === undefined) {
@@ -88,9 +89,9 @@ const fieldController = async (req, res) => {
 }
 const getAllFields = async (req, res) => {
     try {
-        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const { excelName } = req.query;
-        const details = await detail.findOne({ excelName, userId: id });
+        const { id } = req.cookies;
+        const userId = id || "d80defd4-3398-4745-8c03-8e0f6825afc3";        const { excelName } = req.query;
+        const details = await detail.findOne({ excelName, userId: userId });
         console.log({ details });
         return res.status(200).json({
             message: "Send All Details",
@@ -104,8 +105,9 @@ const getAllFields = async (req, res) => {
 const getAllWellStructuredData = async (req, res) => {
     try {
         const { excelName } = req.query;
-        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const plan = await WellPannedExcelModel.find({ excelName, userId: id });
+        const { id } = req.cookies;
+        const userId = id || "d80defd4-3398-4745-8c03-8e0f6825afc3";
+                const plan = await WellPannedExcelModel.find({ excelName, userId});
         return res.status(200).json({ plan });
     } catch (err) {
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
