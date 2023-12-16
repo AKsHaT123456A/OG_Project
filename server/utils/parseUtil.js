@@ -54,10 +54,7 @@ const parseCompleteExcelData = async (sheet, excelData, excelName, userId) => {
         const rowData = data[i].slice(0, dataColumns);
         const id = i - startIndex + 1;
 
-        const prevDetails = WellPannedExcelModel.findOne({ userId, excelName, id });
-        if (prevDetails) {
-            return ;
-        }
+        
         const wellPlanned = await WellPannedExcelModel.create({
             userId,
             excelName,
@@ -81,7 +78,6 @@ const parseCompleteExcelData = async (sheet, excelData, excelName, userId) => {
 
         i++;
     }
-    
 };
 
 module.exports = { parseExcelData, parseCompleteExcelData };
