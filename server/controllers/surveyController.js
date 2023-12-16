@@ -22,6 +22,7 @@ const surveyController = async (req, res) => {
         // }
 
         const prevSurvey = await survey.findOne({ fieldNumber, userId, logName });
+        
         console.log({ md, inc, prevSurvey, userId, well });
         const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
         let angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
@@ -43,7 +44,7 @@ const surveyController = async (req, res) => {
         }
         const prevFieldNumber = fieldNumber - 1;
         const { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew } =
-            await survey.findOne({ fieldNumber: prevFieldNumber }).select("md inc azi tvd ns ew");
+            await survey.findOne({ fieldNumber: prevFieldNumber,logName }).select("md inc azi tvd ns ew");
 
         const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
         const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, angleWithoutDegree, logName, userId);
@@ -97,7 +98,7 @@ const uploadSurvey = async (req, res) => {
         const fieldNumber = i + 1;
         const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
         let angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
-        const prevSurvey = await survey.findOne({ fieldNumber, userId });
+        const prevSurvey = await survey.findOne({ fieldNumber, userId ,logName});
         if (prevSurvey) {
             console.log(`Survey ${fieldNumber} already exists`);
         }

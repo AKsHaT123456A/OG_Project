@@ -68,11 +68,11 @@ const interpolateController = async (req, res) => {
         console.log({ justGreaterThanInput, justLessThanInput });
 
         // Perform Dogleg (DLx) calculation
-        const DL12 = justGreaterThanInput.dls - justLessThanInput.dls;
+        const DL12 = justGreaterThanInput.dl - justLessThanInput.dl;
         const DLx = ((md - justLessThanInput.md) * DL12) / (justGreaterThanInput.md - justLessThanInput.md);
 
         // Verify DL12 using DLS at Station 2
-        const DLS2 = justGreaterThanInput.dls;
+        const DLS2 = justGreaterThanInput.dl;
         const verifiedDL12 = (DLS2 * (justGreaterThanInput.md - justLessThanInput.md)) / 100;
 
         // Calculate IncX using the provided formula
@@ -89,7 +89,7 @@ const interpolateController = async (req, res) => {
             (Math.sin(inc2) * Math.cos(azi2) * Math.sin(DLxRadians));
 
         const incX = Math.atan2(numerator, denominator);
-console.log({incX});
+        console.log({ incX });
         // Convert back to degrees
         const incXDegrees = (incX * 180) / Math.PI;
 
