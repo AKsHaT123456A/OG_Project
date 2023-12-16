@@ -139,7 +139,7 @@ const getAllSurveys = async (req, res) => {
 
 const updateSurvey = async (req, res) => {
     try {
-        const { updatedTieAzi, logName } = req.body;
+        const { updatedTieAzi, logName ,well} = req.body;
         const surveys = await survey.find({ logName });
         const updatedSurvey = surveys.map(async (survey) => {
 
