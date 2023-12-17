@@ -1,6 +1,7 @@
 const survey = require("../models/survey");
 
 const toRadians = degrees => (degrees * Math.PI) / 180;
+const toDegrees = radians => (radians * 180) / Math.PI;
 
 const interpolateController = async (req, res) => {
     try {
@@ -35,7 +36,6 @@ const interpolateController = async (req, res) => {
                 $project: {
                     md: 1,
                     vs: 1,
-                    _id: 0,
                     inc: 1,
                     azi: 1,
                     cl: 1,
@@ -58,49 +58,70 @@ const interpolateController = async (req, res) => {
                 },
             },
         ]);
-        console.log({ fields: result });
+
+        // Find the index with the closest absolute difference to 0
+        let closestToZeroIndex = 0;
+        let closestToZeroDifference = Math.abs(result[0].absoluteDifference);
+
+        for (let i = 1; i < result.length; i++) {
+            const currentDifference = Math.abs(result[i].absoluteDifference);
+
+            if (currentDifference < closestToZeroDifference) {
+                closestToZeroIndex = i;
+                closestToZeroDifference = currentDifference;
+            }
+        }
+
+        // Get the closest survey to 0
+        const closestToZero = result[closestToZeroIndex];
+        console.log({ closestToZero });
 
         // Find the surveys just greater and less than the input MD
-        const index = result.findIndex(doc => doc.absoluteDifference === 0);
-        console.log({ index });
-        const justGreaterThanInput = result[index + 1];
-        const justLessThanInput = result[index - 1];
-        console.log({ justGreaterThanInput, justLessThanInput });
+        const justGreaterThanInput = result[closestToZeroIndex + 1];
+        const justLessThanInput = result[closestToZeroIndex - 1];
+        console.log({ justGreaterThanInput, closestToZero });
 
-        // Perform Dogleg (DLx) calculation
-        const DL12 = justGreaterThanInput.dl - justLessThanInput.dl;
-        const DLx = ((md - justLessThanInput.md) * DL12) / (justGreaterThanInput.md - justLessThanInput.md);
+        // Verify DL with the calculated DL12
+        if (Math.abs(DL - DL12) > 0.001) {
+            return res.status(500).json({ error: "DL verification failed" });
+        }
 
-        // Verify DL12 using DLS at Station 2
-        const DLS2 = justGreaterThanInput.dl;
-        const verifiedDL12 = (DLS2 * (justGreaterThanInput.md - justLessThanInput.md)) / 100;
+        // Calculate DLx
+        const DLx = ((md - justLessThanInput.md) * DL) / (justGreaterThanInput.md - justLessThanInput.md);
 
-        // Calculate IncX using the provided formula
-        const inc1 = toRadians(justLessThanInput.inc);
-        const inc2 = toRadians(justGreaterThanInput.inc);
-        const azi1 = toRadians(justLessThanInput.azi);
-        const azi2 = toRadians(justGreaterThanInput.azi);
+        // Calculate Inclination (Ix) using radians
+        const I1 = toRadians(justLessThanInput.inc);
+        const I2 = toRadians(justGreaterThanInput.inc);
+        const A1 = toRadians(justLessThanInput.azi);
+        const A2 = toRadians(justGreaterThanInput.azi);
         const DLxRadians = toRadians(DLx);
 
-        const numerator = (Math.sin(inc1) * Math.sin(azi1) * Math.sin(DL12 - DLxRadians)) +
-            (Math.sin(inc1) * Math.sin(azi2) * Math.sin(DLxRadians));
+        const numerator = (Math.sin(I1) * Math.sin(A1) * Math.sin(DL12 - DLxRadians)) +
+            (Math.sin(I1) * Math.sin(A2) * Math.sin(DLxRadians));
 
-        const denominator = (Math.sin(inc1) * Math.cos(azi1) * Math.sin(DL12 - DLxRadians)) +
-            (Math.sin(inc2) * Math.cos(azi2) * Math.sin(DLxRadians));
+        const denominator = (Math.sin(I1) * Math.cos(A1) * Math.sin(DL12 - DLxRadians)) +
+            (Math.sin(I2) * Math.cos(A2) * Math.sin(DLxRadians));
 
-        const incX = Math.atan2(numerator, denominator);
-        console.log({ incX });
-        // Convert back to degrees
-        const incXDegrees = (incX * 180) / Math.PI;
+        const Ix = Math.atan2(numerator, denominator);
+
+        // Calculate Azimuth (Ax) using radians
+        const DLS = justGreaterThanInput.dls;
+        const Ax = Math.acos((Math.cos(I2) * Math.cos(DLS)) +
+            (Math.sin(DLS) * ((Math.cos(I1) - (Math.cos(I1) * Math.cos(DL))) / Math.sin(DL))));
+
+        // Convert angles back to degrees
+        const IxDegrees = toDegrees(Ix);
+        const AxDegrees = toDegrees(Ax);
 
         // Output the results
         console.log({
             justGreaterThanInput,
             justLessThanInput,
             DL12,
+            DL,
             DLx,
-            verifiedDL12,
-            incX: incXDegrees,
+            Ix: IxDegrees,
+            Ax: AxDegrees,
         });
 
         // Return the results or send them in the response
@@ -108,9 +129,10 @@ const interpolateController = async (req, res) => {
             justGreaterThanInput,
             justLessThanInput,
             DL12,
+            DL,
             DLx,
-            verifiedDL12,
-            incX: incXDegrees,
+            Ix: IxDegrees,
+            Ax: AxDegrees,
         });
 
     } catch (err) {
