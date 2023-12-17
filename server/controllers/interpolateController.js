@@ -7,11 +7,16 @@ const toDegrees = radians => (radians * 180) / Math.PI;
 
 const interpolateController = async (req, res) => {
     try {
-        const { md, logName } = req.body;
-        console.log({ md, logName });
+        const { md, excelName } = req.body;
+        console.log({ md, excelName });
 
         // Get the min and max MD values from the database
         const minMaxValues = await WellPannedExcelModel.aggregate([
+            {
+                "$match": {
+                    "excelName": excelName,
+                }
+            },
             {
                 "$group": {
                     "_id": null,
@@ -20,6 +25,9 @@ const interpolateController = async (req, res) => {
                 }
             }
         ]);
+        if (!minMaxValues[0]) {
+            return res.status(400).json({ error: `No data found for this well` });
+        }
         const { min, max } = minMaxValues[0];
 
         // Check if the input MD is within the valid range
@@ -32,6 +40,7 @@ const interpolateController = async (req, res) => {
             {
                 $match: {
                     md: { $exists: true },
+                    excelName: excelName,
                 },
             },
             {
