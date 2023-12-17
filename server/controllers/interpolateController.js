@@ -1,4 +1,6 @@
-const survey = require("../models/survey");
+const log = require("../models/logs");
+const WellPannedExcelModel = require("../models/wellPlannedSchema");
+const { calculateRF, calculateDeltaTVD, calculateDeltaEW, calculateDeltaNS, calculateDLS } = require("../utils/calculationUtil");
 
 const toRadians = degrees => (degrees * Math.PI) / 180;
 const toDegrees = radians => (radians * 180) / Math.PI;
@@ -9,7 +11,7 @@ const interpolateController = async (req, res) => {
         console.log({ md, logName });
 
         // Get the min and max MD values from the database
-        const minMaxValues = await survey.aggregate([
+        const minMaxValues = await WellPannedExcelModel.aggregate([
             {
                 "$group": {
                     "_id": null,
@@ -26,7 +28,7 @@ const interpolateController = async (req, res) => {
         }
 
         // Find the closest surveys
-        const result = await survey.aggregate([
+        const result = await WellPannedExcelModel.aggregate([
             {
                 $match: {
                     md: { $exists: true },
@@ -38,18 +40,17 @@ const interpolateController = async (req, res) => {
                     vs: 1,
                     inc: 1,
                     azi: 1,
-                    cl: 1,
-                    dl: 1,
                     dls: 1,
-                    rf: 1,
                     tvd: 1,
-                    ns: 1,
-                    ew: 1,
+                    east: 1,
+                    north: 1,
+                    buildrate: 1,
+                    turnrate: 1,
                 },
             },
             {
                 $addFields: {
-                    absoluteDifference: { $subtract: ['$md', md] },
+                    absoluteDifference: { $subtract: [{ $toDouble: "$md" }, md] },
                 },
             },
             {
@@ -79,60 +80,37 @@ const interpolateController = async (req, res) => {
         // Find the surveys just greater and less than the input MD
         const justGreaterThanInput = result[closestToZeroIndex + 1];
         const justLessThanInput = result[closestToZeroIndex - 1];
-        console.log({ justGreaterThanInput, closestToZero });
+        console.log({ justGreaterThanInput, justLessThanInput });
 
-        // Verify DL with the calculated DL12
-        if (Math.abs(DL - DL12) > 0.001) {
-            return res.status(500).json({ error: "DL verification failed" });
-        }
 
         // Calculate DLx
-        const DLx = ((md - justLessThanInput.md) * DL) / (justGreaterThanInput.md - justLessThanInput.md);
-
-        // Calculate Inclination (Ix) using radians
-        const I1 = toRadians(justLessThanInput.inc);
-        const I2 = toRadians(justGreaterThanInput.inc);
-        const A1 = toRadians(justLessThanInput.azi);
-        const A2 = toRadians(justGreaterThanInput.azi);
-        const DLxRadians = toRadians(DLx);
-
-        const numerator = (Math.sin(I1) * Math.sin(A1) * Math.sin(DL12 - DLxRadians)) +
-            (Math.sin(I1) * Math.sin(A2) * Math.sin(DLxRadians));
-
-        const denominator = (Math.sin(I1) * Math.cos(A1) * Math.sin(DL12 - DLxRadians)) +
-            (Math.sin(I2) * Math.cos(A2) * Math.sin(DLxRadians));
-
-        const Ix = Math.atan2(numerator, denominator);
-
-        // Calculate Azimuth (Ax) using radians
-        const DLS = justGreaterThanInput.dls;
-        const Ax = Math.acos((Math.cos(I2) * Math.cos(DLS)) +
-            (Math.sin(DLS) * ((Math.cos(I1) - (Math.cos(I1) * Math.cos(DL))) / Math.sin(DL))));
-
-        // Convert angles back to degrees
-        const IxDegrees = toDegrees(Ix);
-        const AxDegrees = toDegrees(Ax);
-
-        // Output the results
-        console.log({
-            justGreaterThanInput,
-            justLessThanInput,
-            DL12,
-            DL,
-            DLx,
-            Ix: IxDegrees,
-            Ax: AxDegrees,
-        });
-
+        let brX = (justLessThanInput.buildrate) / 100;
+        let trX = (justLessThanInput.turnrate) / 100;
+        let incX = justGreaterThanInput.inc + brX * (md - justGreaterThanInput.md);
+        let aziX = (justLessThanInput.azi) + trX * (md - justGreaterThanInput.md);
+        const dl = justGreaterThanInput.dls * (md - justLessThanInput.md);
+        const dlX = dl * (md - justGreaterThanInput.md) / (justLessThanInput.md - justGreaterThanInput.md);
+        const dls = calculateDLS(dlX, md - justLessThanInput.md);
+        const rf = calculateRF(dlX);
+        console.log({ brX, trX, incX, aziX, dlX });
+        console.log({ rf });
+        const deltaTVD = calculateDeltaTVD(justLessThanInput.inc, incX, rf, md - justLessThanInput.md);
+        const tvd = deltaTVD + justLessThanInput.tvd;
+        const deltaEW = calculateDeltaEW(justLessThanInput.inc, incX, justLessThanInput.azi, aziX, rf, md - justLessThanInput.md);
+        const ew = deltaEW + justLessThanInput.east;
+        const deltaNS = calculateDeltaNS(justLessThanInput.inc, incX, justLessThanInput.azi, aziX, rf, md - justLessThanInput.md);
+        const ns = deltaNS + justLessThanInput.north;
+        console.log({ tvd, ew, ns });
         // Return the results or send them in the response
         return res.json({
-            justGreaterThanInput,
-            justLessThanInput,
-            DL12,
-            DL,
-            DLx,
-            Ix: IxDegrees,
-            Ax: AxDegrees,
+            md,
+            tvd,
+            ew,
+            ns,
+            inc: incX,
+            azi: aziX,
+            // dls: dlX,
+            rf,
         });
 
     } catch (err) {
