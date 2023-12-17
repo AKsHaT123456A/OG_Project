@@ -1,3 +1,4 @@
+const interpolate = require("../models/interpolateModel");
 const log = require("../models/logs");
 const WellPannedExcelModel = require("../models/wellPlannedSchema");
 const { calculateRF, calculateDeltaTVD, calculateDeltaEW, calculateDeltaNS, calculateDLS } = require("../utils/calculationUtil");
@@ -9,7 +10,7 @@ const interpolateController = async (req, res) => {
     try {
         const { md, excelName } = req.body;
         console.log({ md, excelName });
-
+        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
         // Get the min and max MD values from the database
         const minMaxValues = await WellPannedExcelModel.aggregate([
             {
@@ -110,6 +111,7 @@ const interpolateController = async (req, res) => {
         const deltaNS = calculateDeltaNS(justLessThanInput.inc, incX, justLessThanInput.azi, aziX, rf, md - justLessThanInput.md);
         const ns = deltaNS + justLessThanInput.north;
         console.log({ tvd, ew, ns });
+        await interpolate.create({ md, tvd, ew, ns, inc: incX, azi: aziX, rf, excelName, userId: id });
         // Return the results or send them in the response
         return res.json({
             md,
@@ -126,6 +128,17 @@ const interpolateController = async (req, res) => {
         console.log(err);
         res.status(500).json({ error: "Internal Server Error" });
     }
+};
+
+const getInterpolate = async (req, res) => {
+    try {
+        const { excelName } = req.query;
+        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+        const interpolateData = await interpolate.find({ excelName, userId: id });
+        return res.status(200).json({ interpolateData });
+    } catch (err) {
+        return res.status(500).json({ message: "Internal Server Error", error: err.message });
+    }
 }
 
-module.exports = interpolateController;
+module.exports = {interpolateController,getInterpolate};
