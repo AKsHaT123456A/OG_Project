@@ -1,10 +1,10 @@
 const interpolate = require("../models/interpolateModel");
-const log = require("../models/logs");
 const WellPannedExcelModel = require("../models/wellPlannedSchema");
 const { calculateRF, calculateDeltaTVD, calculateDeltaEW, calculateDeltaNS, calculateDLS } = require("../utils/calculationUtil");
 
 const toRadians = degrees => (degrees * Math.PI) / 180;
 const toDegrees = radians => (radians * 180) / Math.PI;
+
 const interpolateController = async (req, res) => {
     try {
         const { md, excelName } = req.body;
@@ -22,7 +22,6 @@ const interpolateController = async (req, res) => {
                 inc: prevMd.inc,
                 azi: prevMd.azi,
                 rf: prevMd.rf,
-
             });
         }
 
@@ -51,9 +50,13 @@ const interpolateController = async (req, res) => {
         if (min > md || max < md) {
             return res.status(400).json({ error: `md value must be between ${min} and ${max}` });
         }
+        console.log({ min, max, md });
+        const justLessThanInputArray = await WellPannedExcelModel.find({ md: { $lt: md } }).sort({ md: -1 });
+        const justGreaterThanInputArray = await WellPannedExcelModel.find({ md: { $gt: md } }).sort({ md: 1 });
 
-        const justLessThanInput = await WellPannedExcelModel.findOne({ md: { $lt: md } }).sort({ md: -1 });
-        const justGreaterThanInput = await WellPannedExcelModel.findOne({ md: { $gt: md } }).sort({ md: 1 });
+        // Find the closest md in both cases
+        const justLessThanInput = findClosestMD(justLessThanInputArray, md);
+        const justGreaterThanInput = findClosestMD(justGreaterThanInputArray, md);
 
         console.log({ justLessThanInput, justGreaterThanInput });
 
@@ -105,7 +108,6 @@ const interpolateController = async (req, res) => {
     }
 };
 
-
 const getInterpolate = async (req, res) => {
     try {
         const { excelName } = req.query;
@@ -115,6 +117,20 @@ const getInterpolate = async (req, res) => {
     } catch (err) {
         return res.status(500).json({ message: "Internal Server Error", error: err.message });
     }
-}
+};
+
+// Function to find the closest MD
+const findClosestMD = (mdArray, targetMD) => {
+    if (mdArray.length === 0) {
+        return null;
+    }
+
+    return mdArray.reduce((closest, current) => {
+        const closestDiff = Math.abs(closest.md - targetMD);
+        const currentDiff = Math.abs(current.md - targetMD);
+
+        return currentDiff < closestDiff ? current : closest;
+    });
+};
 
 module.exports = { interpolateController, getInterpolate };
