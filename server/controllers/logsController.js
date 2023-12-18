@@ -7,7 +7,8 @@ const createLog = async (req, res) => {
     try {
         const { logName, usedFrom, usedBy } = req.body;
         // const { id } = req.cookies;
-        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+        // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+        const {id } = req.cookies;
         console.log(id);
         const user = await User.findOne({ id: id });
         console.log(user);
@@ -53,8 +54,9 @@ const deleteLog = async (req, res) => {
         const { logName } = req.body;
         const prevLog = await log.findOne({ logName });
         console.log({prevLog});
-        // const { id } = req.cookies;
-        const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+        const { id } = req.cookies;
+        // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+
 
 
         const user = await User.findOne({ id: id });
@@ -87,7 +89,8 @@ const deleteLog = async (req, res) => {
 };
 
 const deleteAllLogs = async (req, res) => {
-    const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+    // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
+    const { id } = req.cookies;
     await log.deleteMany({ userId: id });
     return res.status(200).json({
         message: "Log deleted",
@@ -105,8 +108,8 @@ const editLog = async (req, res) => {
 
 const getAllLogs = async (req, res) => {
     const { id } = req.cookies;
-    const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
-    const allLogs = await log.find({ userId: userId });
+    // const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
+    const allLogs = await log.find({ userId: id });
     return res.status(200).json({
         message: "All logs",
         logs: allLogs,

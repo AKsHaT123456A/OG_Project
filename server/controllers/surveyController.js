@@ -12,8 +12,8 @@ const surveyController = async (req, res) => {
         const { md, inc, azi, fieldNumber, logName, well, tieAzi } = req.body;
         console.log({ tieAzi });
         const { id } = req.cookies;
-
-        const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
+        const userId = id;
+        // const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
         // if (!md || !inc || !azi || !fieldNumber || !logName) {
         //     return res.status(400).json({
         //         message: "Bad request",
@@ -93,6 +93,7 @@ const uploadSurvey = async (req, res) => {
     for (let i = 0; i < surveyData.length; i++) {
         const { MD, Inclination, Azimuth } = surveyData[i];
         console.log({ MD, Inclination, Azimuth });
+
         const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
         const well = "SB-978";
         const fieldNumber = i + 1;
@@ -129,7 +130,9 @@ const uploadSurvey = async (req, res) => {
 }
 const getAllSurveys = async (req, res) => {
     try {
-        const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
+        // const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
+        const { id } = req.cookies;
+        const userId = id;
         const { logName } = req.query;
         const surveys = await survey.find({ userId, logName });
         return res.status(200).json({ surveys });
