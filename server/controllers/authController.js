@@ -4,9 +4,9 @@ const { v4: uuidv4 } = require('uuid');
 const register = async (req, res) => {
     try {
         const id = uuidv4();
-        const userId = req.headers['user-id']; // Use 'user-id' header
+        const userId = req.headers['user-id'];
         const user = await User.findOne({ id: userId });
-        
+
         console.log({ user, userId });
 
         if (user) {
@@ -28,7 +28,7 @@ const register = async (req, res) => {
     }
 };
 
-const redirect = (req, res) => {
+const redirect = async (req, res) => {
     const userId = req.headers['user-id']; // Use 'user-id' header
 
     if (!userId) {
@@ -36,7 +36,7 @@ const redirect = (req, res) => {
         const fifteenDays = 15 * 24 * 60 * 60 * 1000;
 
         // Set 'user-id' header in the response
-        res.set('user-id', req.params.id);
+        await res.set('user-id', req.params.id);
     }
 
     console.log({ message: "Header found", header: userId });
