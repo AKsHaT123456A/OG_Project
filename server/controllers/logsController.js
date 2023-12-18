@@ -8,10 +8,10 @@ const createLog = async (req, res) => {
         const { logName, usedFrom, usedBy } = req.body;
         // const { id } = req.cookies;
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const {id } = req.query;
+        const { id } = req.query;
         // const { 'user-id': userId } = req.headers;
         // const id = userId;
-        console.log(id);
+        console.log({ id });
         const user = await User.findOne({ id: id });
         console.log(user);
         if (!user) {
@@ -55,7 +55,7 @@ const deleteLog = async (req, res) => {
     try {
         const { logName } = req.body;
         const prevLog = await log.findOne({ logName });
-        console.log({prevLog});
+        console.log({ prevLog });
         const { id } = req.query;
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
 
@@ -68,7 +68,7 @@ const deleteLog = async (req, res) => {
                 message: "User not found",
             });
         }
-        
+
         const index = user.logs.indexOf(prevLog._id);
         if (index > -1) {
             user.logs.splice(index, 1);
@@ -104,7 +104,8 @@ const deleteAllLogs = async (req, res) => {
 const editLog = async (req, res) => {
     const { logName } = req.body;
     const { editLogName, usedBy, usedFrom } = req.body;
-    const prevLog = await log.findOneAndUpdate({ logName }, { $set: { logName: editLogName, usedBy, usedFrom } });
+    const { id } = req.query;
+    const prevLog = await log.findOneAndUpdate({ logName, userId: id }, { $set: { logName: editLogName, usedBy, usedFrom } });
     return res.status(200).json({
         message: "Log edited",
         log: prevLog,
