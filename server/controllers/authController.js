@@ -25,7 +25,7 @@ const register = async (req, res) => {
     }
 };
 
-const redirect = (req, res) => {
+
     const redirect = (req, res) => {
         if (!req.cookies.id) {
             console.log({ message: "No cookie found" });
@@ -36,7 +36,6 @@ const redirect = (req, res) => {
         console.log({ message: "Cookie found", cookie: req.cookies.id });
         return res.redirect(`https://temp-project-alpha.vercel.app/`);
     }
-}
 
 
 
