@@ -12,6 +12,7 @@ const interpolateController = async (req, res) => {
         const { id } = req.query;
 
         const prevMd = await WellPannedExcelModel.findOne({ md, excelName, userId: id });
+        const prevInter = await interpolate.findOne({ md, excelName, userId: id });
         console.log({ prevMd });
         if (prevMd) {
             return res.status(400).json({
@@ -22,6 +23,17 @@ const interpolateController = async (req, res) => {
                 inc: prevMd.inc,
                 azi: prevMd.azi,
                 rf: prevMd.rf,
+            });
+        };
+        if (prevInter) {
+            return res.status(400).json({
+                md: prevInter.md,
+                tvd: prevInter.tvd,
+                ew: prevInter.ew,
+                ns: prevInter.ns,
+                inc: prevInter.inc,
+                azi: prevInter.azi,
+                rf: prevInter.rf,
             });
         }
 
