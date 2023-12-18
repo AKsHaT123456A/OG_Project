@@ -107,6 +107,7 @@ const getAllFields = async (req, res) => {
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
         const { id } = req.query;
         const { excelName } = req.query;
+        
         const details = await detail.findOne({ excelName, userId: id });
         console.log({ details });
         return res.status(200).json({
