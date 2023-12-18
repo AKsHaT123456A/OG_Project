@@ -5,6 +5,7 @@ const register = async (req, res) => {
         const id = uuidv4();
         const userId = req.cookies.id;
         const user = await User.findOne({ id: userId });
+        console.log({ user , userId });
         if (user) {
             if (!userId) {
                 return res.redirect(`https://temp-project-alpha.vercel.app/404`);
