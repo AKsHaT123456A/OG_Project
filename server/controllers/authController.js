@@ -26,7 +26,7 @@ const register = async (req, res) => {
 };
 
 const redirect = (req, res) => {
-    if (!req.cookies.userId) {
+    if (!req.cookies.id) {
         console.log({ message: "No cookie found" });
         const fifteenDays = 15 * 24 * 60 * 60 * 1000;
         res.cookie('id', req.params.id, { maxAge: fifteenDays, httpOnly: true });
