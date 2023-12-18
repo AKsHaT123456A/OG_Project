@@ -25,9 +25,11 @@ const register = async (req, res) => {
 
 const redirect = (req, res) => {
     if (!req.cookies.id) {
-        const fifteenDays = 15 * 24 * 60 * 60 * 1000; 
+        console.log({ message: "No cookie found" });
+        const fifteenDays = 15 * 24 * 60 * 60 * 1000;
         res.cookie('id', req.params.id, { maxAge: fifteenDays, httpOnly: true });
     }
+    console.log({ message: "Cookie found", cookie: req.cookies.id });
     return res.redirect(`https://temp-project-alpha.vercel.app/`)
 }
 
