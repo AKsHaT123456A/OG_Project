@@ -52,11 +52,11 @@ const parseCompleteExcelData = async (sheet, excelData, excelName, userId) => {
     let i = startIndex + 2; // Starting from the third row after "md"
     while (data[i] && data[i][0] !== undefined) {
         const rowData = data[i].slice(0, dataColumns);
-        const id = i - startIndex + 1;
+        const id = i - startIndex - 1;
 
 
         const wellPlanned = await WellPannedExcelModel.create({
-            userId: id,
+            userId,
             excelName,
             id,
             fieldNumber: id,
