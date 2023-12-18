@@ -17,6 +17,7 @@ const fieldController = async (req, res) => {
     try {
         // const id = uuidv4();
         let { id } = req.query;
+        console.log({ id });
         if (!id) {
             id = uuidv4();
         }
@@ -107,7 +108,7 @@ const getAllFields = async (req, res) => {
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
         const { id } = req.query;
         const { excelName } = req.query;
-        
+        console.log({ id, excelName });
         const details = await detail.findOne({ excelName, userId: id });
         console.log({ details });
         return res.status(200).json({
