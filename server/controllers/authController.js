@@ -31,7 +31,7 @@ const redirect = (req, res) => {
         const fifteenDays = 15 * 24 * 60 * 60 * 1000;
         res.cookie('id', req.params.id, { maxAge: fifteenDays, httpOnly: true });
     }
-    console.log({ message: "Cookie found", cookie: req.cookies.userId });
+    console.log({ message: "Cookie found", cookie: req.cookies.id });
     return res.redirect(`https://temp-project-alpha.vercel.app/`)
 }
 

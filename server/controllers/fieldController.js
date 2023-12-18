@@ -15,8 +15,7 @@ const fieldController = async (req, res) => {
     try {
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
         // const { id } = req.cookies;
-        const { 'user-id': userId } = req.headers;
-        const id = userId;
+        const id = req.cookies.id;
         console.log({ id });
         const { excelName } = req.query;
         const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
@@ -93,8 +92,7 @@ const fieldController = async (req, res) => {
 const getAllFields = async (req, res) => {
     try {
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const { 'user-id': userId } = req.headers;
-        const id = userId;
+        const { id } = req.cookies;
         const { excelName } = req.query;
         const details = await detail.findOne({ excelName, userId: id });
         console.log({ details });
@@ -111,9 +109,7 @@ const getAllWellStructuredData = async (req, res) => {
     try {
         const { excelName } = req.query;
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        // const { id } = req.cookies;
-        const { 'user-id': userId } = req.headers;
-        const id = userId;
+        const { id } = req.cookies;
         const plan = await WellPannedExcelModel.find({ excelName, userId: id });
         return res.status(200).json({ plan });
     } catch (err) {
@@ -125,10 +121,7 @@ const updateFields = async (req, res) => {
     try {
         const { excelName } = req.query;
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        // const { id } = req.cookies;
-        const { 'user-id': userId } = req.headers;
-        const id = userId;
-        
+        const { id } = req.cookies;
         const newField = await detail.findOneAndUpdate({ excelName, userId: id }, { ...req.body });
         return res.status(200).json({ message: "Details Updated", newField });
     } catch (error) {

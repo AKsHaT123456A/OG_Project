@@ -11,9 +11,9 @@ const interpolateController = async (req, res) => {
         const { md, excelName } = req.body;
         console.log({ md, excelName });
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        // const { id } = req.cookies;
-        const { 'user-id': userId } = req.headers;
-        const id = userId;
+        const { id } = req.cookies;
+        // const { 'user-id': userId } = req.headers;
+        // const id = userId;
         // Get the min and max MD values from the database
         const minMaxValues = await WellPannedExcelModel.aggregate([
             {
@@ -137,9 +137,7 @@ const getInterpolate = async (req, res) => {
     try {
         const { excelName } = req.query;
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        // const { id } = req.cookies;
-        const { 'user-id': userId } = req.headers;
-        const id = userId;
+        const { id } = req.cookies;
         const interpolateData = await interpolate.find({ excelName, userId: id });
         return res.status(200).json({ interpolateData });
     } catch (err) {

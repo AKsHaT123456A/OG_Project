@@ -11,9 +11,9 @@ const surveyController = async (req, res) => {
     try {
         const { md, inc, azi, fieldNumber, logName, well, tieAzi } = req.body;
         console.log({ tieAzi });
-        // const { id } = req.cookies;
-        // const userId = id;
-        const { 'user-id': userId } = req.headers;
+        const { id } = req.cookies;
+        const userId = id;
+        // const { 'user-id': userId } = req.headers;
         // const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
         // if (!md || !inc || !azi || !fieldNumber || !logName) {
         //     return res.status(400).json({
@@ -132,9 +132,9 @@ const uploadSurvey = async (req, res) => {
 const getAllSurveys = async (req, res) => {
     try {
         // const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
-        // const { id } = req.cookies;
-        // const userId = id;
-        const { 'user-id': userId } = req.headers;
+        const { id } = req.cookies;
+        const userId = id;
+        // const { 'user-id': userId } = req.headers;
         const { logName } = req.query;
         const surveys = await survey.find({ userId, logName });
         return res.status(200).json({ surveys });
@@ -147,7 +147,9 @@ const updateSurvey = async (req, res) => {
     try {
         const { updatedTieAzi, logName, well } = req.body;
         const surveys = await survey.find({ logName });
-        const { 'user-id': userId } = req.headers;
+        // const { 'user-id': userId } = req.headers;
+        const {id} = req.cookies;
+        const userId = id;
         const updatedSurvey = surveys.map(async (survey) => {
 
             const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
