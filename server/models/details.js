@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const detailSchema = new mongoose.Schema(
     {
         excelName: { type: String, trim: true, required: true },
-        well: { type: String, trim: true, unique: true },
+        well: { type: String, trim: true },
         wellbore: { type: String, trim: true },
         planRevision: { type: String, trim: true },
         fieldName: { type: String, trim: true },

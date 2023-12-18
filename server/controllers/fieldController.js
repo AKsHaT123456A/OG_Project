@@ -10,14 +10,26 @@ const constants = require("../connections/constants");
 const detail = require("../models/details");
 const parseConstants = require("../connections/parseConstants");
 const WellPannedExcelModel = require("../models/wellPlannedSchema");
+const User = require("../models/user");
+const { v4: uuidv4 } = require('uuid')
 
 const fieldController = async (req, res) => {
     try {
+        // const id = uuidv4();
+        let { id } = req.query;
+        if (!id) {
+            id = uuidv4();
+        }
+
+        const user = await User.findOne({ id });
+        if (!user) {
+            await User.create({ id });
+        }
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const { id } = req.cookies;
+        // const { id } = req.cookies;
         // const id = req.cookies.id;
         console.log({ id });
-        console.log({ od: req.headers });
+        // console.log({ od: req.headers });
         const { excelName } = req.query;
         const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
         const excelArray = [
@@ -79,13 +91,13 @@ const fieldController = async (req, res) => {
             }
         }
         console.log(mergedObject);
-        const newMerge = await detail.findOne({ well: mergedObject.well });
+        const newMerge = await detail.findOne({ well: mergedObject.well, userId: id });
 
         if (newMerge) {
             return res.status(200).json({ message: "Details already exists", newField: newMerge });
         }
         const newField = await detail.create({ ...mergedObject, excelName, userId: id });
-        return res.status(201).json({ message: "Details added", newField });
+        return res.status(201).json({ message: "Details added", newField, id });
     } catch (error) {
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
@@ -93,7 +105,7 @@ const fieldController = async (req, res) => {
 const getAllFields = async (req, res) => {
     try {
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const { id } = req.cookies;
+        const { id } = req.query;
         const { excelName } = req.query;
         const details = await detail.findOne({ excelName, userId: id });
         console.log({ details });
@@ -110,7 +122,7 @@ const getAllWellStructuredData = async (req, res) => {
     try {
         const { excelName } = req.query;
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const { id } = req.cookies;
+        const { id } = req.query;
         const plan = await WellPannedExcelModel.find({ excelName, userId: id });
         return res.status(200).json({ plan });
     } catch (err) {
@@ -122,7 +134,7 @@ const updateFields = async (req, res) => {
     try {
         const { excelName } = req.query;
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const { id } = req.cookies;
+        const { id } = req.query;
         const newField = await detail.findOneAndUpdate({ excelName, userId: id }, { ...req.body });
         return res.status(200).json({ message: "Details Updated", newField });
     } catch (error) {

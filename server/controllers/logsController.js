@@ -8,7 +8,7 @@ const createLog = async (req, res) => {
         const { logName, usedFrom, usedBy } = req.body;
         // const { id } = req.cookies;
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const {id } = req.cookies;
+        const {id } = req.query;
         // const { 'user-id': userId } = req.headers;
         // const id = userId;
         console.log(id);
@@ -56,7 +56,7 @@ const deleteLog = async (req, res) => {
         const { logName } = req.body;
         const prevLog = await log.findOne({ logName });
         console.log({prevLog});
-        const { id } = req.cookies;
+        const { id } = req.query;
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
 
 
@@ -92,7 +92,7 @@ const deleteLog = async (req, res) => {
 
 const deleteAllLogs = async (req, res) => {
     // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-    const { id } = req.cookies;
+    const { id } = req.query;
     // const { 'user-id': userId } = req.headers;
     // const id = userId;
 
@@ -112,7 +112,7 @@ const editLog = async (req, res) => {
 }
 
 const getAllLogs = async (req, res) => {
-    const { id } = req.cookies;
+    const { id } = req.query;
     // const { 'user-id': userId } = req.headers;
     // const id = userId;
     // const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";

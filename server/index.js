@@ -26,10 +26,10 @@ connectDB();
 app.set("trust proxy", 1);
 
 // Middleware setup
+app.use(cookieParser());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(helmet());
 app.use(compression());
 // Content Security Policy middleware using Helmet

@@ -11,7 +11,7 @@ const surveyController = async (req, res) => {
     try {
         const { md, inc, azi, fieldNumber, logName, well, tieAzi } = req.body;
         console.log({ tieAzi });
-        const { id } = req.cookies;
+        const { id } = req.query;
         const userId = id;
         // const { 'user-id': userId } = req.headers;
         // const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
@@ -132,7 +132,7 @@ const uploadSurvey = async (req, res) => {
 const getAllSurveys = async (req, res) => {
     try {
         // const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const { id } = req.cookies;
+        const { id } = req.query;
         const userId = id;
         // const { 'user-id': userId } = req.headers;
         const { logName } = req.query;
@@ -148,7 +148,7 @@ const updateSurvey = async (req, res) => {
         const { updatedTieAzi, logName, well } = req.body;
         const surveys = await survey.find({ logName });
         // const { 'user-id': userId } = req.headers;
-        const {id} = req.cookies;
+        const {id} = req.query;
         const userId = id;
         const updatedSurvey = surveys.map(async (survey) => {
 
