@@ -10,21 +10,8 @@ const interpolateController = async (req, res) => {
         const { md, excelName } = req.body;
         console.log({ md, excelName });
         const { id } = req.query;
+                const prevInter = await interpolate.findOne({ md, excelName, userId: id });
 
-        const prevMd = await WellPannedExcelModel.findOne({ md, excelName, userId: id });
-        const prevInter = await interpolate.findOne({ md, excelName, userId: id });
-        console.log({ prevMd });
-        if (prevMd) {
-            return res.status(400).json({
-                md: prevMd.md,
-                tvd: prevMd.tvd,
-                ew: prevMd.east,
-                ns: prevMd.north,
-                inc: prevMd.inc,
-                azi: prevMd.azi,
-                rf: prevMd.rf,
-            });
-        };
         if (prevInter) {
             return res.status(400).json({
                 md: prevInter.md,
