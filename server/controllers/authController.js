@@ -26,14 +26,16 @@ const register = async (req, res) => {
 };
 
 const redirect = (req, res) => {
-    if (!req.cookies.id) {
-        console.log({ message: "No cookie found" });
-        const fifteenDays = 15 * 24 * 60 * 60 * 1000;
-        res.cookie('id', req.params.id, { maxAge: fifteenDays, httpOnly: true });
-        res.headers['user-id'] = req.params.id;
+    const redirect = (req, res) => {
+        if (!req.cookies.id) {
+            console.log({ message: "No cookie found" });
+            const fifteenDays = 15 * 24 * 60 * 60 * 1000;
+            res.cookie('id', req.params.id, { maxAge: fifteenDays, httpOnly: true });
+            res.setHeader('user-id', req.params.id); // Correct way to set a response header
+        }
+        console.log({ message: "Cookie found", cookie: req.cookies.id });
+        return res.redirect(`https://temp-project-alpha.vercel.app/`);
     }
-    console.log({ message: "Cookie found", cookie: req.cookies.id });
-    return res.redirect(`https://temp-project-alpha.vercel.app/`)
 }
 
 
