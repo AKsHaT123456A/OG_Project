@@ -17,6 +17,7 @@ const fieldController = async (req, res) => {
         // const { id } = req.cookies;
         const id = req.cookies.id;
         console.log({ id });
+        console.log({ od: req.headers });
         const { excelName } = req.query;
         const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
         const excelArray = [
