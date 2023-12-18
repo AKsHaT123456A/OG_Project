@@ -54,9 +54,9 @@ const createLog = async (req, res) => {
 const deleteLog = async (req, res) => {
     try {
         const { logName } = req.body;
-        const prevLog = await log.findOne({ logName });
+        const { id } = req.query
+        const prevLog = await log.findOne({ logName, userId: id });
         console.log({ prevLog });
-        const { id } = req.query;
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
 
 
