@@ -15,13 +15,14 @@ const interpolateController = async (req, res) => {
         console.log({ prevMd });
         if (prevMd) {
             return res.status(400).json({
-                md: parseFloat(prevMd.md),
-                tvd: parseFloat(prevMd.tvd),
-                ew: parseFloat(prevMd.ew),
-                ns: parseFloat(prevMd.ns),
-                inc: parseFloat(prevMd.inc),
-                azi: parseFloat(prevMd.azi),
-                rf: parseFloat(prevMd.rf),
+                md: prevMd.md,
+                tvd: prevMd.tvd,
+                ew: prevMd.east,
+                ns: prevMd.north,
+                inc: prevMd.inc,
+                azi: prevMd.azi,
+                rf: prevMd.rf,
+
             });
         }
 
