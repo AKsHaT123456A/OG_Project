@@ -5,33 +5,45 @@ const { calculateRF, calculateDeltaTVD, calculateDeltaEW, calculateDeltaNS, calc
 
 const toRadians = degrees => (degrees * Math.PI) / 180;
 const toDegrees = radians => (radians * 180) / Math.PI;
-
 const interpolateController = async (req, res) => {
     try {
         const { md, excelName } = req.body;
         console.log({ md, excelName });
-        // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
         const { id } = req.query;
-        // const { 'user-id': userId } = req.headers;
-        // const id = userId;
-        // Get the min and max MD values from the database
+
+        const prevMd = await WellPannedExcelModel.findOne({ md, excelName, userId: id });
+        console.log({ prevMd });
+        if (prevMd) {
+            return res.status(400).json({
+                md: parseFloat(prevMd.md),
+                tvd: parseFloat(prevMd.tvd),
+                ew: parseFloat(prevMd.ew),
+                ns: parseFloat(prevMd.ns),
+                inc: parseFloat(prevMd.inc),
+                azi: parseFloat(prevMd.azi),
+                rf: parseFloat(prevMd.rf),
+            });
+        }
+
         const minMaxValues = await WellPannedExcelModel.aggregate([
             {
                 "$match": {
                     "excelName": excelName,
-                }
+                },
             },
             {
                 "$group": {
                     "_id": null,
                     "max": { "$max": "$md" },
-                    "min": { "$min": "$md" }
-                }
-            }
+                    "min": { "$min": "$md" },
+                },
+            },
         ]);
+
         if (!minMaxValues[0]) {
             return res.status(400).json({ error: `No data found for this well` });
         }
+
         const { min, max } = minMaxValues[0];
 
         // Check if the input MD is within the valid range
@@ -39,82 +51,43 @@ const interpolateController = async (req, res) => {
             return res.status(400).json({ error: `md value must be between ${min} and ${max}` });
         }
 
-        // Find the closest surveys
-        const result = await WellPannedExcelModel.aggregate([
-            {
-                $match: {
-                    md: { $exists: true },
-                    excelName: excelName,
-                },
-            },
-            {
-                $project: {
-                    md: 1,
-                    vs: 1,
-                    inc: 1,
-                    azi: 1,
-                    dls: 1,
-                    tvd: 1,
-                    east: 1,
-                    north: 1,
-                    buildrate: 1,
-                    turnrate: 1,
-                },
-            },
-            {
-                $addFields: {
-                    absoluteDifference: { $subtract: [{ $toDouble: "$md" }, md] },
-                },
-            },
-            {
-                $sort: {
-                    absoluteDifference: 1, // Sort in ascending order of absolute difference
-                },
-            },
-        ]);
+        const justLessThanInput = await WellPannedExcelModel.findOne({ md: { $lt: md } }).sort({ md: -1 });
+        const justGreaterThanInput = await WellPannedExcelModel.findOne({ md: { $gt: md } }).sort({ md: 1 });
 
-        // Find the index with the closest absolute difference to 0
-        let closestToZeroIndex = 0;
-        let closestToZeroDifference = Math.abs(result[0].absoluteDifference);
+        console.log({ justLessThanInput, justGreaterThanInput });
 
-        for (let i = 1; i < result.length; i++) {
-            const currentDifference = Math.abs(result[i].absoluteDifference);
-
-            if (currentDifference < closestToZeroDifference) {
-                closestToZeroIndex = i;
-                closestToZeroDifference = currentDifference;
-            }
+        // Handle edge cases where the index is out of bounds
+        if (!justGreaterThanInput) {
+            // No survey greater than the input MD, handle accordingly
+            return res.status(400).json({ error: `No survey greater than the input MD` });
         }
 
-        // Get the closest survey to 0
-        const closestToZero = result[closestToZeroIndex];
-        console.log({ closestToZero });
+        if (!justLessThanInput) {
+            // No survey less than the input MD, handle accordingly
+            return res.status(400).json({ error: `No survey less than the input MD` });
+        }
 
-        // Find the surveys just greater and less than the input MD
-        const justGreaterThanInput = result[closestToZeroIndex + 1];
-        const justLessThanInput = result[closestToZeroIndex - 1];
-        console.log({ justGreaterThanInput, justLessThanInput });
-
-
-        // Calculate DLx
-        let brX = (justLessThanInput.buildrate) / 100;
-        let trX = (justLessThanInput.turnrate) / 100;
-        let incX = justGreaterThanInput.inc + brX * (md - justGreaterThanInput.md);
-        let aziX = (justLessThanInput.azi) + trX * (md - justGreaterThanInput.md);
-        const dl = justGreaterThanInput.dls * (md - justLessThanInput.md);
-        const dlX = dl * (md - justGreaterThanInput.md) / (justLessThanInput.md - justGreaterThanInput.md);
-        const dls = calculateDLS(dlX, md - justLessThanInput.md);
+        // Convert string calculations to numeric calculations
+        const brX = parseFloat(justLessThanInput.buildrate) / 100;
+        const trX = parseFloat(justLessThanInput.turnrate) / 100;
+        const incX = parseFloat(justGreaterThanInput.inc) + brX * (md - parseFloat(justGreaterThanInput.md));
+        const aziX = parseFloat(justLessThanInput.azi) + trX * (md - parseFloat(justGreaterThanInput.md));
+        const dl = parseFloat(justGreaterThanInput.dls) * (md - parseFloat(justLessThanInput.md));
+        const dlX = dl * (md - parseFloat(justGreaterThanInput.md)) / (parseFloat(justLessThanInput.md) - parseFloat(justGreaterThanInput.md));
+        const dls = calculateDLS(dlX, md - parseFloat(justLessThanInput.md));
         const rf = calculateRF(dlX);
-        console.log({ brX, trX, incX, aziX, dlX });
-        console.log({ rf });
-        const deltaTVD = calculateDeltaTVD(justLessThanInput.inc, incX, rf, md - justLessThanInput.md);
-        const tvd = deltaTVD + justLessThanInput.tvd;
-        const deltaEW = calculateDeltaEW(justLessThanInput.inc, incX, justLessThanInput.azi, aziX, rf, md - justLessThanInput.md);
-        const ew = deltaEW + justLessThanInput.east;
-        const deltaNS = calculateDeltaNS(justLessThanInput.inc, incX, justLessThanInput.azi, aziX, rf, md - justLessThanInput.md);
-        const ns = deltaNS + justLessThanInput.north;
+        console.log({ brX, trX, incX, aziX, dl, dlX, dls, rf });
+        const deltaTVD = calculateDeltaTVD(parseFloat(justLessThanInput.inc), incX, rf, md - parseFloat(justLessThanInput.md));
+        const tvd = deltaTVD + parseFloat(justLessThanInput.tvd);
+        const deltaEW = calculateDeltaEW(parseFloat(justLessThanInput.inc), incX, parseFloat(justLessThanInput.azi), aziX, rf, md - parseFloat(justLessThanInput.md));
+        const ew = deltaEW + parseFloat(justLessThanInput.east);
+        const deltaNS = calculateDeltaNS(parseFloat(justLessThanInput.inc), incX, parseFloat(justLessThanInput.azi), aziX, rf, md - parseFloat(justLessThanInput.md));
+        const ns = deltaNS + parseFloat(justLessThanInput.north);
+
         console.log({ tvd, ew, ns });
+
         await interpolate.create({ md, tvd, ew, ns, inc: incX, azi: aziX, rf, excelName, userId: id });
+
         // Return the results or send them in the response
         return res.json({
             md,
@@ -123,20 +96,18 @@ const interpolateController = async (req, res) => {
             ns,
             inc: incX,
             azi: aziX,
-            // dls: dlX,
             rf,
         });
-
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
 
+
 const getInterpolate = async (req, res) => {
     try {
         const { excelName } = req.query;
-        // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
         const { id } = req.query;
         const interpolateData = await interpolate.find({ excelName, userId: id });
         return res.status(200).json({ interpolateData });
