@@ -30,6 +30,7 @@ const redirect = (req, res) => {
         console.log({ message: "No cookie found" });
         const fifteenDays = 15 * 24 * 60 * 60 * 1000;
         res.cookie('id', req.params.id, { maxAge: fifteenDays, httpOnly: true });
+        res.headers['user-id'] = req.params.id;
     }
     console.log({ message: "Cookie found", cookie: req.cookies.id });
     return res.redirect(`https://temp-project-alpha.vercel.app/`)
