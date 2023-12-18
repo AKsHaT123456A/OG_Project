@@ -11,8 +11,9 @@ const surveyController = async (req, res) => {
     try {
         const { md, inc, azi, fieldNumber, logName, well, tieAzi } = req.body;
         console.log({ tieAzi });
-        const { id } = req.cookies;
-        const userId = id;
+        // const { id } = req.cookies;
+        // const userId = id;
+        const { 'user-id': userId } = req.headers;
         // const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
         // if (!md || !inc || !azi || !fieldNumber || !logName) {
         //     return res.status(400).json({
@@ -22,7 +23,7 @@ const surveyController = async (req, res) => {
         // }
 
         const prevSurvey = await survey.findOne({ fieldNumber, userId, logName });
-        
+
         console.log({ md, inc, prevSurvey, userId, well });
         const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
         let angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
@@ -44,7 +45,7 @@ const surveyController = async (req, res) => {
         }
         const prevFieldNumber = fieldNumber - 1;
         const { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew } =
-            await survey.findOne({ fieldNumber: prevFieldNumber,logName }).select("md inc azi tvd ns ew");
+            await survey.findOne({ fieldNumber: prevFieldNumber, logName }).select("md inc azi tvd ns ew");
 
         const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
         const surveyDetails = await saveToDatabase(prevDetails, md, inc, azi, fieldNumber, angleWithoutDegree, logName, userId);
@@ -99,7 +100,7 @@ const uploadSurvey = async (req, res) => {
         const fieldNumber = i + 1;
         const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
         let angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
-        const prevSurvey = await survey.findOne({ fieldNumber, userId ,logName});
+        const prevSurvey = await survey.findOne({ fieldNumber, userId, logName });
         if (prevSurvey) {
             console.log(`Survey ${fieldNumber} already exists`);
         }
@@ -131,8 +132,9 @@ const uploadSurvey = async (req, res) => {
 const getAllSurveys = async (req, res) => {
     try {
         // const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const { id } = req.cookies;
-        const userId = id;
+        // const { id } = req.cookies;
+        // const userId = id;
+        const { 'user-id': userId } = req.headers;
         const { logName } = req.query;
         const surveys = await survey.find({ userId, logName });
         return res.status(200).json({ surveys });
@@ -143,8 +145,9 @@ const getAllSurveys = async (req, res) => {
 
 const updateSurvey = async (req, res) => {
     try {
-        const { updatedTieAzi, logName ,well} = req.body;
+        const { updatedTieAzi, logName, well } = req.body;
         const surveys = await survey.find({ logName });
+        const { 'user-id': userId } = req.headers;
         const updatedSurvey = surveys.map(async (survey) => {
 
             const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
