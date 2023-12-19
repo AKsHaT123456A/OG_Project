@@ -123,6 +123,7 @@ const getTieOnPoint = async (req, res) => {
     if (!tieOnPointDb) {
         return res.status(404).json({
             message: "Tie on point not found",
+            tieOn:"193.60"
         });
     }
     return res.status(200).json({
