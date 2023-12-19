@@ -106,6 +106,7 @@ const editLog = async (req, res) => {
     const { editLogName, usedBy, usedFrom } = req.body;
     const { id } = req.query;
     const prevLog = await log.findOneAndUpdate({ logName, userId: id }, { $set: { logName: editLogName, usedBy, usedFrom } });
+    await survey.updateMany({ logName }, { $set: { logName: editLogName } });
     return res.status(200).json({
         message: "Log edited",
         log: prevLog,
