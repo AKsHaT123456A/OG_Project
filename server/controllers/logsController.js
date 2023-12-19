@@ -131,7 +131,7 @@ const getTieOnPoint = async (req, res) => {
     }
     return res.status(200).json({
         message: "Tie on point found",
-        tieOn: tieOnPointDb.tieOnPoint,
+        tieOn: tieOnPointDb,
     });
 
 }
