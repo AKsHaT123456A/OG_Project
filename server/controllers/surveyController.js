@@ -154,6 +154,7 @@ const updateSurvey = async (req, res) => {
             const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
             let angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
             console.log({ verticalSectionAzimuth });
+            const prevSurvey = await survey.findOne({ fieldNumber, userId, logName });
             if (prevSurvey) {
                 console.log(`Survey ${fieldNumber} already exists`);
                 return res.status(200).json({
