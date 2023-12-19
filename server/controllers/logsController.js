@@ -117,7 +117,7 @@ const editLog = async (req, res) => {
 
 
 const getTieOnPoint = async (req, res) => {
-    const { excelName } = req.body;
+    const { excelName } = req.query;
     const { id } = req.query;
     const tieOnPointDb = await tieOnPoint.findOne({ excelName, userId: id });
     if (!tieOnPointDb) {
