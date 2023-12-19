@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const tieOnPointSchema = new mongoose.Schema(
     {
-        id: { type: String, trim: true, required: true },
+        userId: { type: String, trim: true, required: true },
         tieOnPoint: { type: String, trim: true, default: "193.60" },
         excelName: { type: String, trim: true, required: true },
     },

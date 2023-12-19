@@ -2,6 +2,7 @@ const log = require("../models/logs");
 const survey = require("../models/survey");
 const User = require("../models/user");
 const { getCompleteLogsByIds } = require("../utils/arrayLogs");
+const tieOnPoint = require("../models/tieOnPoint");
 
 const createLog = async (req, res) => {
     try {
@@ -113,26 +114,10 @@ const editLog = async (req, res) => {
     });
 }
 
-const tieOnPoint = async (req, res) => {
-    const { excelName, tieOnPoint } = req.body;
-    const { id } = req.query;
-    const tieOnPointDb = await tieOnPoint.findOne({ excelName, userId: id });
-    if (tieOnPointDb) {
-        await tieOnPointDb.updateOne({ tieOnPoint });
-        return res.status(200).json({
-            message: "Tie on point updated",
-            tieOnPoint: tieOnPointDb,
-        });
-    }
-    const newTieOnPoint = await tieOnPoint.create({ excelName, tieOnPoint, userId: id });
-    return res.status(201).json({
-        message: "Tie on point created",
-        tieOnPoint: newTieOnPoint,
-    });
-}
+
 
 const getTieOnPoint = async (req, res) => {
-    const { excelName } = req.query;
+    const { excelName } = req.body;
     const { id } = req.query;
     const tieOnPointDb = await tieOnPoint.findOne({ excelName, userId: id });
     if (!tieOnPointDb) {
@@ -142,7 +127,7 @@ const getTieOnPoint = async (req, res) => {
     }
     return res.status(200).json({
         message: "Tie on point found",
-        tieOnPoint: tieOnPointDb,
+        tieOn: tieOnPointDb.tieOnPoint,
     });
 
 }
@@ -159,4 +144,22 @@ const getAllLogs = async (req, res) => {
 
 }
 
-module.exports = { createLog, deleteLog, editLog, getAllLogs, deleteAllLogs, getAllLogs, tieOnPoint, getTieOnPoint };
+const tie = async (req, res) => {
+    const { excelName, tieOn } = req.body;
+    const { id } = req.query;
+    const tieOnPointDb = await tieOnPoint.findOne({ excelName, userId: id });
+    if (tieOnPointDb) {
+        await tieOnPoint.updateOne({ tieOnPoint: tieOn });
+        return res.status(200).json({
+            message: "Tie on point updated",
+            tieOnPoint: tieOn,
+        });
+    }
+    const newTieOnPoint = await tieOnPoint.create({ excelName, tieOnPoint: tieOn, userId: id });
+    return res.status(201).json({
+        message: "Tie on point created",
+        tieOnPoint: newTieOnPoint.tieOnPoint,
+    });
+}
+
+module.exports = { createLog, deleteLog, editLog, getAllLogs, deleteAllLogs, getAllLogs, tie, getTieOnPoint };

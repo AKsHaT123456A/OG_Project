@@ -5,7 +5,6 @@ const log = require("../models/logs");
 const survey = require("../models/survey");
 const { calculateVS, calculateDLS, calculateDogLeg, calculateDeltaNS } = require("../utils/calculationUtil");
 const { saveToDatabase, saveToDatabaseEdit } = require("../utils/saveCalculation");
-
 const surveyController = async (req, res) => {
 
     try {
@@ -148,7 +147,7 @@ const updateSurvey = async (req, res) => {
         const { updatedTieAzi, logName, well } = req.body;
         const surveys = await survey.find({ logName });
         // const { 'user-id': userId } = req.headers;
-        const {id} = req.query;
+        const { id } = req.query;
         const userId = id;
         const updatedSurvey = surveys.map(async (survey) => {
 
