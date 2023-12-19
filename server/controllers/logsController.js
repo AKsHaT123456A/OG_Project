@@ -120,11 +120,14 @@ const getTieOnPoint = async (req, res) => {
     const { excelName } = req.query;
     const { id } = req.query;
     const tieOnPointDb = await tieOnPoint.findOne({ excelName, userId: id });
-    if (!tieOnPointDb) {
-        return res.status(404).json({
-            message: "Tie on point not found",
-            tieOn:"193.60"
-        });
+    if (tieOnPointDb) {
+        if (req.body !== undefined) {
+            await tieOnPointDb.updateOne({ ...req.body });
+            return res.status(404).json({
+                message: "Tie on point not found",
+                tieOn: tieOnPointDb
+            });
+        }
     }
     return res.status(200).json({
         message: "Tie on point found",

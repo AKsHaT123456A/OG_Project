@@ -1,5 +1,6 @@
 const xlsx = require("xlsx");
 const WellPannedExcelModel = require("../models/wellPlannedSchema");
+const tieOnPoint = require("../models/tieOnPoint");
 
 const parseExcelData = async (sheet, excelData) => {
     const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
@@ -36,6 +37,19 @@ const parseCompleteExcelData = async (sheet, excelData, excelName, userId) => {
 
         if (mdCellValue && mdCellValue.toString().toLowerCase() === 'md') {
             console.log({ i, mdCellValue });
+            console.log({data:data[i+1][2]})
+            await tieOnPoint.create({
+                excelName,
+                md: data[i+2][0],
+                inc: data[i+2][1],
+                azi: data[i+2][2],
+                tvd: data[i+2][3],
+                ns: data[i+2][5],
+                ew: data[i+2][6],
+                vs: data[i+2][15],
+                dls: data[i+2][11],
+                userId
+            })
             startIndex = i;
             break;  // Stop searching once "md" is found
         }
