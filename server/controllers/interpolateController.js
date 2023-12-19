@@ -54,8 +54,8 @@ const interpolateController = async (req, res) => {
         const justGreaterThanInputArray = await WellPannedExcelModel.find({ md: { $gt: md } }).sort({ md: 1 });
 
         // Find the closest md in both cases
-        const justLessThanInput = findClosestMD(justLessThanInputArray, md);
-        const justGreaterThanInput = findClosestMD(justGreaterThanInputArray, md);
+        const justGreaterThanInput = findClosestMD(justLessThanInputArray, md);
+        const justLessThanInput = findClosestMD(justGreaterThanInputArray, md);
 
         console.log({ justLessThanInput, justGreaterThanInput });
 
