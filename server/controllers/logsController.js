@@ -113,6 +113,39 @@ const editLog = async (req, res) => {
     });
 }
 
+const tieOnPoint = async (req, res) => {
+    const { excelName, tieOnPoint } = req.body;
+    const { id } = req.query;
+    const tieOnPointDb = await tieOnPoint.findOne({ excelName, userId: id });
+    if (tieOnPointDb) {
+        await tieOnPointDb.updateOne({ tieOnPoint });
+        return res.status(200).json({
+            message: "Tie on point updated",
+            tieOnPoint: tieOnPointDb,
+        });
+    }
+    const newTieOnPoint = await tieOnPoint.create({ excelName, tieOnPoint, userId: id });
+    return res.status(201).json({
+        message: "Tie on point created",
+        tieOnPoint: newTieOnPoint,
+    });
+}
+
+const getTieOnPoint = async (req, res) => {
+    const { excelName } = req.query;
+    const { id } = req.query;
+    const tieOnPointDb = await tieOnPoint.findOne({ excelName, userId: id });
+    if (!tieOnPointDb) {
+        return res.status(404).json({
+            message: "Tie on point not found",
+        });
+    }
+    return res.status(200).json({
+        message: "Tie on point found",
+        tieOnPoint: tieOnPointDb,
+    });
+
+}
 const getAllLogs = async (req, res) => {
     const { id } = req.query;
     // const { 'user-id': userId } = req.headers;
@@ -126,4 +159,4 @@ const getAllLogs = async (req, res) => {
 
 }
 
-module.exports = { createLog, deleteLog, editLog, getAllLogs, deleteAllLogs };
+module.exports = { createLog, deleteLog, editLog, getAllLogs, deleteAllLogs, getAllLogs, tieOnPoint, getTieOnPoint };
