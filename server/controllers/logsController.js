@@ -12,9 +12,7 @@ const createLog = async (req, res) => {
         const { id } = req.query;
         // const { 'user-id': userId } = req.headers;
         // const id = userId;
-        console.log({ id });
         const user = await User.findOne({ id: id });
-        console.log(user);
         if (!user) {
             return res.status(404).json({
                 message: "User not found",
@@ -57,7 +55,6 @@ const deleteLog = async (req, res) => {
         const { logName } = req.body;
         const { id } = req.query
         const prevLog = await log.findOne({ logName, userId: id });
-        console.log({ prevLog });
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
 
 

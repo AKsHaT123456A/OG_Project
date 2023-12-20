@@ -16,7 +16,6 @@ const interpolate = async (req, res) => {
     const result = await survey.find({
         md: { $gt: inputMd, $lt: inputMd },
     }).project({ _id: 0, md: 1 }).toArray();
-    console.log({ result: result });
     if (result.length === 0) {
         return res.status(400).json({ error: `No ${logName} found at ${md}` });
     };

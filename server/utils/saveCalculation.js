@@ -29,11 +29,6 @@ const calculateSurveyValues = (prevDetails, md2, i2, a2, verticalSectionAzimuth)
     return { cl, dl, dls, rf, tvd, ns, ew, vs };
 };
 
-const saveSurveyToLog = async (logName, newSurveyId) => {
-    const logs = await log.findOne({ logName });
-    await logs.surveys.push(newSurveyId);
-    await logs.save();
-};
 
 const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName, id) => {
     try {
@@ -57,10 +52,7 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
         });
 
         await newSurvey.save();
-        await saveSurveyToLog(logName, newSurvey._id);
-
-        const result = await log.findOne({ logName }).populate("surveys").select("-_id -__v");
-        return { bool: true, newSurvey: result };
+        return { bool: true, newSurvey };
     } catch (err) {
         console.error(err);
         return { bool: false, error: err };

@@ -36,8 +36,6 @@ const parseCompleteExcelData = async (sheet, excelData, excelName, userId) => {
         const mdCellValue = data[i] && data[i][0];
 
         if (mdCellValue && mdCellValue.toString().toLowerCase() === 'md') {
-            console.log({ i, mdCellValue });
-            console.log({data:data[i+1][2]})
             await tieOnPoint.create({
                 excelName,
                 md: data[i+2][0],
@@ -55,7 +53,6 @@ const parseCompleteExcelData = async (sheet, excelData, excelName, userId) => {
         }
     }
 
-    console.log({ startIndex: startIndex });
 
     if (startIndex === -1) {
         console.log("Couldn't find 'md' in the specified range.");
