@@ -1,10 +1,5 @@
 const xlsx = require("xlsx");
-const additional = require("../models/additional");
-const field = require("../models/field");
-const installation = require("../models/installation");
-const slot = require("../models/slot");
-const well = require("../models/well");
-const wellbore = require("../models/wellbore");
+
 const { parseExcelData, parseCompleteExcelData } = require("../utils/parseUtil");
 const constants = require("../connections/constants");
 const detail = require("../models/details");
@@ -143,12 +138,4 @@ const updateFields = async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 }
-const additionalField = async (req, res) => {
-    const additionalBody = await additional.create(req.body);
-    const _id = additionalBody._id;
-    const additionalData = { _id, ...additionalBody };
-    return res.status(201).json({ additional: additionalData._doc });
-
-}
-
-module.exports = { fieldController, getAllFields, additionalField, getAllFields, getAllWellStructuredData, updateFields };
+module.exports = { fieldController, getAllFields, getAllFields, getAllWellStructuredData, updateFields };
