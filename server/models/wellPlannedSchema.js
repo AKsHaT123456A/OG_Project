@@ -14,7 +14,7 @@ const wellPlannedExcelSchema = new mongoose.Schema(
         north: { type: Number, trim: true, required: true },
         east: { type: Number, trim: true, required: true },
         dls: { type: Number, trim: true, required: true },
-        toolface: { type: Number, trim: true, required: true },
+        toolface: { type: String, trim: true, required: true },
         buildrate: { type: Number, trim: true, required: true },
         turnrate: { type: Number, trim: true, required: true },
         vs: { type: Number, trim: true, required: true },

@@ -1,6 +1,6 @@
 const interpolate = require("../models/interpolateModel");
 const WellPlannedExcelModel = require("../models/wellPlannedSchema");
-const { calculateRF, calculateDeltaTVD, calculateDeltaEW, calculateDeltaNS, calculateDLS } = require("../utils/calculationUtil");
+const { calculateRF, calculateDeltaTVD, calculateDeltaEW, calculateDeltaNS } = require("../utils/calculationUtil");
 
 const interpolateController = async (req, res) => {
     try {
@@ -11,25 +11,9 @@ const interpolateController = async (req, res) => {
         if (prevInter) {
             return res.status(400).json({ ...prevInter._doc });
         }
-
-        const minMaxValues = await WellPlannedExcelModel.aggregate([
-            { $match: { excelName } },
-            { $group: { _id: null, max: { $max: "$md" }, min: { $min: "$md" } } },
-        ]);
-
-        if (!minMaxValues[0]) {
-            return res.status(400).json({ error: "No data found for this well" });
-        }
-
-        const { min, max } = minMaxValues[0];
-
-        if (min > md || max < md) {
-            return res.status(400).json({ error: `md value must be between ${min} and ${max}` });
-        }
-
         const station1Array = await WellPlannedExcelModel.find({ md: { $lte: md } }).sort({ md: -1 });
         const station2Array = await WellPlannedExcelModel.find({ md: { $gt: md } }).sort({ md: 1 });
-        
+
         const station1 = findClosestMD(station1Array, md);
         const station2 = findClosestMD(station2Array, md);
         if (!station2 || !station1) {
@@ -42,7 +26,6 @@ const interpolateController = async (req, res) => {
         const incX = parseFloat(station1.inc) + brX * (md - parseFloat(station1.md));
         const aziX = parseFloat(station1.azi) + trX * (md - parseFloat(station1.md));
         const dlX = parseFloat(station2.dls) * (parseFloat(station2.md) - parseFloat(station1.md));
-        const dls = calculateDLS(dlX, md - parseFloat(station2.md));
         const rf = calculateRF(dlX);
 
         const deltaTVD = calculateDeltaTVD(parseFloat(station1.inc), incX, rf, md - parseFloat(station1.md));
