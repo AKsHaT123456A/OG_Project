@@ -12,22 +12,32 @@ const {
     customRound
 } = require("../utils/calculationUtil");
 
+const calculateSurveyValues = (prevDetails, md2, i2, a2, verticalSectionAzimuth) => {
+    const cl = calculateCourseLength(prevDetails.md, md2);
+    const dl = calculateDogLeg(prevDetails.inc, i2, prevDetails.azi, a2);
+    const dls = calculateDLS(dl, cl);
+    const rf = calculateRF(dl);
+    const deltaMD = md2 - prevDetails.md;
+    const deltaTVD = calculateDeltaTVD(prevDetails.inc, i2, rf, deltaMD);
+    const tvd = prevDetails.tvd + deltaTVD;
+    const deltaNS = calculateDeltaNS(prevDetails.inc, i2, prevDetails.azi, a2, rf, deltaMD);
+    const deltaEW = calculateDeltaEW(prevDetails.inc, i2, prevDetails.azi, a2, rf, deltaMD);
+    const ew = prevDetails.ew + deltaEW;
+    const ns = prevDetails.ns + deltaNS;
+    const vs = calculateVS(verticalSectionAzimuth, ns, ew);
+
+    return { cl, dl, dls, rf, tvd, ns, ew, vs };
+};
+
+const saveSurveyToLog = async (logName, newSurveyId) => {
+    const logs = await log.findOne({ logName });
+    await logs.surveys.push(newSurveyId);
+    await logs.save();
+};
+
 const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName, id) => {
     try {
-        console.log({ fieldNumber, prevDetails, md2, i2, a2, verticalSectionAzimuth });
-
-        const cl = calculateCourseLength(prevDetails.md, md2);
-        const dl = calculateDogLeg(prevDetails.inc, i2, prevDetails.azi, a2);
-        const dls = calculateDLS(dl, cl);
-        const rf = calculateRF(dl);
-        const deltaMD = md2 - prevDetails.md;
-        const deltaTVD = calculateDeltaTVD(prevDetails.inc, i2, rf, deltaMD);
-        const tvd = prevDetails.tvd + deltaTVD;
-        const deltaNS = calculateDeltaNS(prevDetails.inc, i2, prevDetails.azi, a2, rf, deltaMD);
-        const deltaEW = calculateDeltaEW(prevDetails.inc, i2, prevDetails.azi, a2, rf, deltaMD);
-        const ew = prevDetails.ew + deltaEW;
-        const ns = prevDetails.ns + deltaNS;
-        const vs = calculateVS(verticalSectionAzimuth, ns, ew);
+        const { cl, dl, dls, rf, tvd, ns, ew, vs } = calculateSurveyValues(prevDetails, md2, i2, a2, verticalSectionAzimuth);
 
         const newSurvey = new survey({
             logName,
@@ -46,46 +56,20 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
             userId: id
         });
 
-        console.log({
-            cl,
-            dl,
-            dls,
-            rf,
-            tvd,
-            ns,
-            ew,
-            vs
-        });
-
         await newSurvey.save();
-        const logs = await log.findOne({ logName });
-        await logs.surveys.push(newSurvey._id);
-        await logs.save();
+        await saveSurveyToLog(logName, newSurvey._id);
 
-        await log.findOne({ logName }).populate("surveys").select("-_id -__v");
-        return { bool: true, newSurvey };
+        const result = await log.findOne({ logName }).populate("surveys").select("-_id -__v");
+        return { bool: true, newSurvey: result };
     } catch (err) {
-        console.log(err);
+        console.error(err);
         return { bool: false, error: err };
     }
 };
 
 const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName, id) => {
     try {
-        console.log({ fieldNumber, prevDetails, md2, i2, a2, verticalSectionAzimuth });
-
-        const cl = calculateCourseLength(prevDetails.md, md2);
-        const dl = calculateDogLeg(prevDetails.inc, i2, prevDetails.azi, a2);
-        const dls = calculateDLS(dl, cl);
-        const rf = calculateRF(dl);
-        const deltaMD = md2 - prevDetails.md;
-        const deltaTVD = calculateDeltaTVD(prevDetails.inc, i2, rf, deltaMD);
-        const tvd = prevDetails.tvd + deltaTVD;
-        const deltaNS = calculateDeltaNS(prevDetails.inc, i2, prevDetails.azi, a2, rf, deltaMD);
-        const deltaEW = calculateDeltaEW(prevDetails.inc, i2, prevDetails.azi, a2, rf, deltaMD);
-        const ew = prevDetails.ew + deltaEW;
-        const ns = prevDetails.ns + deltaNS;
-        const vs = calculateVS(verticalSectionAzimuth, ns, ew);
+        const { cl, dl, dls, rf, tvd, ns, ew, vs } = calculateSurveyValues(prevDetails, md2, i2, a2, verticalSectionAzimuth);
 
         const newSurvey = await survey.findOne({ fieldNumber, userId: id });
         newSurvey.md = md2;
@@ -101,14 +85,12 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
         newSurvey.vs = vs;
 
         await newSurvey.save();
-        const logs = await log.findOne({ logName });
-        await logs.surveys.push(newSurvey._id);
-        await logs.save();
+        await saveSurveyToLog(logName, newSurvey._id);
 
-        await log.findOne({ logName }).populate("surveys").select("-_id -__v");
-        return { bool: true, newSurvey };
+        const result = await log.findOne({ logName }).populate("surveys").select("-_id -__v");
+        return { bool: true, newSurvey: result };
     } catch (err) {
-        console.log(err);
+        console.error(err);
         return { bool: false, error: err };
     }
 };
@@ -116,10 +98,10 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
 const allSurvey = async (req, res) => {
     try {
         const all = await survey.find({});
-        return res.status(200).json({ all });
+        res.status(200).json({ all });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ error: "Internal server error" });
     }
 };
 
