@@ -30,7 +30,7 @@ const surveyController = async (req, res) => {
             .select("verticalSectionAzimuth");
         const angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
 
-        if (fieldNumber === 1) {
+        if (fieldNumber == 1) {
             const prevDetails = { md: 0, inc: 0, azi: tieAzi, tvd: 0, ns: 0, ew: 0 };
             const surveyDetails = await saveToDatabase(
                 prevDetails,
