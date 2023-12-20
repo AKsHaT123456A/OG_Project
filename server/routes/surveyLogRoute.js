@@ -8,7 +8,7 @@ router.get("/allLogs", getAllLogs);
 router.delete("/deleteAll", deleteAllLogs);
 router.delete("/deleteALog", deleteLog);
 router.post("/editTiePnPoint", tie);
-router.get("/getTieOnPoint", getTieOnPoint);
+router.post("/getTieOnPoint", getTieOnPoint);
 
 
 module.exports = router;

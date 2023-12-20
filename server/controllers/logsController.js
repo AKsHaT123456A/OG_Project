@@ -115,7 +115,6 @@ const editLog = async (req, res) => {
 }
 
 
-
 const getTieOnPoint = async (req, res) => {
     const { excelName } = req.query;
     const { id } = req.query;

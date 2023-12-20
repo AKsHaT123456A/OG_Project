@@ -1,10 +1,21 @@
 const log = require("../models/logs");
 const survey = require("../models/survey");
-const { calculateCourseLength, calculateDogLeg, calculateDLS, calculateRF, calculateDeltaTVD, calculateDeltaNS, calculateDeltaEW, calculateVS, customRound } = require("../utils/calculationUtil");
+const {
+    calculateCourseLength,
+    calculateDogLeg,
+    calculateDLS,
+    calculateRF,
+    calculateDeltaTVD,
+    calculateDeltaNS,
+    calculateDeltaEW,
+    calculateVS,
+    customRound
+} = require("../utils/calculationUtil");
 
-const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName,id) => {
+const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName, id) => {
     try {
         console.log({ fieldNumber, prevDetails, md2, i2, a2, verticalSectionAzimuth });
+
         const cl = calculateCourseLength(prevDetails.md, md2);
         const dl = calculateDogLeg(prevDetails.inc, i2, prevDetails.azi, a2);
         const dls = calculateDLS(dl, cl);
@@ -17,6 +28,7 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
         const ew = prevDetails.ew + deltaEW;
         const ns = prevDetails.ns + deltaNS;
         const vs = calculateVS(verticalSectionAzimuth, ns, ew);
+
         const newSurvey = new survey({
             logName,
             md: md2,
@@ -24,14 +36,14 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
             azi: a2,
             fieldNumber: customRound(fieldNumber, 0),
             cl,
-            dl: dl,
+            dl,
             dls,
             rf,
             tvd,
             ns,
             ew,
             vs,
-            userId:id
+            userId: id
         });
 
         console.log({
@@ -47,20 +59,21 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
 
         await newSurvey.save();
         const logs = await log.findOne({ logName });
-        // logs.surveys.push(newSurvey._id);
-        // await logs.save();
+        await logs.surveys.push(newSurvey._id);
+        await logs.save();
+
         await log.findOne({ logName }).populate("surveys").select("-_id -__v");
         return { bool: true, newSurvey };
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         return { bool: false, error: err };
     }
 };
 
-const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName,id) => {
+const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName, id) => {
     try {
         console.log({ fieldNumber, prevDetails, md2, i2, a2, verticalSectionAzimuth });
+
         const cl = calculateCourseLength(prevDetails.md, md2);
         const dl = calculateDogLeg(prevDetails.inc, i2, prevDetails.azi, a2);
         const dls = calculateDLS(dl, cl);
@@ -73,7 +86,8 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
         const ew = prevDetails.ew + deltaEW;
         const ns = prevDetails.ns + deltaNS;
         const vs = calculateVS(verticalSectionAzimuth, ns, ew);
-        const newSurvey = await survey.findOne({  fieldNumber,userId:id });
+
+        const newSurvey = await survey.findOne({ fieldNumber, userId: id });
         newSurvey.md = md2;
         newSurvey.inc = i2;
         newSurvey.azi = a2;
@@ -86,15 +100,14 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
         newSurvey.ew = ew;
         newSurvey.vs = vs;
 
-
         await newSurvey.save();
         const logs = await log.findOne({ logName });
-        logs.surveys.push(newSurvey._id);
+        await logs.surveys.push(newSurvey._id);
         await logs.save();
+
         await log.findOne({ logName }).populate("surveys").select("-_id -__v");
         return { bool: true, newSurvey };
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         return { bool: false, error: err };
     }
@@ -105,9 +118,9 @@ const allSurvey = async (req, res) => {
         const all = await survey.find({});
         return res.status(200).json({ all });
     } catch (error) {
-
+        console.error(error);
+        return res.status(500).json({ error: "Internal server error" });
     }
 };
 
-
-module.exports = {saveToDatabase,saveToDatabaseEdit};
+module.exports = { saveToDatabase, saveToDatabaseEdit, allSurvey };
