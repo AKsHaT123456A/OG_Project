@@ -1,5 +1,5 @@
 const xlsx = require("xlsx");
-const { parseExcelData, parseCompleteExcelData, minMdmaxMd } = require("../utils/parseUtil");
+const { parseExcelData, parseCompleteExcelData, minMdmaxMd, getCellValuesByKeywords } = require("../utils/parseUtil");
 const detail = require("../models/details");
 const parseConstants = require("../connections/dummyController");
 const WellPannedExcelModel = require("../models/wellPlannedSchema");
@@ -14,11 +14,9 @@ const fieldController = async (req, res) => {
             id = uuidv4();
             await User.create({ id });
         }
-
         const { excelName } = req.query;
         const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
         const sheetName = workbook.SheetNames[0];
-
         const [arra, minMax] = await Promise.all([
             Promise.all(excelArray.map(async (element) => parseExcelData(workbook.Sheets[sheetName], element))),
             minMdmaxMd(workbook.Sheets[sheetName])

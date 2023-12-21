@@ -11,15 +11,10 @@ const interpolateController = async (req, res) => {
         if (prevInter) {
             return res.status(400).json({ ...prevInter._doc });
         }
-        const station1Array = await WellPlannedExcelModel.find({ md: { $lte: md } }).sort({ md: -1 });
-        const station2Array = await WellPlannedExcelModel.find({ md: { $gt: md } }).sort({ md: 1 });
-
-        const station1 = findClosestMD(station1Array, md);
-        const station2 = findClosestMD(station2Array, md);
-        if (!station2 || !station1) {
-            return res.status(400).json({ error: "Unable to find survey stations for interpolation" });
-        }
-
+        const station1Array = await WellPlannedExcelModel.find({ md: { $lte: md } }).sort({ md: -1 }).limit(1);
+        const station2Array = await WellPlannedExcelModel.find({ md: { $gt: md } }).sort({ md: 1 }).limit(1);
+        const station1 = station1Array[0];
+        const station2 = station2Array[0];
         const brX = parseFloat(station2.buildrate) / 100;
         const trX = parseFloat(station2.turnrate) / 100;
 

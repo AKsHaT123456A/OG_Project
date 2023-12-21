@@ -31,6 +31,7 @@ const parseCompleteExcelData = async (sheet, excelName, userId) => {
     const data = parseData(sheet);
     // Find the index where "md" is located in the first column
     const startIndex = data.findIndex(row => row && row[MD_COLUMN_INDEX] && row[MD_COLUMN_INDEX].toString().toLowerCase() === 'md');
+    console.log({ startIndex });
     if (startIndex === -1) {
         console.log("Couldn't find 'md' in the specified range.");
         return null;
