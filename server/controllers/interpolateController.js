@@ -8,13 +8,22 @@ const interpolateController = async (req, res) => {
         const { id } = req.query;
 
         const prevInter = await interpolate.findOne({ md, excelName, userId: id });
+
         if (prevInter) {
-            return res.status(400).json({ ...prevInter._doc });
+            return res.status(400).json({ ...prevInter.toObject() });
         }
-        const station1Array = await WellPlannedExcelModel.find({ md: { $lte: md } }).sort({ md: -1 }).limit(1);
-        const station2Array = await WellPlannedExcelModel.find({ md: { $gt: md } }).sort({ md: 1 }).limit(1);
-        const station1 = station1Array[0];
-        const station2 = station2Array[0];
+
+        const [station1, station2] = await Promise.all([
+            WellPlannedExcelModel.findOne({ md: { $lte: md }, excelName })
+                .sort({ md: -1 })
+                .limit(1)
+                .select('md inc azi tvd east north -_id'),
+            WellPlannedExcelModel.findOne({ md: { $gte: md }, excelName })
+                .sort({ md: 1 })
+                .limit(1)
+                .select('md dls buildrate turnrate -_id')
+        ]);
+
         const brX = parseFloat(station2.buildrate) / 100;
         const trX = parseFloat(station2.turnrate) / 100;
 
@@ -31,12 +40,30 @@ const interpolateController = async (req, res) => {
         const ew = parseFloat((deltaEW + parseFloat(station1.east)).toFixed(2));
         const ns = parseFloat((deltaNS + parseFloat(station1.north)).toFixed(2));
 
-        await interpolate.create({ md, tvd, ew, ns, inc: parseFloat(incX.toFixed(2)), azi: parseFloat(aziX.toFixed(2)), rf, excelName, userId: id });
+        await interpolate.create({
+            md,
+            tvd,
+            ew,
+            ns,
+            inc: parseFloat(incX.toFixed(2)),
+            azi: parseFloat(aziX.toFixed(2)),
+            rf,
+            excelName,
+            userId: id
+        });
 
-        return res.json({ md, tvd, ew, ns, inc: parseFloat(incX.toFixed(2)), azi: parseFloat(aziX.toFixed(2)), rf });
+        return res.json({
+            md,
+            tvd,
+            ew,
+            ns,
+            inc: parseFloat(incX.toFixed(2)),
+            azi: parseFloat(aziX.toFixed(2)),
+            rf
+        });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Internal Server Error" });
+        return res.status(500).json({ error: "Internal Server Error" });
     }
 };
 
@@ -46,21 +73,9 @@ const getInterpolate = async (req, res) => {
         const interpolateData = await interpolate.find({ excelName, userId: id });
         return res.status(200).json({ interpolateData });
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ message: "Internal Server Error", error: err.message });
     }
-};
-
-const findClosestMD = (mdArray, targetMD) => {
-    if (mdArray.length === 0) {
-        return null;
-    }
-
-    return mdArray.reduce((closest, current) => {
-        const closestDiff = Math.abs(closest.md - targetMD);
-        const currentDiff = Math.abs(current.md - targetMD);
-
-        return currentDiff < closestDiff ? current : closest;
-    });
 };
 
 module.exports = { interpolateController, getInterpolate };
