@@ -33,7 +33,6 @@ const calculateSurveyValues = (prevDetails, md2, i2, a2, verticalSectionAzimuth)
 const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName, id) => {
     try {
         const { cl, dl, dls, rf, tvd, ns, ew, vs } = calculateSurveyValues(prevDetails, md2, i2, a2, verticalSectionAzimuth);
-
         const newSurvey = new survey({
             logName,
             md: md2,
@@ -61,8 +60,7 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
 
 const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName, id) => {
     try {
-        const { cl, dl, dls, rf, tvd, ns, ew, vs } = calculateSurveyValues(prevDetails, md2, i2, a2, verticalSectionAzimuth);
-
+        console.log({ prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName, id });
         const newSurvey = await survey.findOne({ fieldNumber, userId: id });
         newSurvey.md = md2;
         newSurvey.inc = i2;
@@ -75,12 +73,8 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
         newSurvey.ns = ns;
         newSurvey.ew = ew;
         newSurvey.vs = vs;
-
         await newSurvey.save();
-        await saveSurveyToLog(logName, newSurvey._id);
-
-        const result = await log.findOne({ logName }).populate("surveys").select("-_id -__v");
-        return { bool: true, newSurvey: result };
+        return { bool: true, newSurvey: newSurvey };
     } catch (err) {
         console.error(err);
         return { bool: false, error: err };

@@ -44,7 +44,9 @@ const fieldController = async (req, res) => {
 const getAllFields = async (req, res) => {
     try {
         const { id, excelName } = req.query;
+        console.log({ id, excelName });
         const details = await detail.findOne({ excelName, userId: id });
+        console.log({ id, details });
         return res.status(200).json({ message: "Send All Details", details });
     } catch (error) {
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
