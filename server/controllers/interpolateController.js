@@ -1,12 +1,17 @@
 const interpolate = require("../models/interpolateModel");
 const WellPlannedExcelModel = require("../models/wellPlannedSchema");
-const { calculateRF, calculateDeltaTVD, calculateDeltaEW, calculateDeltaNS } = require("../utils/calculationUtil");
+const {
+    calculateRF,
+    calculateDeltaTVD,
+    calculateDeltaEW,
+    calculateDeltaNS
+} = require("../utils/calculationUtil");
 
 const interpolateController = async (req, res) => {
-    try {
-        const { md, excelName } = req.body;
-        const { id } = req.query;
+    const { md, excelName } = req.body;
+    const { id } = req.query;
 
+    try {
         const prevInter = await interpolate.findOne({ md, excelName, userId: id });
 
         if (prevInter) {
@@ -27,20 +32,20 @@ const interpolateController = async (req, res) => {
         const brX = parseFloat(station2.buildrate) / 100;
         const trX = parseFloat(station2.turnrate) / 100;
 
-        const incX = parseFloat(station1.inc) + brX * (md - parseFloat(station1.md));
-        const aziX = parseFloat(station1.azi) + trX * (md - parseFloat(station1.md));
-        const dlX = parseFloat(station2.dls) * (parseFloat(station2.md) - parseFloat(station1.md));
+        const incX = station1.inc + brX * (md - station1.md);
+        const aziX = station1.azi + trX * (md - station1.md);
+        const dlX = station2.dls * (station2.md - station1.md);
         const rf = calculateRF(dlX);
 
-        const deltaTVD = calculateDeltaTVD(parseFloat(station1.inc), incX, rf, md - parseFloat(station1.md));
-        const deltaEW = calculateDeltaEW(parseFloat(station1.inc), incX, parseFloat(station1.azi), aziX, rf, md - parseFloat(station1.md));
-        const deltaNS = calculateDeltaNS(parseFloat(station1.inc), incX, parseFloat(station1.azi), aziX, rf, md - parseFloat(station1.md));
+        const deltaTVD = calculateDeltaTVD(station1.inc, incX, rf, md - station1.md);
+        const deltaEW = calculateDeltaEW(station1.inc, incX, station1.azi, aziX, rf, md - station1.md);
+        const deltaNS = calculateDeltaNS(station1.inc, incX, station1.azi, aziX, rf, md - station1.md);
 
-        const tvd = parseFloat((deltaTVD + parseFloat(station1.tvd)).toFixed(2));
-        const ew = parseFloat((deltaEW + parseFloat(station1.east)).toFixed(2));
-        const ns = parseFloat((deltaNS + parseFloat(station1.north)).toFixed(2));
+        const tvd = parseFloat((deltaTVD + station1.tvd).toFixed(2));
+        const ew = parseFloat((deltaEW + station1.east).toFixed(2));
+        const ns = parseFloat((deltaNS + station1.north).toFixed(2));
 
-        await interpolate.create({
+        const interpolatedData = {
             md,
             tvd,
             ew,
@@ -50,17 +55,11 @@ const interpolateController = async (req, res) => {
             rf,
             excelName,
             userId: id
-        });
+        };
 
-        return res.json({
-            md,
-            tvd,
-            ew,
-            ns,
-            inc: parseFloat(incX.toFixed(2)),
-            azi: parseFloat(aziX.toFixed(2)),
-            rf
-        });
+        await interpolate.create(interpolatedData);
+
+        return res.json(interpolatedData);
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: "Internal Server Error" });
