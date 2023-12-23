@@ -19,7 +19,7 @@ const fieldController = async (req, res) => {
         const sheetName = workbook.SheetNames[0];
         const [arra, minMax] = await Promise.all([
             Promise.all(excelArray.map(async (element) => parseExcelData(workbook.Sheets[sheetName], element))),
-            minMdmaxMd(workbook.Sheets[sheetName])
+            minMdmaxMd(workbook.Sheets[workbook.SheetNames[0]])
         ]);
         parseCompleteExcelData(workbook.Sheets[sheetName], excelName, id);
         const mergedObject = Object.assign({}, ...arra);
@@ -28,16 +28,15 @@ const fieldController = async (req, res) => {
                 mergedObject[key] = '';
             }
         }
-
         const newMerge = await detail.findOne({ well: mergedObject.well, userId: id });
         if (newMerge) {
-            return res.status(200).json({ message: "Details already exist", newField: newMerge, minMd: minMax.minMd, maxMd: minMax.maxMd });
+            return res.status(200).json({ message: "Details already exist", newField: newMerge, minMd: minMax.minMd, maxMd: minMax.lastNonEmptyValue });
         }
 
         const newField = await detail.create({ ...mergedObject, excelName, userId: id });
-        return res.status(201).json({ message: "Details added", newField, id, minMd: minMax.minMd, maxMd: minMax.maxMd });
+        return res.status(201).json({ message: "Details added", newField, id, minMd: minMax.minMd, maxMd: minMax.lastNonEmptyValue });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server Error", error: error.message });
+        return res.status(500).json({ message: "Internal Server Error", error: error });
     }
 };
 

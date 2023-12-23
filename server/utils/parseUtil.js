@@ -81,15 +81,25 @@ const parseCompleteExcelData = async (sheet, excelName, userId) => {
 const minMdmaxMd = async (sheet) => {
     const data = parseData(sheet);
     const startIndex = data.findIndex(row => row && row[MD_COLUMN_INDEX] && row[MD_COLUMN_INDEX].toString().toLowerCase() === 'md');
+
     if (startIndex === -1) {
         console.log("Couldn't find 'md' in the specified range.");
         return null;
     }
-    const lastIndex = data.slice(startIndex + 1).findIndex(row => row && row[MD_COLUMN_INDEX] === undefined);
-    const undefinedIndex = lastIndex !== -1 ? startIndex + 1 + lastIndex : -1;
+
+    let lastNonEmptyIndex = -1;
+    for (let i = data.length - 1; i >= 0; i--) {
+        const row = data[i];
+        if (row && row[0] !== undefined && row[0] !== null && row[0].toString().trim() !== '') {
+            lastNonEmptyIndex = i;
+            break;
+        }
+    }
+    const lastNonEmptyValue = lastNonEmptyIndex !== -1 ? data[lastNonEmptyIndex][0] : null;
     const minMd = data[startIndex + 3][MD_COLUMN_INDEX];
-    const maxMd = data[undefinedIndex - 1][MD_COLUMN_INDEX];
-    return { minMd, maxMd };
+
+    return { minMd, lastNonEmptyValue };
 }
+
 
 module.exports = { parseExcelData, parseCompleteExcelData, minMdmaxMd };
