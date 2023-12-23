@@ -2,7 +2,9 @@
 import { DataGrid } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import { useState } from 'react';
+import { useMatchStore } from '../../store/store';
+import { getSavedData } from '../constant';
+import { useEffect } from 'react';
 
 const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
     border: 0,
@@ -84,7 +86,7 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
         backgroundColor: '#fafafa'
     },
     '& ::-webkit-scrollbar': {
-        width: '4px' ,
+        width: '4px',
         height: '4px'
     },
 
@@ -102,50 +104,60 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
     }
 }));
 
-const initialRows = [
-    { id: 1, col1: '1', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 2, col1: '2', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 3, col1: '3', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 4, col1: '4', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 5, col1: '5', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 6, col1: '6', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 7, col1: '7', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 8, col1: '8', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 9, col1: '9', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 10, col1: '10', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 11, col1: '11', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 12, col1: '12', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 13, col1: '13', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 14, col1: '14', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 15, col1: '15', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 16, col1: '16', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 17, col1: '17', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 18, col1: '18', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 19, col1: '19', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-    { id: 20, col1: '20', col2: '0.02', col3: '0.00', col4: '193.630', col5: '0.02', col6: '0.00', col7: '0.02', col8: '0.002', col9: '0.00', col10: '0', col11: '0.5', col12: '0', col13: '0', col14: 'this is comment' },
-
-];
 
 const initialColumns = [
-    { field: 'col1', headerName: '', width: 50, sortable: false, align: 'center', headerAlign: 'center', },
-    { field: 'col2', headerName: 'MD', headerUnits: '(ft)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell' },
-    { field: 'col3', headerName: 'Inc', headerUnits: '(deg)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col4', headerName: 'Azi', headerUnits: '(deg)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col5', headerName: 'TVD', headerUnits: '(ft)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col6', headerName: 'TVDSS', headerUnits: '(ft)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col7', headerName: 'North', headerUnits: '(ft)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col8', headerName: 'East', headerUnits: '(ft)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col9', headerName: 'DLS', headerUnits: '(deg)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col10', headerName: 'Toolface', headerUnits: '(deg)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col11', headerName: 'Build Rate', headerUnits: '(deg)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col12', headerName: 'Turn Rate', headerUnits: '(deg)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col13', headerName: 'VS', headerUnits: '(ft)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col14', headerName: 'Comments', minWidth: 100, align: 'center', headerAlign: 'center', flex: 1, sortable: false, cellClassName: ['frozen--cell', 'column-cell'], },
+    { field: 'fieldNumber', headerName: '', width: 50, sortable: false, align: 'center', headerAlign: 'center', },
+    { field: 'md', headerName: 'MD', headerUnits: '(ft)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell' },
+    { field: 'inc', headerName: 'Inc', headerUnits: '(deg)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
+    { field: 'azi', headerName: 'Azi', headerUnits: '(deg)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
+    { field: 'tvd', headerName: 'TVD', headerUnits: '(ft)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
+    { field: 'tvdss', headerName: 'TVDSS', headerUnits: '(ft)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
+    { field: 'north', headerName: 'North', headerUnits: '(ft)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
+    { field: 'east', headerName: 'East', headerUnits: '(ft)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
+    { field: 'dls', headerName: 'DLS', headerUnits: '(deg)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
+    { field: 'toolface', headerName: 'Toolface', headerUnits: '(deg)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
+    { field: 'buildrate', headerName: 'Build Rate', headerUnits: '(deg)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
+    { field: 'turnrate', headerName: 'Turn Rate', headerUnits: '(deg)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
+    { field: 'vs', headerName: 'VS', headerUnits: '(ft)', minWidth: 100, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
+    { field: 'comments', headerName: 'Comments', minWidth: 100, align: 'center', headerAlign: 'center', flex: 1, sortable: false, cellClassName: ['frozen--cell', 'column-cell'], },
 ];
 
 
 export default function PathTable() {
-    const [rows, setRows] = useState(initialRows);
+    const { plannedRows, setUp, setPlannedRows, notEditPlannedRows } = useMatchStore();
+    const fetchPlanned = async () => {
+        try {
+            const idVal = localStorage.getItem('id');
+            const data = await getSavedData(`https://og-project.onrender.com/api/v1/getWellPlanned?excelName=${setUp.excelName}&id=${idVal}`);
+            if (data.plan.length) {
+                setPlannedRows(data.plan)
+            }
+        } catch (error) {
+            console.log('error');
+        }
+
+    };
+
+    useEffect(() => {
+        if (setUp.enteries) {
+            const fetchDataInterval = setInterval(async () => {
+                await fetchPlanned();
+            }, 400);
+
+            // Stop the interval after 20 seconds
+            const stopIntervalTimeout = setTimeout(() => {
+                clearInterval(fetchDataInterval);
+            }, 130000);
+
+
+            return () => {
+                clearInterval(fetchDataInterval);
+                clearTimeout(stopIntervalTimeout);
+            };
+        } else {
+            setPlannedRows(notEditPlannedRows);
+        }
+    }, [setUp.excelName]);
 
 
     return (
@@ -154,8 +166,8 @@ export default function PathTable() {
                 rowSelection={false}
                 disableColumnMenu
                 disableColumnFilter
-                rows={rows}
-                hideFooter
+                rows={plannedRows}
+                pagination
                 rowHeight={42}
                 columnHeaderHeight={72}
                 columns={initialColumns.map((column) => ({

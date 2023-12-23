@@ -6,7 +6,7 @@ const BoxHeader = ({ boxHead }) => {
         borderRadius: "0.2rem 0.2rem 0rem 0rem",
         borderBottom: "1px solid #a8a4a48f"
     }} >
-        <Typography variant='h5' component='h1' fontWeight={'bold'}>
+        <Typography variant='h5' component='h1' fontWeight={600}>
             {boxHead}
         </Typography>
     </Box>

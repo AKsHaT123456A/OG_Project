@@ -17,7 +17,9 @@ const style = {
 
 const AddNew = () => {
     const [form, setForm] = useState({
-        naam: '',
+        logName: '',
+        usedBy: '',
+        usedFrom: '',
         model: '',
         error: '',
         loading: false,
@@ -32,13 +34,14 @@ const AddNew = () => {
             ...form,
             loading: true
         })
-        const logData = await postLogData('https://og-project.onrender.com/api/v1/surveyCreate/', {
-            "logName": form.naam,
-            "usedFrom": 5674.65,
-            "usedBy": 45894
+        const idVal = localStorage.getItem('id');
+        const logData = await postLogData(`https://og-project.onrender.com/api/v1/surveyCreate?id=${idVal}`, {
+            "logName": form.logName,
+            "usedFrom": 0,
+            "usedBy": 0
         });
         if (logData) {
-            setLog([form, ...logArray]);
+            setLog([...logArray, form]);
 
         } else {
             alert('Log not added.');
@@ -79,7 +82,7 @@ const AddNew = () => {
                             <Stack display={'grid'} padding={{ md: "20px 28px", sm: "20px 20px", xs: "20px 18px" }} gap={2}>
 
                                 <TextField
-                                    name="naam"
+                                    name="logName"
                                     variant="outlined"
                                     fullWidth
                                     label="Survey Tool Program Name"
@@ -98,6 +101,7 @@ const AddNew = () => {
                                         label="Survey Tool Model"
                                         onChange={handleChange}
                                     >
+                                        <MenuItem value=""></MenuItem>
                                         <MenuItem value={"ISCWSA MWD"}>ISCWSA MWD</MenuItem>
                                     </Select>
                                 </FormControl>
@@ -111,6 +115,7 @@ const AddNew = () => {
                                         label="Error Model"
                                         onChange={handleChange}
                                     >
+                                        <MenuItem value=""></MenuItem>
                                         <MenuItem value={"MWD-STD"}>MWD-STD</MenuItem>
                                     </Select>
                                 </FormControl>
@@ -119,7 +124,7 @@ const AddNew = () => {
                                     <Button variant="text" sx={{
                                         color: "gray"
                                     }} onClick={handleClose}>Cancel</Button>
-                                    <Button variant="contained" disabled={(form.naam === '' || form.model === '' || form.error === '') ? true : false} sx={{
+                                    <Button variant="contained" disabled={(form.logName === '' || form.model === '' || form.error === '') ? true : false} sx={{
                                         "&.MuiButtonBase-root:hover": {
                                             bgcolor: "#0abd61"
                                         }

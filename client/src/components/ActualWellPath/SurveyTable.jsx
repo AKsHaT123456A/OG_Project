@@ -1,8 +1,9 @@
-
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
+import { formatNumberToTwoDecimalPlaces, formatStringInNumberToTwoDecimalPlaces, postLogData } from '../constant';
+import { useMatchStore } from '../../store/store';
 
 const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
     border: 0,
@@ -80,12 +81,13 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
     '& .MuiDataGrid-row:hover': {
         backgroundColor: 'transparent'
     },
-    '& .frozen--cell': {
-        backgroundColor: '#fafafa'
-    },
     '& .Unfrozen--cell': {
-        backgroundColor: '#f2ffff'
+        backgroundColor: '#f2ffff !important'
     },
+    '& .Unfrozen--row': {
+        backgroundColor: '#f2ffff !important'
+    },
+
 
     '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': {
         width: '4px' /* Change this value to adjust the width of the scrollbar */
@@ -119,43 +121,86 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
     }
 }));
 
-const initialRows = [
-    { id: 1, col1: 'Tie On', col2: '0.00', col3: '0.00', col4: '193.630', col5: '0.00', col6: '0.00', col7: '0.00', col8: '', col9: '0.00', col10: '' },
-    { id: 2, col1: 2, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-    { id: 3, col1: 3, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-    { id: 4, col1: 4, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-    { id: 5, col1: 5, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-    { id: 6, col1: 6, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-    { id: 7, col1: 7, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-    { id: 8, col1: 8, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-    { id: 9, col1: 9, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-    { id: 10, col1: 10, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-    { id: 11, col1: 11, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-    { id: 12, col1: 12, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-    { id: 13, col1: 13, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-    { id: 14, col1: 14, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-    { id: 15, col1: 15, col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '' },
-
-];
-
-const initialColumns = [
-    { field: 'col1', headerName: '', width: 105, sortable: false },
-    { field: 'col2', headerName: 'MD', headerUnits: '(ft)', minWidth: 115, editable: true, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'Unfrozen--cell' },
-    { field: 'colE', headerName: 'CL', headerUnits: '(ft)', minWidth: 115, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell' },
-    { field: 'col3', headerName: 'Inc', headerUnits: '(deg)', minWidth: 115, editable: true, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'Unfrozen--cell', },
-    { field: 'col4', headerName: 'Azi', headerUnits: '(deg)', minWidth: 115, editable: true, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'Unfrozen--cell', },
-    { field: 'col5', headerName: 'TVD', headerUnits: '(ft)', minWidth: 115, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col6', headerName: 'North', headerUnits: '(ft)', minWidth: 115, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col7', headerName: 'East', headerUnits: '(ft)', minWidth: 115, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col8', headerName: 'DLS', headerUnits: '(deg)', minWidth: 115, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col9', headerName: 'VS', headerUnits: '(ft)', minWidth: 115, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', },
-    { field: 'col10', headerName: 'Comment', minWidth: 180, align: 'right', editable: true, headerAlign: 'center', flex: 1, sortable: false, cellClassName: ['Unfrozen--cell', 'column-cell'], },
-];
 
 
 export default function SurveyTable() {
-    const [rows, setRows] = useState(initialRows);
+    const { setUp, logArray, setLog, surveyRows, setSurveyRows, logIndex } = useMatchStore();
+    const apiRef = useGridApiRef();
+    const [call, setCall] = useState(false);
+    const [ids, setIds] = useState(0);
+    const initialColumns = [
+        { field: 'fieldNumber', headerName: '', width: 105, sortable: false, align: 'center', },
+        { field: 'md', headerName: 'MD', headerUnits: '(ft)', minWidth: 115, editable: true, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'Unfrozen--cell' },
+        { field: 'inc', headerName: 'Inc', headerUnits: '(deg)', minWidth: 115, editable: true, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'Unfrozen--cell', },
+        { field: 'azi', headerName: 'Azi', headerUnits: '(deg)', minWidth: 115, editable: true, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'Unfrozen--cell', },
+        { field: 'cl', headerName: 'CL', headerUnits: '(ft)', minWidth: 115, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', editable: true },
+        { field: 'tvd', headerName: 'TVD', headerUnits: '(ft)', minWidth: 115, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', editable: true },
+        { field: 'ns', headerName: 'North', headerUnits: '(ft)', minWidth: 115, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', editable: true },
+        { field: 'ew', headerName: 'East', headerUnits: '(ft)', minWidth: 115, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', editable: true },
+        { field: 'dls', headerName: 'DLS', headerUnits: '(deg)', minWidth: 115, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', editable: true },
+        { field: 'vs', headerName: 'VS', headerUnits: '(ft)', minWidth: 115, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', editable: true },
+        { field: 'comment', headerName: 'Comment', minWidth: 180, align: 'right', editable: true, headerAlign: 'center', flex: 1, sortable: false, cellClassName: ['Unfrozen--cell', 'column-cell'], },
+    ];
+    const handleCellEditStop = (params, event) => {
 
+        let updateCell = surveyRows;
+        if (params.field !== 'comment') {
+            const val = formatStringInNumberToTwoDecimalPlaces(event.target.value);
+            updateCell = surveyRows.map((sRow, index) => {
+                if (index === params.id - 1) {
+                    return {
+                        ...sRow,
+                        [params.field]: val,
+                    };
+                } else {
+                    return sRow;
+                }
+            });
+        } else {
+            updateCell = surveyRows.map((sRow, index) => {
+                if (index === params.id - 1) {
+                    return {
+                        ...sRow,
+                        [params.field]: event.target.value,
+                    };
+                } else {
+                    return sRow;
+                }
+            });
+        }
+        setCall(true);
+        setIds(params.id - 1);
+        setSurveyRows(updateCell);
+    };
+    const processRowUpdate = async (currentRow) => {
+        const idVal = localStorage.getItem('id');
+        const data = await postLogData(`https://og-project.onrender.com/api/v1/survey?id=${idVal}`, {
+            "md": formatStringInNumberToTwoDecimalPlaces(currentRow.md),
+            "inc": formatStringInNumberToTwoDecimalPlaces(currentRow.inc),
+            "azi": formatStringInNumberToTwoDecimalPlaces(currentRow.azi),
+            "logName": logArray[logIndex].logName,
+            "well": setUp.well,
+            "tieAzi": surveyRows[0].azi,
+            "fieldNumber": (currentRow.fieldNumber).toString()
+        });
+
+        let updatedRow;
+        console.log(data);
+        if (data) {
+            updatedRow = {
+                "id": currentRow.id,
+                "fieldNumber": currentRow.fieldNumber,
+                "md": formatNumberToTwoDecimalPlaces(data.newSurvey["md"]),
+                "cl": formatNumberToTwoDecimalPlaces(data.newSurvey["cl"]),
+                "inc": formatNumberToTwoDecimalPlaces(data.newSurvey["inc"]),
+                "azi": formatNumberToTwoDecimalPlaces(data.newSurvey["azi"]),
+                "tvd": formatNumberToTwoDecimalPlaces(data.newSurvey["tvd"]),
+                "ns": formatNumberToTwoDecimalPlaces(data.newSurvey["ns"]),
+                "ew": formatNumberToTwoDecimalPlaces(data.newSurvey["ew"]),
+                "dls": formatNumberToTwoDecimalPlaces(data.newSurvey["dls"]),
+                "vs": formatNumberToTwoDecimalPlaces(data.newSurvey["vs"]),
+                "comment": currentRow.comment
+=======
     useEffect(() => {
         const allRowsFilled = rows.slice(1).every((row) =>
             Object.values(row).every((value) => value !== '')
@@ -175,9 +220,114 @@ export default function SurveyTable() {
                 col9: '',
                 col10: '',
             };
-            setRows((prevRows) => [...prevRows, newRow]);
+        } else {
+            updatedRow = { ...currentRow };
         }
-    }, [rows]);
+        const updatedRows = surveyRows.map((row) => (row.id === currentRow.id ? updatedRow : row));
+        setCall(false);
+        if (currentRow.id === surveyRows.length) {
+            const iRow = { id: currentRow.id + 1, fieldNumber: currentRow.id, md: '', cl: '', inc: '', azi: '', tvd: '', ns: '', ew: '', dls: '', vs: '', comment: '' };
+            setSurveyRows([...updatedRows, iRow]);
+        } else {
+            setSurveyRows(updatedRows);
+        }
+        apiRef.current.setCellFocus(currentRow.id + 1, "md");
+    }
+
+    const processFullRowUpdate = async (currentRow) => {
+        const jsonData = {
+            "azi": currentRow.azi,
+            "md": currentRow.md,
+            "inc": currentRow.inc,
+            "cl": currentRow.cl,
+            "tvd": currentRow.tvd,
+            "ns": currentRow.ns,
+            "ew": currentRow.ew,
+            "dls": currentRow.dls,
+            "vs": currentRow.vs,
+        }
+        const idVal = localStorage.getItem('id');
+        const apiUrl = `https://og-project.onrender.com/api/v1/getTieOnPoint?id=${idVal}&excelName=${setUp.excelName}`;
+        const updateData = await postLogData(apiUrl, jsonData);
+        console.log(updateData);
+        if (logIndex !== -1 && logArray.length) {
+            const data = await postLogData(`https://og-project.onrender.com/api/v1/updateSurveyAzimuth?id=${idVal}`, {
+                "updatedTieAzi": formatStringInNumberToTwoDecimalPlaces(currentRow.azi),
+                "updatedTieMd": formatStringInNumberToTwoDecimalPlaces(currentRow.md),
+                "updatedTieInc": formatStringInNumberToTwoDecimalPlaces(currentRow.inc),
+                "updatedTieCl": formatStringInNumberToTwoDecimalPlaces(currentRow.cl),
+                "updatedTieTvd": formatStringInNumberToTwoDecimalPlaces(currentRow.tvd),
+                "updatedTieNs": formatStringInNumberToTwoDecimalPlaces(currentRow.ns),
+                "updatedTieEw": formatStringInNumberToTwoDecimalPlaces(currentRow.ew),
+                "updatedTieDls": formatStringInNumberToTwoDecimalPlaces(currentRow.dls),
+                "updatedTieVs": formatStringInNumberToTwoDecimalPlaces(currentRow.vs),
+                "logName": logArray[logIndex].logName,
+                "well": setUp.well,
+            });
+            if (data.surveys.length) {
+                let updatedRows = [];
+                data.surveys.map((sdata, index) => {
+                    let updated;
+                    updated = {
+                        key: index + 2,
+                        "id": index + 2,
+                        "fieldNumber": Number(sdata.fieldNumber),
+                        "md": formatNumberToTwoDecimalPlaces(sdata["md"]),
+                        "inc": formatNumberToTwoDecimalPlaces(sdata["inc"]),
+                        "azi": formatNumberToTwoDecimalPlaces(sdata["azi"]),
+                        "tvd": formatNumberToTwoDecimalPlaces(sdata["tvd"]),
+                        "ns": formatNumberToTwoDecimalPlaces(sdata["ns"]),
+                        "ew": formatNumberToTwoDecimalPlaces(sdata["ew"]),
+                        "dls": formatNumberToTwoDecimalPlaces(sdata["dls"]),
+                        "vs": formatNumberToTwoDecimalPlaces(sdata["vs"]),
+                        "cl": formatNumberToTwoDecimalPlaces(sdata["cl"]),
+                        "comment": ""
+                    }
+                    updatedRows = [...updatedRows, updated];
+                })
+                const getSurveyRows = surveyRows.slice(updatedRows.length + 1);
+                setSurveyRows([surveyRows[0], ...updatedRows, ...getSurveyRows]);
+                setCall(false);
+            }
+        }
+    }
+
+    const updateLogByMD = async (key, val) => {
+        const idVal = localStorage.getItem('id');
+        const logData = await postLogData(`https://og-project.onrender.com/api/v1/surveyEdit?id=${idVal}`, {
+            "logName": logArray[logIndex].logName,
+            [key]: val
+        })
+        console.log(logData);
+    }
+    useEffect(() => {
+        if (ids !== 0 && call) {
+            const currentRow = surveyRows[ids];
+            if (currentRow.md && currentRow.azi && currentRow.inc) {
+                processRowUpdate(currentRow);
+                const rowId = currentRow.id + 1;
+                const field = 'md'
+                const newLog = [...logArray];
+                if (newLog[logIndex]) {
+                    if (newLog[logIndex]["usedFrom"] === 0 || newLog[logIndex]["usedFrom"] === "" || currentRow.md === newLog[logIndex]["usedFrom"]) {
+                        updateLogByMD("usedFrom", currentRow.md);
+                        newLog[logIndex]["usedFrom"] = currentRow.md;
+                    } else {
+                        updateLogByMD("usedBy", currentRow.md);
+                        newLog[logIndex]["usedBy"] = currentRow.md;
+                    }
+
+                }
+                setLog(newLog);
+                apiRef.current.setCellFocus(rowId, field);
+            }
+        }
+        if (ids === 0 && call) {
+            const currentRow = surveyRows[ids];
+            processFullRowUpdate(currentRow);
+        }
+    }, [surveyRows])
+
 
 console.log({rows});
     return (
@@ -185,11 +335,20 @@ console.log({rows});
             <StyledDataGrid
                 rowSelection={false}
                 disableColumnMenu
+                apiRef={apiRef}
                 disableColumnFilter
-                rows={rows}
+                onCellEditStop={handleCellEditStop}
+                rows={surveyRows}
+                getRowId={(row) => row.id}
                 hideFooter
+                isCellEditable={(params) => ((params.id === 1 && setUp.excelName !== "") || (params.id !== 1 && (params.field === "md" || params.field === "inc" || params.field === "azi" || params.field === "comment")
+                    && logIndex !== -1 && logArray.length))}
                 rowHeight={42}
                 columnHeaderHeight={72}
+                getRowClassName={(params) =>
+                    (params.id === 1) ? 'Unfrozen--row' : ''
+                }
+
                 columns={initialColumns.map((column) => ({
                     ...column,
                     renderHeader: (params) => (
