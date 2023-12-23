@@ -141,8 +141,6 @@ export default function SurveyTable() {
         { field: 'vs', headerName: 'VS', headerUnits: '(ft)', minWidth: 115, align: 'right', headerAlign: 'center', sortable: false, cellClassName: 'frozen--cell', editable: true },
         { field: 'comment', headerName: 'Comment', minWidth: 180, align: 'right', editable: true, headerAlign: 'center', flex: 1, sortable: false, cellClassName: ['Unfrozen--cell', 'column-cell'], },
     ];
-
-
     const handleCellEditStop = (params, event) => {
 
         let updateCell = surveyRows;
@@ -202,6 +200,25 @@ export default function SurveyTable() {
                 "dls": formatNumberToTwoDecimalPlaces(data.newSurvey["dls"]),
                 "vs": formatNumberToTwoDecimalPlaces(data.newSurvey["vs"]),
                 "comment": currentRow.comment
+=======
+    useEffect(() => {
+        const allRowsFilled = rows.slice(1).every((row) =>
+            Object.values(row).every((value) => value !== '')
+        );
+        if (allRowsFilled) {
+            // If all rows (excluding header and row 1) are filled, add a new empty row
+            const newRow = {
+                id: rows.length + 1,
+                col1: rows[rows.length - 1].col1 + 1,
+                col2: '',
+                col3: '',
+                col4: '',
+                col5: '',
+                col6: '',
+                col7: '',
+                col8: '',
+                col9: '',
+                col10: '',
             };
         } else {
             updatedRow = { ...currentRow };
@@ -312,7 +329,7 @@ export default function SurveyTable() {
     }, [surveyRows])
 
 
-
+console.log({rows});
     return (
         <Box component={'div'} sx={{ height: 702, width: '100%' }}>
             <StyledDataGrid
