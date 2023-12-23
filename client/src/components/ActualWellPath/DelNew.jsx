@@ -3,7 +3,7 @@ import { useMatchStore } from "../../store/store";
 import BoxHeader from "../SetUp/BoxHeader";
 import CircularProgress from '@mui/material/CircularProgress';
 import { useState } from "react";
-import { postLogData } from "../constant";
+import { DeleteLogData, formatNumberToTwoDecimalPlaces, getSavedData } from "../constant";
 
 
 const style = {
@@ -17,28 +17,49 @@ const style = {
 };
 
 const DelNew = () => {
-    const { setOpen, open, logArray, setLog } = useMatchStore();
+    const { setOpen, open, logArray, setLog, surveyRows, setSurveyRows, surveyNotEditRows, setUp } = useMatchStore();
     const [loading, setLoading] = useState(false);
 
     const handleClose = () => {
         setOpen({ show: false, text: '', id: -1 });
     }
     const handleDelete = async () => {
-        console.log(logArray[open.id].name);
         setLoading(true);
-        const logData = await postLogData('https://og-project.onrender.com/api/v1/surveyDelete', {
-            "logName": logArray[open.id].naam,
+        const idVal = localStorage.getItem('id');
+        const logData = await DeleteLogData(`https://og-project.onrender.com/api/v1/deleteALog?id=${idVal}`, {
+            "logName": logArray[open.id].logName,
         });
         if (logData) {
             const updatedLogArray = [
-                ...logArray.slice(0, open.id),  
+                ...logArray.slice(0, open.id),
                 ...logArray.slice(open.id + 1),
             ];
             setLog(updatedLogArray);
+            let tieOnRow = { ...surveyRows[0] };
+            const iVal = localStorage.getItem('id');
+            const updateTie = await getSavedData(`https://og-project.onrender.com/api/v1/getTieOnPoint?id=${iVal}&excelName=${setUp.excelName}`)
+            if (updateTie.tieOn) {
+                const newSurvey = updateTie.tieOn;
+                tieOnRow = {
+                    "id": 1,
+                    "fieldNumber": "Tie On",
+                    "md": formatNumberToTwoDecimalPlaces(newSurvey["md"]),
+                    "cl": formatNumberToTwoDecimalPlaces(newSurvey["cl"]),
+                    "inc": formatNumberToTwoDecimalPlaces(newSurvey["inc"]),
+                    "azi": formatNumberToTwoDecimalPlaces(newSurvey["azi"]),
+                    "tvd": formatNumberToTwoDecimalPlaces(newSurvey["tvd"]),
+                    "ns": formatNumberToTwoDecimalPlaces(newSurvey["ns"]),
+                    "ew": formatNumberToTwoDecimalPlaces(newSurvey["ew"]),
+                    "dls": formatNumberToTwoDecimalPlaces(newSurvey["dls"]),
+                    "vs": formatNumberToTwoDecimalPlaces(newSurvey["vs"]),
+                    "comment": ""
+                };
+            }
+            setSurveyRows([tieOnRow, ...surveyNotEditRows])
+
         } else {
             alert('Log not Deleted.');
         }
-        // Update the state with the new array
         handleClose();
         setLoading(false);
     }
@@ -63,7 +84,7 @@ const DelNew = () => {
 
                             <Stack display={'grid'} mt={2} padding={{ md: "20px 28px", sm: "20px 20px", xs: "20px 18px" }} gap={2}>
 
-                                <Typography variant="subtitle1" textAlign={"center"}>All surveys associated with this Survey Log will be deleted.<br /> Are you sure?
+                                <Typography variant="subtitle1">All surveys associated with this Survey Log will be deleted. Are you sure?
                                 </Typography>
 
                                 <Stack direction={'row'} mt={2} justifyContent="flex-end" spacing={2}>

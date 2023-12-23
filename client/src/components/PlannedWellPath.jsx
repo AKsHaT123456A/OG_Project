@@ -18,7 +18,7 @@ const PlannedWellPath = () => {
             <Stack direction={{ sm: 'row', xs: 'column' }} sx={{
               position: 'relative'
             }} spacing={4} justifyContent={'space-between'} alignItems={'center'}>
-              <Typography variant='h5' component='h1' fontWeight={'bold'}>
+              <Typography variant='h5' component='h1' fontWeight={600}>
                 Planned Surveys
               </Typography>
               <Stack direction={'row'} alignSelf={'flex-start'} alignItems={'center'} spacing={1}>

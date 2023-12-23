@@ -2,12 +2,24 @@ import { Stack } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import { useMatchStore } from '../../store/store';
+import { postFieldData } from '../constant';
 
 
 const LabelSelect = ({ fieldName, fieldLabel, fieldValue, fieldStatus, fieldArray }) => {
 
     const { setUp, updateSetUp } = useMatchStore();
-
+    const sendData = async (fieldObj) => {
+        console.log(fieldObj);
+        try {
+            const id = localStorage.getItem('id')
+            const data = await postFieldData(`https://og-project.onrender.com/api/v1/updateFields?excelName=${setUp.excelName}&id=${id}`, fieldObj);
+            if (data) {
+                console.log('data updated');
+            }
+        } catch (error) {
+            console.log('error');
+        }
+    }
     const handleChange = (e) => {
         const { name, value } = e.target;
         const obj = name.split('.');
@@ -15,6 +27,7 @@ const LabelSelect = ({ fieldName, fieldLabel, fieldValue, fieldStatus, fieldArra
         updateSetUp({
             ...setUp, [second]: value
         })
+        sendData({ [second]: value });
     }
     return (
         <Stack component={"label"} direction="column" style={{

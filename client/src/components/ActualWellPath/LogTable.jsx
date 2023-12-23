@@ -10,20 +10,84 @@ import Stack from '@mui/material/Stack';
 import { useMatchStore } from '../../store/store';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { formatNumberToTwoDecimalPlaces, getSavedData } from '../constant';
 
 export default function LogTable() {
-    const { setOpen, logArray } = useMatchStore();
-    const [selectedRowIndex, setSelectedRowIndex] = useState(-1);
+    const { setOpen, logArray, logIndex, setLogIndex, surveyRows, setSurveyRows, surveyNotEditRows, setUp } = useMatchStore();
 
     const handleButton = (val, idx) => {
+
         setOpen({ show: true, text: val, id: idx });
     }
 
     const handleRowClick = (e) => {
         const rowIndex = parseInt(e.currentTarget.getAttribute('data-row-index'));
-        setSelectedRowIndex(rowIndex);
-      };
+        setLogIndex(rowIndex);
+    };
+
+    const fetchSurveys = async () => {
+        let tieOnRow = { ...surveyRows[0] };
+        const iVal = localStorage.getItem('id');
+        const updateTie = await getSavedData(`https://og-project.onrender.com/api/v1/getTieOnPoint?id=${iVal}&excelName=${setUp.excelName}`)
+        if (updateTie.tieOn) {
+            const newSurvey = updateTie.tieOn;
+            tieOnRow = {
+                "id": 1,
+                "fieldNumber": "Tie On",
+                "md": formatNumberToTwoDecimalPlaces(newSurvey["md"]),
+                "cl": formatNumberToTwoDecimalPlaces(newSurvey["cl"]),
+                "inc": formatNumberToTwoDecimalPlaces(newSurvey["inc"]),
+                "azi": formatNumberToTwoDecimalPlaces(newSurvey["azi"]),
+                "tvd": formatNumberToTwoDecimalPlaces(newSurvey["tvd"]),
+                "ns": formatNumberToTwoDecimalPlaces(newSurvey["ns"]),
+                "ew": formatNumberToTwoDecimalPlaces(newSurvey["ew"]),
+                "dls": formatNumberToTwoDecimalPlaces(newSurvey["dls"]),
+                "vs": formatNumberToTwoDecimalPlaces(newSurvey["vs"]),
+                "comment": ""
+            };
+        }
+        const data = await getSavedData(`https://og-project.onrender.com/api/v1/allSurveys?logName=${logArray[logIndex].logName}&id=${iVal}`);
+        if (data.surveys.length) {
+            let updatedRows = [];
+            data.surveys.map((sdata, index) => {
+                let updated;
+                updated = {
+                    key: index + 2,
+                    "id": index + 2,
+                    "fieldNumber": Number(sdata.fieldNumber),
+                    "md": formatNumberToTwoDecimalPlaces(sdata["md"]),
+                    "inc": formatNumberToTwoDecimalPlaces(sdata["inc"]),
+                    "azi": formatNumberToTwoDecimalPlaces(sdata["azi"]),
+                    "tvd": formatNumberToTwoDecimalPlaces(sdata["tvd"]),
+                    "ns": formatNumberToTwoDecimalPlaces(sdata["ns"]),
+                    "ew": formatNumberToTwoDecimalPlaces(sdata["ew"]),
+                    "dls": formatNumberToTwoDecimalPlaces(sdata["dls"]),
+                    "vs": formatNumberToTwoDecimalPlaces(sdata["vs"]),
+                    "cl": formatNumberToTwoDecimalPlaces(sdata["cl"]),
+                    "comment": ""
+                }
+                updatedRows = [...updatedRows, updated];
+            })
+            const getSurveyRows = surveyNotEditRows.slice(updatedRows.length);
+            if (getSurveyRows.length === 0) {
+                const iRow = { id: updatedRows.length + 2, fieldNumber: updatedRows.length + 1, md: '', inc: '', azi: '', tvd: '', ns: '', ew: '', vs: '', dls: '', cl: '', comment: '' };
+                setSurveyRows([tieOnRow, ...updatedRows, iRow]);
+            } else {
+                setSurveyRows([tieOnRow, ...updatedRows, ...getSurveyRows]);
+            }
+        } else {
+            setSurveyRows([tieOnRow, ...surveyNotEditRows]);
+        }
+
+
+    };
+
+    useEffect(() => {
+        if (logIndex !== -1) {
+            fetchSurveys();
+        }
+    }, [logIndex])
     return (
         <TableContainer component={Paper} elevation={0} >
             <Table aria-label="simple table" >
@@ -61,23 +125,23 @@ export default function LogTable() {
                             }}
                             data-row-index={index}
                             onClick={handleRowClick}
-                            className={selectedRowIndex === index ? "table-row selected" : "table-row"}
+                            className={logIndex === index ? "table-row selected" : "table-row"}
                         >
                             <TableCell component="th" scope="row" sx={{
                                 paddingLeft: 3.5,
                                 fontSize: '15.2px',
                                 fontWeight: 500,
                             }}>
-                                {row.naam}
+                                {row.logName}
                             </TableCell>
                             <TableCell align="right" sx={{
                                 fontSize: '15.2px',
                                 fontWeight: 500,
-                            }}>{112.23}</TableCell>
+                            }}>{(Number(row.usedFrom)) ? formatNumberToTwoDecimalPlaces(row.usedFrom) : " "}</TableCell>
                             <TableCell align="right" sx={{
                                 fontSize: '15.2px',
                                 fontWeight: 500
-                            }}>{180.23}</TableCell>
+                            }}>{(Number(row.usedBy)) ? formatNumberToTwoDecimalPlaces(row.usedBy) : " "}</TableCell>
                             <TableCell align="right" sx={{
                                 paddingRight: 3.5
                             }}>

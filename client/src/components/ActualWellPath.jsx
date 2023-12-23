@@ -3,13 +3,15 @@ import LogTable from './ActualWellPath/LogTable';
 import SurveyTable from './ActualWellPath/SurveyTable';
 import BoxHeader from './SetUp/BoxHeader';
 import { useMatchStore } from '../store/store';
-import AddIcon from '@mui/icons-material/Add';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 const ActualWellPath = () => {
-  const { setOpen } = useMatchStore();
+  const { setOpen, logArray, setUp } = useMatchStore();
 
   const handleClick = (val) => {
-    setOpen({ show: true, text: val, id: -1 });
+    if (setUp.excelName !== "") {
+      setOpen({ show: true, text: val, id: -1 });
+    }
   }
   return (
     <Box mt={2.5} component="div" mb={6}>
@@ -26,7 +28,7 @@ const ActualWellPath = () => {
               <Stack direction={{ sm: 'row', xs: 'column' }} sx={{
                 position: 'relative'
               }} spacing={4} justifyContent={'space-between'} alignItems={'center'}>
-                <Typography variant='h5' component='h1' fontWeight={'bold'}>
+                <Typography variant='h5' component='h1' fontWeight={600}>
                   Survey Tool Program
                 </Typography>
                 <Button variant="contained" size="small" onClick={() => handleClick('Add')}
@@ -44,9 +46,22 @@ const ActualWellPath = () => {
 
               </Stack>
             </Box>
-            <Box >
-              <LogTable />
-            </Box>
+            {
+              (logArray.length)
+                ?
+                <Box >
+                  <LogTable />
+                </Box>
+                :
+                <Stack direction={'row'} alignSelf={'flex-start'} alignItems={'center'} spacing={1} px={4} py={2}>
+                  <InfoOutlinedIcon fontSize='small' />
+                  <Typography sx={{
+                    fontSize: '15.2px',
+                    fontWeight: 400
+                  }} >Create a new Survey Log to start posting Surveys.</Typography>
+                </Stack>
+            }
+
           </Stack>
         </Paper>
         <Paper square={false} elevation={0} sx={{
