@@ -16,7 +16,6 @@ const excelArray = [
     { name: 'sectionX', data: constants.SECTIONX },
     { name: 'sectionY', data: constants.SECTIONY },
     { name: 'verticalSectionAzimuth', data: constants.VERTICALSECTIONAZIMUTH },
-    { name: 'userId', data: constants.PORT },
     { name: 'localNorthSlotLocation', data: constants.LOCALNORTHSLOTLOCATION },
     { name: 'localEastSlotLocation', data: constants.LOCALEASTSLOTLOCATION },
     { name: 'localGridNorthSlotLocation', data: constants.GRIDNORTHSLOTLOCATION },

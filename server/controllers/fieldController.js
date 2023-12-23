@@ -10,13 +10,15 @@ const excelArray = require("../connections/excelArray");
 const fieldController = async (req, res) => {
     try {
         let { id } = req.query;
-        if (!id) {
+        console.log({ id });
+        if (id==='null') {
             id = uuidv4();
             await User.create({ id });
         }
         const { excelName } = req.query;
         const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
         const sheetName = workbook.SheetNames[0];
+
         const [arra, minMax] = await Promise.all([
             Promise.all(excelArray.map(async (element) => parseExcelData(workbook.Sheets[sheetName], element))),
             minMdmaxMd(workbook.Sheets[workbook.SheetNames[0]])

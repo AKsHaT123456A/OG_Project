@@ -200,136 +200,154 @@ export default function SurveyTable() {
                 "dls": formatNumberToTwoDecimalPlaces(data.newSurvey["dls"]),
                 "vs": formatNumberToTwoDecimalPlaces(data.newSurvey["vs"]),
                 "comment": currentRow.comment
-=======
-    useEffect(() => {
-        const allRowsFilled = rows.slice(1).every((row) =>
-            Object.values(row).every((value) => value !== '')
-        );
-        if (allRowsFilled) {
-            // If all rows (excluding header and row 1) are filled, add a new empty row
-            const newRow = {
-                id: rows.length + 1,
-                col1: rows[rows.length - 1].col1 + 1,
-                col2: '',
-                col3: '',
-                col4: '',
-                col5: '',
-                col6: '',
-                col7: '',
-                col8: '',
-                col9: '',
-                col10: '',
-            };
-        } else {
-            updatedRow = { ...currentRow };
-        }
-        const updatedRows = surveyRows.map((row) => (row.id === currentRow.id ? updatedRow : row));
-        setCall(false);
-        if (currentRow.id === surveyRows.length) {
-            const iRow = { id: currentRow.id + 1, fieldNumber: currentRow.id, md: '', cl: '', inc: '', azi: '', tvd: '', ns: '', ew: '', dls: '', vs: '', comment: '' };
-            setSurveyRows([...updatedRows, iRow]);
-        } else {
-            setSurveyRows(updatedRows);
-        }
-        apiRef.current.setCellFocus(currentRow.id + 1, "md");
-    }
-
-    const processFullRowUpdate = async (currentRow) => {
-        const jsonData = {
-            "azi": currentRow.azi,
-            "md": currentRow.md,
-            "inc": currentRow.inc,
-            "cl": currentRow.cl,
-            "tvd": currentRow.tvd,
-            "ns": currentRow.ns,
-            "ew": currentRow.ew,
-            "dls": currentRow.dls,
-            "vs": currentRow.vs,
-        }
-        const idVal = localStorage.getItem('id');
-        const apiUrl = `https://og-project.onrender.com/api/v1/getTieOnPoint?id=${idVal}&excelName=${setUp.excelName}`;
-        const updateData = await postLogData(apiUrl, jsonData);
-        console.log(updateData);
-        if (logIndex !== -1 && logArray.length) {
-            const data = await postLogData(`https://og-project.onrender.com/api/v1/updateSurveyAzimuth?id=${idVal}`, {
-                "updatedTieAzi": formatStringInNumberToTwoDecimalPlaces(currentRow.azi),
-                "updatedTieMd": formatStringInNumberToTwoDecimalPlaces(currentRow.md),
-                "updatedTieInc": formatStringInNumberToTwoDecimalPlaces(currentRow.inc),
-                "updatedTieCl": formatStringInNumberToTwoDecimalPlaces(currentRow.cl),
-                "updatedTieTvd": formatStringInNumberToTwoDecimalPlaces(currentRow.tvd),
-                "updatedTieNs": formatStringInNumberToTwoDecimalPlaces(currentRow.ns),
-                "updatedTieEw": formatStringInNumberToTwoDecimalPlaces(currentRow.ew),
-                "updatedTieDls": formatStringInNumberToTwoDecimalPlaces(currentRow.dls),
-                "updatedTieVs": formatStringInNumberToTwoDecimalPlaces(currentRow.vs),
-                "logName": logArray[logIndex].logName,
-                "well": setUp.well,
-            });
-            if (data.surveys.length) {
-                let updatedRows = [];
-                data.surveys.map((sdata, index) => {
-                    let updated;
-                    updated = {
-                        key: index + 2,
-                        "id": index + 2,
-                        "fieldNumber": Number(sdata.fieldNumber),
-                        "md": formatNumberToTwoDecimalPlaces(sdata["md"]),
-                        "inc": formatNumberToTwoDecimalPlaces(sdata["inc"]),
-                        "azi": formatNumberToTwoDecimalPlaces(sdata["azi"]),
-                        "tvd": formatNumberToTwoDecimalPlaces(sdata["tvd"]),
-                        "ns": formatNumberToTwoDecimalPlaces(sdata["ns"]),
-                        "ew": formatNumberToTwoDecimalPlaces(sdata["ew"]),
-                        "dls": formatNumberToTwoDecimalPlaces(sdata["dls"]),
-                        "vs": formatNumberToTwoDecimalPlaces(sdata["vs"]),
-                        "cl": formatNumberToTwoDecimalPlaces(sdata["cl"]),
-                        "comment": ""
-                    }
-                    updatedRows = [...updatedRows, updated];
-                })
-                const getSurveyRows = surveyRows.slice(updatedRows.length + 1);
-                setSurveyRows([surveyRows[0], ...updatedRows, ...getSurveyRows]);
-                setCall(false);
             }
-        }
-    }
-
-    const updateLogByMD = async (key, val) => {
-        const idVal = localStorage.getItem('id');
-        const logData = await postLogData(`https://og-project.onrender.com/api/v1/surveyEdit?id=${idVal}`, {
-            "logName": logArray[logIndex].logName,
-            [key]: val
-        })
-        console.log(logData);
-    }
-    useEffect(() => {
-        if (ids !== 0 && call) {
-            const currentRow = surveyRows[ids];
-            if (currentRow.md && currentRow.azi && currentRow.inc) {
-                processRowUpdate(currentRow);
-                const rowId = currentRow.id + 1;
-                const field = 'md'
-                const newLog = [...logArray];
-                if (newLog[logIndex]) {
-                    if (newLog[logIndex]["usedFrom"] === 0 || newLog[logIndex]["usedFrom"] === "" || currentRow.md === newLog[logIndex]["usedFrom"]) {
-                        updateLogByMD("usedFrom", currentRow.md);
-                        newLog[logIndex]["usedFrom"] = currentRow.md;
-                    } else {
-                        updateLogByMD("usedBy", currentRow.md);
-                        newLog[logIndex]["usedBy"] = currentRow.md;
-                    }
-
+            useEffect(() => {
+                const allRowsFilled = surveyRows.slice(1).every((row) =>
+                    Object.values(row).every((value) => value !== '')
+                );
+                if (allRowsFilled) {
+                    // If all rows (excluding header and row 1) are filled, add a new empty row
+                    const newRow = {
+                        id: surveyRows.length + 1,
+                        fieldNumber: surveyRows[surveyRows.length - 1].fieldNumber + 1,
+                        md: '',
+                        cl: '',
+                        inc: '',
+                        azi: '',
+                        tvd: '',
+                        ns: '',
+                        ew: '',
+                        dls: '',
+                        vs: '',
+                        comment: '',
+                    };
+                    setSurveyRows([...surveyRows, newRow]);
+                } else {
+                    updatedRow = { ...currentRow };
                 }
-                setLog(newLog);
-                apiRef.current.setCellFocus(rowId, field);
+                const updatedRows = surveyRows.map((row) =>
+                    row.id === currentRow.id ? updatedRow : row
+                );
+                setCall(false);
+                if (currentRow.id === surveyRows.length) {
+                    const iRow = {
+                        id: currentRow.id + 1,
+                        fieldNumber: currentRow.id,
+                        md: '',
+                        cl: '',
+                        inc: '',
+                        azi: '',
+                        tvd: '',
+                        ns: '',
+                        ew: '',
+                        dls: '',
+                        vs: '',
+                        comment: '',
+                    };
+                    setSurveyRows([...updatedRows, iRow]);
+                } else {
+                    setSurveyRows(updatedRows);
+                }
+                apiRef.current.setCellFocus(currentRow.id + 1, 'md');
+            }, [surveyRows]);
+        }
+        const processFullRowUpdate = async (currentRow) => {
+            const jsonData = {
+                "azi": currentRow.azi,
+                "md": currentRow.md,
+                "inc": currentRow.inc,
+                "cl": currentRow.cl,
+                "tvd": currentRow.tvd,
+                "ns": currentRow.ns,
+                "ew": currentRow.ew,
+                "dls": currentRow.dls,
+                "vs": currentRow.vs,
+            }
+            const idVal = localStorage.getItem('id');
+            const apiUrl = `https://og-project.onrender.com/api/v1/getTieOnPoint?id=${idVal}&excelName=${setUp.excelName}`;
+            const updateData = await postLogData(apiUrl, jsonData);
+            console.log(updateData);
+            if (logIndex !== -1 && logArray.length) {
+                const data = await postLogData(`https://og-project.onrender.com/api/v1/updateSurveyAzimuth?id=${idVal}`, {
+                    "updatedTieAzi": formatStringInNumberToTwoDecimalPlaces(currentRow.azi),
+                    "updatedTieMd": formatStringInNumberToTwoDecimalPlaces(currentRow.md),
+                    "updatedTieInc": formatStringInNumberToTwoDecimalPlaces(currentRow.inc),
+                    "updatedTieCl": formatStringInNumberToTwoDecimalPlaces(currentRow.cl),
+                    "updatedTieTvd": formatStringInNumberToTwoDecimalPlaces(currentRow.tvd),
+                    "updatedTieNs": formatStringInNumberToTwoDecimalPlaces(currentRow.ns),
+                    "updatedTieEw": formatStringInNumberToTwoDecimalPlaces(currentRow.ew),
+                    "updatedTieDls": formatStringInNumberToTwoDecimalPlaces(currentRow.dls),
+                    "updatedTieVs": formatStringInNumberToTwoDecimalPlaces(currentRow.vs),
+                    "logName": logArray[logIndex].logName,
+                    "well": setUp.well,
+                });
+                if (data.surveys.length) {
+                    let updatedRows = [];
+                    data.surveys.map((sdata, index) => {
+                        let updated;
+                        updated = {
+                            key: index + 2,
+                            "id": index + 2,
+                            "fieldNumber": Number(sdata.fieldNumber),
+                            "md": formatNumberToTwoDecimalPlaces(sdata["md"]),
+                            "inc": formatNumberToTwoDecimalPlaces(sdata["inc"]),
+                            "azi": formatNumberToTwoDecimalPlaces(sdata["azi"]),
+                            "tvd": formatNumberToTwoDecimalPlaces(sdata["tvd"]),
+                            "ns": formatNumberToTwoDecimalPlaces(sdata["ns"]),
+                            "ew": formatNumberToTwoDecimalPlaces(sdata["ew"]),
+                            "dls": formatNumberToTwoDecimalPlaces(sdata["dls"]),
+                            "vs": formatNumberToTwoDecimalPlaces(sdata["vs"]),
+                            "cl": formatNumberToTwoDecimalPlaces(sdata["cl"]),
+                            "comment": ""
+                        }
+                        updatedRows = [...updatedRows, updated];
+                    })
+                    const getSurveyRows = surveyRows.slice(updatedRows.length + 1);
+                    setSurveyRows([surveyRows[0], ...updatedRows, ...getSurveyRows]);
+                    setCall(false);
+                }
             }
         }
-        if (ids === 0 && call) {
-            const currentRow = surveyRows[ids];
-            processFullRowUpdate(currentRow);
+
+        const updateLogByMD = async (key, val) => {
+            const idVal = localStorage.getItem('id');
+            const logData = await postLogData(`https://og-project.onrender.com/api/v1/surveyEdit?id=${idVal}`, {
+                "logName": logArray[logIndex].logName,
+                [key]: val
+            })
+            console.log(logData);
         }
-    }, [surveyRows])
+    }
+        useEffect(() => {
+            if (ids !== 0 && call) {
+                const currentRow = surveyRows[ids];
+                if (currentRow.md && currentRow.azi && currentRow.inc) {
+                    processRowUpdate(currentRow);
+                    const rowId = currentRow.id + 1;
+                    const field = 'md'
+                    const newLog = [...logArray];
+                    if (newLog[logIndex]) {
+                        if (newLog[logIndex]["usedFrom"] === 0 || newLog[logIndex]["usedFrom"] === "" || currentRow.md === newLog[logIndex]["usedFrom"]) {
+                            updateLogByMD("usedFrom", currentRow.md);
+                            newLog[logIndex]["usedFrom"] = currentRow.md;
+                        } else {
+                            updateLogByMD("usedBy", currentRow.md);
+                            newLog[logIndex]["usedBy"] = currentRow.md;
+                        }
+
+                    }
+                    setLog(newLog);
+                    apiRef.current.setCellFocus(rowId, field);
+                }
+            }
+            if (ids === 0 && call) {
+                const currentRow = surveyRows[ids];
+                processFullRowUpdate(currentRow);
+            }
+        }, [surveyRows])
 
 
-console.log({rows});
+        console.log({ rows });
     return (
         <Box component={'div'} sx={{ height: 702, width: '100%' }}>
             <StyledDataGrid

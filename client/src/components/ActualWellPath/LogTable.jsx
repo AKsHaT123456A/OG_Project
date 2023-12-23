@@ -10,16 +10,15 @@ import Stack from '@mui/material/Stack';
 import { useMatchStore } from '../../store/store';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { formatNumberToTwoDecimalPlaces, getSavedData } from '../constant';
 
 export default function LogTable() {
     const { setOpen, logArray, logIndex, setLogIndex, surveyRows, setSurveyRows, surveyNotEditRows, setUp } = useMatchStore();
+    const [selectedRowIndex, setSelectedRowIndex] = useState(null);
 
     const handleButton = (val, idx) => {
-
         setOpen({ show: true, text: val, id: idx });
-        
     }
 
     const handleRowClick = (e) => {
@@ -80,18 +79,14 @@ export default function LogTable() {
         } else {
             setSurveyRows([tieOnRow, ...surveyNotEditRows]);
         }
-
-
     };
 
     useEffect(() => {
         if (logIndex !== -1) {
             fetchSurveys();
         }
-    }, [logIndex])
-=======
-        setSelectedRowIndex(rowIndex);
-    };
+    }, [logIndex]);
+
     return (
         <TableContainer component={Paper} elevation={0} >
             <Table aria-label="simple table" >

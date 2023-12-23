@@ -1,11 +1,7 @@
 
 const constants = {
     PORT: process.env.PORT || 3000,
-    JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,
-    recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY,
     DATABASE_KEY: process.env.DATABASE_KEY,
-    CRYPTO_SECRET_KEY: process.env.SECRET_KEY,
-    CACHE_TTL: 7200000,
     WELL: {
         "mainHeading": 9,
         "data": 4
@@ -66,106 +62,107 @@ const constants = {
         "mainHeading": 16,
         "data": 15
     },
-    "LOCALNORTHSLOTLOCATION":{
+    "LOCALNORTHSLOTLOCATION": {
         "mainHeading": 22,
         "data": 4
     },
-    "LOCALEASTSLOTLOCATION":{
+    "LOCALEASTSLOTLOCATION": {
         "mainHeading": 22,
         "data": 6
     },
-    "GRIDEASTSLOTLOCATION":{
+    "GRIDEASTSLOTLOCATION": {
         "mainHeading": 22,
         "data": 8
     },
-    "GRIDNORTHSLOTLOCATION":{
+    "GRIDNORTHSLOTLOCATION": {
         "mainHeading": 22,
         "data": 10
     },
-    "LATITUDESLOTLOCATION":{
+    "LATITUDESLOTLOCATION": {
         "mainHeading": 22,
         "data": 12
     },
-    "LONGITUDESLOTLOCATION":{
+    "LONGITUDESLOTLOCATION": {
         "mainHeading": 22,
         "data": 15
     },
-    "HORZSLOTLOCATION":{
+    "HORZSLOTLOCATION": {
         "mainHeading": 22,
         "data": 18
     },
-    "VERTSLOTLOCATION":{
+    "VERTSLOTLOCATION": {
         "mainHeading": 22,
         "data": 20
     },
-    "LOCALNORTHFACILITYREFERENCEPOINT":{
+    "LOCALNORTHFACILITYREFERENCEPOINT": {
         "mainHeading": 23,
         "data": 4
     },
-    "LOCALEASTFACILITYREFERENCEPOINT":{
+    "LOCALEASTFACILITYREFERENCEPOINT": {
         "mainHeading": 23,
         "data": 6
     },
-    "GRIDEASTFACILITYREFERENCEPOINT":{
+    "GRIDEASTFACILITYREFERENCEPOINT": {
         "mainHeading": 23,
         "data": 8
     },
-    "GRIDNORTHFACILITYREFERENCEPOINT":{
+    "GRIDNORTHFACILITYREFERENCEPOINT": {
         "mainHeading": 23,
         "data": 10
     },
-    "LATITUDEFACILITYREFERENCEPOINT":{
+    "LATITUDEFACILITYREFERENCEPOINT": {
         "mainHeading": 23,
         "data": 12
     },
-    "LONGITUDEFACILITYREFERENCEPOINT":{
+    "LONGITUDEFACILITYREFERENCEPOINT": {
         "mainHeading": 23,
         "data": 15
     },
-    "HORZFACILITYREFERENCEPOINT":{
+    "HORZFACILITYREFERENCEPOINT": {
         "mainHeading": 23,
         "data": 18
     },
-    "VERTFACILITYREFERENCEPOINT":{
+    "VERTFACILITYREFERENCEPOINT": {
         "mainHeading": 23,
         "data": 20
     },
-    "LOCALNORTHFIELDREFERENCEPOINT":{
+    "LOCALNORTHFIELDREFERENCEPOINT": {
         "mainHeading": 24,
         "data": 4
     },
-    "LOCALEASTFIELDREFERENCEPOINT":{
+    "LOCALEASTFIELDREFERENCEPOINT": {
         "mainHeading": 24,
         "data": 6
     },
-    "GRIDEASTFIELDREFERENCEPOINT":{
+    "GRIDEASTFIELDREFERENCEPOINT": {
         "mainHeading": 24,
         "data": 8
     },
-    "GRIDNORTHFIELDREFERENCEPOINT":{
+    "GRIDNORTHFIELDREFERENCEPOINT": {
         "mainHeading": 24,
         "data": 10
     },
-    "LATITUDEFIELDREFERENCEPOINT":{
+    "LATITUDEFIELDREFERENCEPOINT": {
         "mainHeading": 24,
         "data": 12
     },
-    "LONGITUDEFIELDREFERENCEPOINT":{
+    "LONGITUDEFIELDREFERENCEPOINT": {
         "mainHeading": 24,
         "data": 15
     },
-    "HORZFIELDREFERENCEPOINT":{
+    "HORZFIELDREFERENCEPOINT": {
         "mainHeading": 24,
         "data": 18
     },
-    "VERTFIELDREFERENCEPOINT":{
+    "VERTFIELDREFERENCEPOINT": {
         "mainHeading": 24,
         "data": 20
     },
-    "LASTREVISED":{
+    "LASTREVISED": {
         "mainHeading": 25,
         "data": 4
     },
 };
+
 
 module.exports = constants;

@@ -40,7 +40,17 @@ export async function uploadFile(file) {
   const fileNameWithoutExtension = fileName.replace(/\.[^.]+$/, '');
 
   try {
-    const response = await fetch(`https://og-project.onrender.com/api/v1/fields?excelName=${fileNameWithoutExtension}`, {
+    const id = localStorage.getItem('id')
+    let apiUrl = `http://localhost:3000/api/v1/fields?excelName=${fileNameWithoutExtension}`;
+
+    if (id) {
+      // If 'id' is present in local storage, include it in the API request
+      apiUrl += `&id=${id}`;
+    } else {
+      // If 'id' is not present, set it to 'null' in the API request
+      apiUrl += '&id=null';
+    }
+    const response = await fetch(`${apiUrl}`, {
       method: 'POST',
       body: formData,
     });
@@ -48,6 +58,7 @@ export async function uploadFile(file) {
     if (response.ok) {
       const result = await response.json();
       data = result;
+      localStorage.setItem('id', result.id);
     } else {
       console.error('Request failed:', response.statusText);
     }
