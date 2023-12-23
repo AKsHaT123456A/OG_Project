@@ -44,10 +44,8 @@ export async function uploadFile(file) {
     let apiUrl = `http://localhost:3000/api/v1/fields?excelName=${fileNameWithoutExtension}`;
 
     if (id) {
-      // If 'id' is present in local storage, include it in the API request
       apiUrl += `&id=${id}`;
     } else {
-      // If 'id' is not present, set it to 'null' in the API request
       apiUrl += '&id=null';
     }
     const response = await fetch(`${apiUrl}`, {

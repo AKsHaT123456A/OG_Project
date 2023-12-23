@@ -68,6 +68,7 @@ const updateSurvey = async (req, res) => {
         const surveys = await survey.find({ logName, userId });
 
         const updatedSurvey = surveys.map(async (surveyDetail) => {
+            let surveyDetails = {};
             console.log({ surveyDetail });
             const { verticalSectionAzimuth } = await detail
                 .findOne({ well })
@@ -76,7 +77,7 @@ const updateSurvey = async (req, res) => {
             const fieldNumber = surveyDetail.fieldNumber;
             if (fieldNumber === "1") {
                 const prevDetails = { md: updatedTieMd, inc: updatedTieInc, azi: updatedTieAzi, tvd: updatedTieTvd, ns: updatedTieNs, ew: updatedTieEw };
-                const surveyDetails = await saveToDatabaseEdit(
+                surveyDetails = await saveToDatabaseEdit(
                     prevDetails,
                     surveyDetail.md,
                     surveyDetail.inc,
@@ -99,7 +100,7 @@ const updateSurvey = async (req, res) => {
                 } = await survey.findOne({ fieldNumber: prevFieldNumber }).select("md inc azi tvd ns ew");
 
                 const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
-                const surveyDetails = await saveToDatabaseEdit(
+                surveyDetails = await saveToDatabaseEdit(
                     prevDetails,
                     surveyDetail.md,
                     surveyDetail.inc,
@@ -112,7 +113,7 @@ const updateSurvey = async (req, res) => {
             }
         });
         await Promise.all(updatedSurvey);
-        return res.status(200).json({ message: "Updated", surveys });
+        return res.status(200).json({ message: "Updated", surveys: surveyDetails.newSurvey });
     } catch (err) {
         return res.status(500).json({ err: err.message });
     }
