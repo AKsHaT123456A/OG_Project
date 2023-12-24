@@ -107,7 +107,7 @@ const updateSurvey = async (req, res) => {
             }
         }
 
-        return res.status(200).json({ message: "Updated", updatedSurveys });
+        return res.status(200).json({ message: "Updated", surveys:updatedSurveys });
     } catch (err) {
         return res.status(500).json({ err: err.message });
     }
