@@ -78,7 +78,7 @@ const minMdmaxMd = async (sheet) => {
         }
     }
     const lastNonEmptyValue = lastNonEmptyIndex !== -1 ? data[lastNonEmptyIndex][0] : null;
-    const minMd = data[startIndex + 3][constants.MD_COLUMN_INDEX];
+    const minMd = data[startIndex + 2][constants.MD_COLUMN_INDEX];
 
     return { minMd, lastNonEmptyValue };
 }
