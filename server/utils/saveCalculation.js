@@ -89,6 +89,7 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
             // Save to the database
             const newSurvey = await survey.findOne({ fieldNumber, userId: id });
             newSurvey.md = md2;
+            newSurvey.logName = logName;
             newSurvey.inc = i2;
             newSurvey.azi = a2;
             newSurvey.cl = clNumber;

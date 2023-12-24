@@ -11,13 +11,17 @@ const surveyController = async (req, res) => {
         const { md, inc, azi, fieldNumber, logName, well, tieAzi } = req.body;
         const { id } = req.query;
         const userId = id;
+
         const prevSurvey = await survey.findOne({ fieldNumber, userId, logName });
         if (prevSurvey) {
             return res.status(200).json({ message: `Survey ${fieldNumber} already exists` });
         }
+
         const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
         const angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
+
         const prevFieldNumber = fieldNumber - 1;
+
         const prevDetails = fieldNumber == "1"
             ? { md: 0, inc: 0, azi: tieAzi, tvd: 0, ns: 0, ew: 0 }
             : await survey.findOne({ fieldNumber: prevFieldNumber, logName }).select("md inc azi tvd ns ew");
@@ -31,6 +35,7 @@ const surveyController = async (req, res) => {
             logName,
             userId
         );
+
         if (surveyDetails.bool) {
             return res.status(201).json({
                 message: fieldNumber == "1" ? "Survey added" : "Calculated",
@@ -62,26 +67,17 @@ const updateSurvey = async (req, res) => {
         const userId = req.query.id;
         const surveys = await survey.find({ logName, userId });
 
-        const updatedSurvey = surveys.map(async (surveyDetail) => {
-            const { verticalSectionAzimuth } = await detail
-                .findOne({ well })
-                .select("verticalSectionAzimuth");
+        const updatedSurveys = [];
+
+        for (const surveyDetail of surveys) {
+            const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
             const angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
             const fieldNumber = surveyDetail.fieldNumber;
+
+            let prevDetails;
             if (fieldNumber === "1") {
-                const prevDetails = { md: updatedTieMd, inc: updatedTieInc, azi: updatedTieAzi, tvd: updatedTieTvd, ns: updatedTieNs, ew: updatedTieEw };
-                await saveToDatabaseEdit(
-                    prevDetails,
-                    surveyDetail.md,
-                    surveyDetail.inc,
-                    surveyDetail.azi,
-                    fieldNumber,
-                    angleWithoutDegree,
-                    logName,
-                    userId
-                );
-            }
-            else {
+                prevDetails = { md: updatedTieMd, inc: updatedTieInc, azi: updatedTieAzi, tvd: updatedTieTvd, ns: updatedTieNs, ew: updatedTieEw };
+            } else {
                 const prevFieldNumber = fieldNumber - 1;
                 const {
                     md: prevMd,
@@ -92,25 +88,31 @@ const updateSurvey = async (req, res) => {
                     ew,
                 } = await survey.findOne({ fieldNumber: prevFieldNumber }).select("md inc azi tvd ns ew");
 
-                const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
-                await saveToDatabaseEdit(
-                    prevDetails,
-                    surveyDetail.md,
-                    surveyDetail.inc,
-                    surveyDetail.azi,
-                    fieldNumber,
-                    angleWithoutDegree,
-                    logName,
-                    userId
-                );
+                prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
             }
-        });
-        await Promise.all(updatedSurvey);
-        return res.status(200).json({ message: "Updated", surveys: updatedSurvey });
+
+            const surveyDetails = await saveToDatabaseEdit(
+                prevDetails,
+                surveyDetail.md,
+                surveyDetail.inc,
+                surveyDetail.azi,
+                fieldNumber,
+                angleWithoutDegree,
+                logName,
+                userId
+            );
+
+            if (surveyDetails.bool) {
+                updatedSurveys.push(surveyDetails.newSurvey);
+            }
+        }
+
+        return res.status(200).json({ message: "Updated", updatedSurveys });
     } catch (err) {
         return res.status(500).json({ err: err.message });
     }
 };
+
 
 const updateSurveyList = async (req, res) => {
     try {
