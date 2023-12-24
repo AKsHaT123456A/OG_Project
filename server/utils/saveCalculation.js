@@ -60,26 +60,46 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
 
 const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName, id) => {
     try {
-        console.log({ prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName, id });
-        const newSurvey = await survey.findOne({ fieldNumber, userId: id });
-        newSurvey.md = md2;
-        newSurvey.inc = i2;
-        newSurvey.azi = a2;
-        newSurvey.cl = cl;
-        newSurvey.dl = dl;
-        newSurvey.dls = dls;
-        newSurvey.rf = rf;
-        newSurvey.tvd = tvd;
-        newSurvey.ns = ns;
-        newSurvey.ew = ew;
-        newSurvey.vs = vs;
-        await newSurvey.save();
-        return { bool: true, newSurvey: newSurvey };
+        const { cl, dl, dls, rf, tvd, ns, ew, vs } = calculateSurveyValues(prevDetails, md2, i2, a2, verticalSectionAzimuth);
+        console.log({ cl, dl, dls, rf, tvd, ns, ew, vs });
+        // Convert values to numbers
+        const clNumber = Number(cl);
+        const dlNumber = Number(dl);
+        const dlsNumber = Number(dls);
+        const rfNumber = Number(rf);
+        const tvdNumber = Number(tvd);
+        const nsNumber = Number(ns);
+        const ewNumber = Number(ew);
+        const vsNumber = Number(vs);
+
+        // Check if the conversion was successful
+        if (!isNaN(clNumber) && !isNaN(dlNumber) && !isNaN(dlsNumber) && !isNaN(rfNumber) && !isNaN(tvdNumber) && !isNaN(nsNumber) && !isNaN(ewNumber) && !isNaN(vsNumber)) {
+            // Save to the database
+            const newSurvey = await survey.findOne({ fieldNumber, userId: id });
+            newSurvey.md = md2;
+            newSurvey.inc = i2;
+            newSurvey.azi = a2;
+            newSurvey.cl = clNumber;
+            newSurvey.dl = dlNumber;
+            newSurvey.dls = dlsNumber;
+            newSurvey.rf = rfNumber;
+            newSurvey.tvd = tvdNumber;
+            newSurvey.ns = nsNumber;
+            newSurvey.ew = ewNumber;
+            newSurvey.vs = vsNumber;
+            await newSurvey.save();
+            return { bool: true, newSurvey: newSurvey };
+        } else {
+            console.error('Invalid values for cl, dl, dls, rf, tvd, ns, ew, or vs');
+            console.error({ clNumber, dlNumber, dlsNumber, rfNumber, tvdNumber, nsNumber, ewNumber, vsNumber });
+            return { bool: false, error: 'Invalid values for cl, dl, dls, rf, tvd, ns, ew, or vs' };
+        }
     } catch (err) {
         console.error(err);
         return { bool: false, error: err };
     }
 };
+
 
 const allSurvey = async (req, res) => {
     try {
