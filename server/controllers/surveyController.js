@@ -11,17 +11,13 @@ const surveyController = async (req, res) => {
         const { md, inc, azi, fieldNumber, logName, well, tieAzi } = req.body;
         const { id } = req.query;
         const userId = id;
-
         const prevSurvey = await survey.findOne({ fieldNumber, userId, logName });
         if (prevSurvey) {
             return res.status(200).json({ message: `Survey ${fieldNumber} already exists` });
         }
-
         const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
         const angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
-
         const prevFieldNumber = fieldNumber - 1;
-
         const prevDetails = fieldNumber == "1"
             ? { md: 0, inc: 0, azi: tieAzi, tvd: 0, ns: 0, ew: 0 }
             : await survey.findOne({ fieldNumber: prevFieldNumber, logName }).select("md inc azi tvd ns ew");
@@ -35,7 +31,6 @@ const surveyController = async (req, res) => {
             logName,
             userId
         );
-
         if (surveyDetails.bool) {
             return res.status(201).json({
                 message: fieldNumber == "1" ? "Survey added" : "Calculated",
@@ -68,7 +63,6 @@ const updateSurvey = async (req, res) => {
         const surveys = await survey.find({ logName, userId });
 
         const updatedSurvey = surveys.map(async (surveyDetail) => {
-            console.log({ surveyDetail });
             const { verticalSectionAzimuth } = await detail
                 .findOne({ well })
                 .select("verticalSectionAzimuth");
@@ -76,7 +70,7 @@ const updateSurvey = async (req, res) => {
             const fieldNumber = surveyDetail.fieldNumber;
             if (fieldNumber === "1") {
                 const prevDetails = { md: updatedTieMd, inc: updatedTieInc, azi: updatedTieAzi, tvd: updatedTieTvd, ns: updatedTieNs, ew: updatedTieEw };
-                const surveyDetails = await saveToDatabaseEdit(
+                await saveToDatabaseEdit(
                     prevDetails,
                     surveyDetail.md,
                     surveyDetail.inc,
@@ -99,7 +93,7 @@ const updateSurvey = async (req, res) => {
                 } = await survey.findOne({ fieldNumber: prevFieldNumber }).select("md inc azi tvd ns ew");
 
                 const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
-                const surveyDetails = await saveToDatabaseEdit(
+                await saveToDatabaseEdit(
                     prevDetails,
                     surveyDetail.md,
                     surveyDetail.inc,
@@ -112,7 +106,7 @@ const updateSurvey = async (req, res) => {
             }
         });
         await Promise.all(updatedSurvey);
-        return res.status(200).json({ message: "Updated", surveys });
+        return res.status(200).json({ message: "Updated", surveys: updatedSurvey });
     } catch (err) {
         return res.status(500).json({ err: err.message });
     }

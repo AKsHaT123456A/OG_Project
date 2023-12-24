@@ -13,6 +13,7 @@ const {
 } = require("../utils/calculationUtil");
 
 const calculateSurveyValues = (prevDetails, md2, i2, a2, verticalSectionAzimuth) => {
+
     const cl = calculateCourseLength(prevDetails.md, md2);
     const dl = calculateDogLeg(prevDetails.inc, i2, prevDetails.azi, a2);
     const dls = calculateDLS(dl, cl);
@@ -60,9 +61,20 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
 
 const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName, id) => {
     try {
-        const { cl, dl, dls, rf, tvd, ns, ew, vs } = calculateSurveyValues(prevDetails, md2, i2, a2, verticalSectionAzimuth);
-        console.log({ cl, dl, dls, rf, tvd, ns, ew, vs });
-        // Convert values to numbers
+        const prevDetailsNumber = {
+            md: Number(prevDetails.md),
+            inc: Number(prevDetails.inc),
+            azi: Number(prevDetails.azi),
+            cl: Number(prevDetails.cl),
+            dl: Number(prevDetails.dl),
+            dls: Number(prevDetails.dls),
+            rf: Number(prevDetails.rf),
+            tvd: Number(prevDetails.tvd),
+            ns: Number(prevDetails.ns),
+            ew: Number(prevDetails.ew),
+            vs: Number(prevDetails.vs)
+        }
+        const { cl, dl, dls, rf, tvd, ns, ew, vs } = calculateSurveyValues(prevDetailsNumber, md2, i2, a2, verticalSectionAzimuth);
         const clNumber = Number(cl);
         const dlNumber = Number(dl);
         const dlsNumber = Number(dls);
