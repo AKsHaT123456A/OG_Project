@@ -9,10 +9,10 @@ const {
 
 const surveyController = async (req, res) => {
     try {
-        const { md, inc, azi, fieldNumber, logName, well,excelName } = req.body;
+        const { md, inc, azi, fieldNumber, logName, well, excelName } = req.body;
         const { id } = req.query;
         const userId = id;
-        const tieOnPoint = tieOnPoint.findOne({ userId:id, excelName }).select("md cl inc azi tvd ns ew vs dls");
+        const tieOnPoint = tieOnPoint.findOne({ userId: id, excelName }).select("md cl inc azi tvd ns ew vs dls");
         const prevSurvey = await survey.findOne({ fieldNumber, userId, logName });
         if (prevSurvey) {
             return res.status(200).json({ message: `Survey ${fieldNumber} already exists` });
@@ -24,7 +24,7 @@ const surveyController = async (req, res) => {
         const prevFieldNumber = fieldNumber - 1;
 
         const prevDetails = fieldNumber == "1"
-            ? { md:tieOnPoint.md, inc:tieOnPoint.inc, azi:tieOnPoint.azi, tvd:tieOnPoint.tvd, ns:tieOnPoint.ns, ew:tieOnPoint.ew}
+            ? { md: tieOnPoint.md, inc: tieOnPoint.inc, azi: tieOnPoint.azi, tvd: tieOnPoint.tvd, ns: tieOnPoint.ns, ew: tieOnPoint.ew }
             : await survey.findOne({ fieldNumber: prevFieldNumber, logName }).select("md inc azi tvd ns ew");
         const surveyDetails = await saveToDatabase(
             prevDetails,
@@ -128,10 +128,11 @@ const updateSurveyList = async (req, res) => {
     try {
         const { md, azi, inc, fieldNumber, logName, well } = req.body;
         const { id } = req.query;
+        const tieOnPoint = tieOnPoint.findOne({ userId: id, excelName }).select("md cl inc azi tvd ns ew vs dls");
         const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
         const angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
         if (fieldNumber === "1") {
-            const prevDetails = { md: 0, inc: 0, azi: 0, tvd: 0, ns: 0, ew: 0 };
+            const prevDetails = { md: tieOnPoint.md, inc: tieOnPoint.inc, azi: tieOnPoint.azi, tvd: tieOnPoint.tvd, ns: tieOnPoint.ns, ew: tieOnPoint.ew };
             const surveyDetails = await saveToDatabaseEdit(
                 prevDetails,
                 md,
