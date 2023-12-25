@@ -13,12 +13,16 @@ const interpolateController = async (req, res) => {
 
     try {
         const prevInter = await interpolate.findOne({ md, excelName, userId: id });
-
         if (prevInter) {
             return res.status(400).json({ ...prevInter.toObject() });
         }
         const allWellPlan = await WellPlannedExcelModel.findOne({ md, excelName, userId: id });
         if (allWellPlan) {
+            const interpolatedData = {
+                ...allWellPlan.toObject(),ew: allWellPlan.east, ns: allWellPlan.north
+            };
+    
+            await interpolate.create(interpolatedData);
             return res.status(400).json({ ...allWellPlan.toObject(),ew: allWellPlan.east, ns: allWellPlan.north});
         }
         const [station1, station2] = await Promise.all([

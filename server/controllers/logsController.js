@@ -19,6 +19,7 @@ const createLog = async (req, res) => {
             });
         };
         const surveyLog = await log.findOne({ logName: logName, userId: id ,excelName });
+        console.log({ surveyLog });
         if (surveyLog) {
             const completeLogs = await getCompleteLogsByIds(user.logs);
             return res.status(409).json({
