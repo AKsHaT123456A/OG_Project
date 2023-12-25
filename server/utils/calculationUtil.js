@@ -26,7 +26,9 @@ function calculateRF(dl) {
 function calculateDeltaTVD(i1, i2, rf, deltaMD) {
     const radI1 = i1 * DEG_TO_RAD;
     const radI2 = i2 * DEG_TO_RAD;
-    return ((Math.cos(radI1) + Math.cos(radI2)) * rf * (deltaMD / 2));
+    const ra = radI1.toFixed(2);
+    const rb = radI2.toFixed(2);
+    return ((Math.cos(ra) + Math.cos(rb)) * rf * (deltaMD / 2));
 }
 
 function calculateDeltaNS(i1, i2, a1, a2, rf, md) {

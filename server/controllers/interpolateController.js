@@ -28,20 +28,18 @@ const interpolateController = async (req, res) => {
                 .limit(1)
                 .select('md dls buildrate turnrate -_id')
         ]);
-
         const brX = parseFloat(station2.buildrate) / 100;
         const trX = parseFloat(station2.turnrate) / 100;
 
-        const incX = station1.inc + brX * (md - station1.md);
+        const inc1 = (station1.inc + brX * (md - station1.md));
         const aziX = station1.azi + trX * (md - station1.md);
         const dlX = station2.dls * (station2.md - station1.md);
         const rf = calculateRF(dlX);
-
+        const incX = inc1.toFixed(2);
         const deltaTVD = calculateDeltaTVD(station1.inc, incX, rf, md - station1.md);
         const deltaEW = calculateDeltaEW(station1.inc, incX, station1.azi, aziX, rf, md - station1.md);
         const deltaNS = calculateDeltaNS(station1.inc, incX, station1.azi, aziX, rf, md - station1.md);
-
-        const tvd = parseFloat((deltaTVD + station1.tvd).toFixed(2));
+        const tvd = parseFloat((deltaTVD + station1.tvd));
         const ew = parseFloat((deltaEW + station1.east).toFixed(2));
         const ns = parseFloat((deltaNS + station1.north).toFixed(2));
 
@@ -50,7 +48,7 @@ const interpolateController = async (req, res) => {
             tvd,
             ew,
             ns,
-            inc: parseFloat(incX.toFixed(2)),
+            inc: parseFloat(incX),
             azi: parseFloat(aziX.toFixed(2)),
             rf,
             excelName,
