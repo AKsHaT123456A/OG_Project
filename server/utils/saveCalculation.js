@@ -33,6 +33,7 @@ const calculateSurveyValues = (prevDetails, md2, i2, a2, verticalSectionAzimuth)
 
 const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName, id) => {
     try {
+
         const { cl, dl, dls, rf, tvd, ns, ew, vs } = calculateSurveyValues(prevDetails, md2, i2, a2, verticalSectionAzimuth);
         const newSurvey = new survey({
             logName,
@@ -58,7 +59,6 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
         return { bool: false, error: err };
     }
 };
-
 const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, verticalSectionAzimuth, logName, id) => {
     try {
         const prevDetailsNumber = {

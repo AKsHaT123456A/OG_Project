@@ -6,7 +6,7 @@ const tieOnPoint = require("../models/tieOnPoint");
 
 const createLog = async (req, res) => {
     try {
-        const { logName, usedFrom, usedBy } = req.body;
+        const { logName, usedFrom, usedBy,model,error } = req.body;
         // const { id } = req.cookies;
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
         const { id } = req.query;
@@ -31,6 +31,8 @@ const createLog = async (req, res) => {
             logName,
             usedFrom,
             usedBy,
+            model,
+            error,
             userId: id
         });
         await newLog.save();
