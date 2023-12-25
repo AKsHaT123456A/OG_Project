@@ -46,9 +46,9 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
             dls,
             rf,
             tvd,
-            ns,
-            ew,
-            vs,
+            ns:ns.toFixed(2),
+            ew:ew.toFixed(2),
+            vs:vs.toFixed(2),
             userId: id
         });
 
