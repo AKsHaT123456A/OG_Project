@@ -6,10 +6,10 @@ const tieOnPoint = require("../models/tieOnPoint");
 
 const createLog = async (req, res) => {
     try {
-        const { logName, usedFrom, usedBy,model,error } = req.body;
+        const { logName, usedFrom, usedBy, model, error } = req.body;
         // const { id } = req.cookies;
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
-        const { id } = req.query;
+        const { id,excelName } = req.query;
         // const { 'user-id': userId } = req.headers;
         // const id = userId;
         const user = await User.findOne({ id: id });
@@ -18,7 +18,7 @@ const createLog = async (req, res) => {
                 message: "User not found",
             });
         };
-        const surveyLog = await log.findOne({ logName: logName, userId: id });
+        const surveyLog = await log.findOne({ logName: logName, userId: id ,excelName });
         if (surveyLog) {
             const completeLogs = await getCompleteLogsByIds(user.logs);
             return res.status(409).json({
@@ -33,6 +33,7 @@ const createLog = async (req, res) => {
             usedBy,
             model,
             error,
+            excelName,
             userId: id
         });
         await newLog.save();
@@ -55,8 +56,8 @@ const createLog = async (req, res) => {
 const deleteLog = async (req, res) => {
     try {
         const { logName } = req.body;
-        const { id } = req.query
-        const prevLog = await log.findOne({ logName, userId: id });
+        const { id, excelName } = req.query
+        const prevLog = await log.findOne({ logName, userId: id, excelName });
         // const id = "d80defd4-3398-4745-8c03-8e0f6825afc3";
 
 
@@ -103,9 +104,10 @@ const deleteAllLogs = async (req, res) => {
 }
 const editLog = async (req, res) => {
     const { logName } = req.body;
-    const { editLogName, usedBy, usedFrom } = req.body;
+    const { excelName } = req.query;
+    const { editLogName, usedBy, usedFrom, model, error } = req.body;
     const { id } = req.query;
-    const prevLog = await log.findOneAndUpdate({ logName, userId: id }, { $set: { logName: editLogName, usedBy, usedFrom } });
+    const prevLog = await log.findOneAndUpdate({ logName, userId: id }, { $set: { logName: editLogName, usedBy, usedFrom, model, error, excelName } });
     await survey.updateMany({ logName }, { $set: { logName: editLogName } });
     return res.status(200).json({
         message: "Log edited",
@@ -134,11 +136,11 @@ const getTieOnPoint = async (req, res) => {
 
 }
 const getAllLogs = async (req, res) => {
-    const { id } = req.query;
+    const { id, excelName } = req.query;
     // const { 'user-id': userId } = req.headers;
     // const id = userId;
     // const userId = " d80defd4-3398-4745-8c03-8e0f6825afc3";
-    const allLogs = await log.find({ userId: id });
+    const allLogs = await log.find({ userId: id, excelName });
     return res.status(200).json({
         message: "All logs",
         logs: allLogs,
