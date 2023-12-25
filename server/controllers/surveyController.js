@@ -112,18 +112,13 @@ const updateSurvey = async (req, res) => {
         return res.status(500).json({ err: err.message });
     }
 };
-const updateSurveyFields = async (req, res) => {
-    try {
-        const { md, inc, azi } = req.body;
-        
-    } catch (error) {
-        return res.status(500).json({ err: err.message });
-    }
-}
 
 const updateSurveyList = async (req, res) => {
     try {
-        const { md, azi, inc, fieldNumber } = req.body;
+        const { md, azi, inc, fieldNumber, logName, well } = req.body;
+        const { id } = req.query;
+        const { verticalSectionAzimuth } = await detail.findOne({ well }).select("verticalSectionAzimuth");
+        const angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
         if (fieldNumber === "1") {
             const prevDetails = { md: 0, inc: 0, azi: 0, tvd: 0, ns: 0, ew: 0 };
             const surveyDetails = await saveToDatabaseEdit(
@@ -132,8 +127,9 @@ const updateSurveyList = async (req, res) => {
                 inc,
                 azi,
                 fieldNumber,
-                verticalSectionAzimuth,
-                logName
+                angleWithoutDegree,
+                logName,
+                id
             );
 
             if (surveyDetails.bool) {
@@ -142,7 +138,6 @@ const updateSurveyList = async (req, res) => {
             }
         }
 
-        const surveys = await survey.findOne({ fieldNumber });
         const prevFieldNumber = fieldNumber - 1;
         const { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew } = await survey
             .findOne({ fieldNumber: prevFieldNumber })
@@ -155,8 +150,9 @@ const updateSurveyList = async (req, res) => {
             inc,
             azi,
             fieldNumber,
-            verticalSectionAzimuth,
-            logName
+            angleWithoutDegree,
+            logName,
+            id
         );
 
         if (surveyDetails.bool) {
