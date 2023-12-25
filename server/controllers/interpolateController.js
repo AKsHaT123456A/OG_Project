@@ -19,11 +19,11 @@ const interpolateController = async (req, res) => {
         }
 
         const [station1, station2] = await Promise.all([
-            WellPlannedExcelModel.findOne({ md: { $lte: md }, excelName })
+            WellPlannedExcelModel.findOne({ md: { $lte: md }, excelName ,userId:id})
                 .sort({ md: -1 })
                 .limit(1)
                 .select('md inc azi tvd east north -_id'),
-            WellPlannedExcelModel.findOne({ md: { $gte: md }, excelName })
+            WellPlannedExcelModel.findOne({ md: { $gte: md }, excelName,userId:id })
                 .sort({ md: 1 })
                 .limit(1)
                 .select('md dls buildrate turnrate -_id')
