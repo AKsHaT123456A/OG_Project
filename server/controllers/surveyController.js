@@ -1,6 +1,7 @@
 const surveyData = require("../connections/excelArrayData");
 const detail = require("../models/details");
 const survey = require("../models/survey");
+const tieOnPoint = require("../models/tieOnPoint");
 const {
     saveToDatabase,
     saveToDatabaseEdit,
@@ -8,10 +9,10 @@ const {
 
 const surveyController = async (req, res) => {
     try {
-        const { md, inc, azi, fieldNumber, logName, well, tieAzi } = req.body;
+        const { md, inc, azi, fieldNumber, logName, well, excelName } = req.body;
         const { id } = req.query;
         const userId = id;
-
+        const tieOnPoint = tieOnPoint.findOne({ userId, excelName }).select("md cl inc azi tvd ns ew vs dls");
         const prevSurvey = await survey.findOne({ fieldNumber, userId, logName });
         if (prevSurvey) {
             return res.status(200).json({ message: `Survey ${fieldNumber} already exists` });
@@ -23,7 +24,7 @@ const surveyController = async (req, res) => {
         const prevFieldNumber = fieldNumber - 1;
 
         const prevDetails = fieldNumber == "1"
-            ? { md: 0, inc: 0, azi: tieAzi, tvd: 0, ns: 0, ew: 0 }
+            ? { md:tieOnPoint.md, inc:tieOnPoint.inc, azi:tieOnPoint.azi, tvd:tieOnPoint.tvd, ns:tieOnPoint.ns, ew:tieOnPoint.ew}
             : await survey.findOne({ fieldNumber: prevFieldNumber, logName }).select("md inc azi tvd ns ew");
         const surveyDetails = await saveToDatabase(
             prevDetails,
