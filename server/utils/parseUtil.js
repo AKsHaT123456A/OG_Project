@@ -8,7 +8,7 @@ const parseExcelData = async (sheet, excelData) => {
     const name = excelData.name;
     const mainData = excelData.data.data;
     const specificValue = data[mainHeading] && data[mainHeading][mainData];
-    return specificValue ? { [name]: Array.isArray(specificValue) ? specificValue[0] : specificValue } : {};
+    return specificValue!==undefined ? { [name]: Array.isArray(specificValue) ? specificValue[0] : specificValue } : {};
 };
 
 const parseCompleteExcelData = async (sheet, excelName, userId) => {
