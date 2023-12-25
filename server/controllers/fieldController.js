@@ -17,8 +17,8 @@ const sheetNameFunc = async (buffer) => {
 
 const fieldController = async (req, res) => {
     try {
-        // let { id, excelName } = req.query;
-        const {id} = req.cookies;
+        let { id, excelName } = req.query;
+        
         if (id === 'null') {
             id = uuidv4();
             await User.create({ id });
