@@ -6,7 +6,7 @@ const wellPlannedExcelSchema = new mongoose.Schema(
         userId: { type: String, trim: true, required: true },
         id: { type: String, trim: true, required: true },
         fieldNumber: { type: String, trim: true, required: true },
-        md: { type: Number, trim: true, required: true, index: true }, // Use Number type for numerical values
+        md: { type: Number, trim: true, required: true, index: true }, 
         inc: { type: Number, trim: true, required: true },
         azi: { type: Number, trim: true, required: true },
         tvd: { type: Number, trim: true, required: true },
