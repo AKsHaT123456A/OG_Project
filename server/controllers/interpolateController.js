@@ -19,7 +19,7 @@ const interpolateController = async (req, res) => {
         }
         const allWellPlan = await WellPlannedExcelModel.findOne({ md, excelName, userId: id });
         if (allWellPlan) {
-            return res.status(400).json({ ...allWellPlan.toObject() });
+            return res.status(400).json({ ...allWellPlan.toObject(),ew: allWellPlan.east, ns: allWellPlan.north});
         }
         const [station1, station2] = await Promise.all([
             WellPlannedExcelModel.findOne({ md: { $lte: md }, excelName })
