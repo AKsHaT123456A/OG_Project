@@ -51,8 +51,8 @@ const surveyController = async (req, res) => {
 const lenthSurvey = async (req, res) => {
     try {
         const { id } = req.query;
-        const { logName, excelName } = req.query;
-        const surveys = await survey.find({ userId: id, logName,excelName });
+        const { logName } = req.query;
+        const surveys = await survey.find({ userId: id, logName });
         const length = surveys.length;
         return res.status(200).json({ length });
     } catch (err) {
