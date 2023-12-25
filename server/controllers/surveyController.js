@@ -147,7 +147,7 @@ const updateSurveyList = async (req, res) => {
             );
 
             if (surveyDetails.bool) {
-                const newSurvey = surveyDetails.newSurvey;
+                const newSurvey = surveyDetails.updatedSurvey;
                 return res.status(201).json({ message: "Survey added", newSurvey });
             }
         }
@@ -172,7 +172,7 @@ const updateSurveyList = async (req, res) => {
         if (surveyDetails.bool) {
             return res.status(200).json({
                 message: "Calculated",
-                newSurvey: surveyDetails.newSurvey,
+                newSurvey: surveyDetails.updatedSurvey,
             });
         }
     } catch (err) {
