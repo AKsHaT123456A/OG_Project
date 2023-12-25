@@ -39,7 +39,7 @@ const fieldController = async (req, res) => {
             }
         }
 
-        const newMerge = await detail.findOne({ well: mergedObject.well, userId: id });
+        const newMerge = await detail.findOne({ well: mergedObject.well, userId: id ,excelName});
         const response = newMerge
             ? res.status(200).json({ message: "Details already exist", newField: newMerge, minMd: minMax.minMd, maxMd: minMax.lastNonEmptyValue })
             : res.status(201).json({ message: "Details added", newField: await detail.create({ ...mergedObject, excelName, userId: id }), id, minMd: minMax.minMd, maxMd: minMax.lastNonEmptyValue });
