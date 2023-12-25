@@ -9,8 +9,8 @@ const {
 
 const surveyController = async (req, res) => {
     try {
-        const { md, inc, azi, fieldNumber, logName, well } = req.body;
-        const { id,excelName } = req.query;
+        const { md, inc, azi, fieldNumber, logName, well,excelName } = req.body;
+        const { id } = req.query;
         const userId = id;
         const tieOnPoint = tieOnPoint.findOne({ userId:id, excelName }).select("md cl inc azi tvd ns ew vs dls");
         const prevSurvey = await survey.findOne({ fieldNumber, userId, logName });
