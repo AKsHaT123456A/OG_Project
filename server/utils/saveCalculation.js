@@ -73,7 +73,7 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
             ns: Number(prevDetails.ns),
             ew: Number(prevDetails.ew),
             vs: Number(prevDetails.vs)
-        }
+        };
         const { cl, dl, dls, rf, tvd, ns, ew, vs } = calculateSurveyValues(prevDetailsNumber, md2, i2, a2, verticalSectionAzimuth);
         const clNumber = Number(cl);
         const dlNumber = Number(dl);
@@ -86,22 +86,34 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
 
         // Check if the conversion was successful
         if (!isNaN(clNumber) && !isNaN(dlNumber) && !isNaN(dlsNumber) && !isNaN(rfNumber) && !isNaN(tvdNumber) && !isNaN(nsNumber) && !isNaN(ewNumber) && !isNaN(vsNumber)) {
-            // Save to the database
-            const newSurvey = await survey.findOne({ fieldNumber, userId: id });
-            newSurvey.md = md2;
-            newSurvey.logName = logName;
-            newSurvey.inc = i2;
-            newSurvey.azi = a2;
-            newSurvey.cl = clNumber;
-            newSurvey.dl = dlNumber;
-            newSurvey.dls = dlsNumber;
-            newSurvey.rf = rfNumber;
-            newSurvey.tvd = tvdNumber;
-            newSurvey.ns = nsNumber;
-            newSurvey.ew = ewNumber;
-            newSurvey.vs = vsNumber;
-            await newSurvey.save();
-            return { bool: true, newSurvey: newSurvey };
+            // Update the existing document
+            const updatedSurvey = await survey.findOneAndUpdate(
+                { fieldNumber, userId: id },
+                {
+                    $set: {
+                        md: md2,
+                        logName,
+                        inc: i2,
+                        azi: a2,
+                        cl: clNumber,
+                        dl: dlNumber,
+                        dls: dlsNumber,
+                        rf: rfNumber,
+                        tvd: tvdNumber,
+                        ns: nsNumber,
+                        ew: ewNumber,
+                        vs: vsNumber
+                    }
+                },
+                { new: true } // To return the updated document
+            );
+
+            if (!updatedSurvey) {
+                console.error('Survey not found for update');
+                return { bool: false, error: 'Survey not found for update' };
+            }
+
+            return { bool: true, updatedSurvey };
         } else {
             console.error('Invalid values for cl, dl, dls, rf, tvd, ns, ew, or vs');
             console.error({ clNumber, dlNumber, dlsNumber, rfNumber, tvdNumber, nsNumber, ewNumber, vsNumber });
@@ -109,10 +121,11 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
         }
     } catch (err) {
         console.error(err);
-        return { bool: false, error: err };
+        return { bool: false, error: err.message };
     }
 };
 
+module.exports = { saveToDatabaseEdit };
 
 const allSurvey = async (req, res) => {
     try {
