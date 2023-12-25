@@ -8,6 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const excelArray = require("../connections/excelArray");
 
 const sheetNameFunc = async (buffer) => {
+
     const workbook = xlsx.read(buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[sheetName];
@@ -16,7 +17,8 @@ const sheetNameFunc = async (buffer) => {
 
 const fieldController = async (req, res) => {
     try {
-        let { id, excelName } = req.query;
+        // let { id, excelName } = req.query;
+        const {id} = req.cookies;
         if (id === 'null') {
             id = uuidv4();
             await User.create({ id });
