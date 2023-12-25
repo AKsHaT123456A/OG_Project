@@ -116,7 +116,7 @@ const updateSurvey = async (req, res) => {
             );
 
             if (surveyDetails.bool) {
-                updatedSurveys.push(surveyDetails.newSurvey);
+                updatedSurveys.push(surveyDetails.updatedSurvey);
             }
         }
 
