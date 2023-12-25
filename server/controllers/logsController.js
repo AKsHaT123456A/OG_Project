@@ -40,8 +40,13 @@ const createLog = async (req, res) => {
         await newLog.save();
         user.logs.push(newLog._id);
         await user.save();
-        const populatedUser = await User.findOne({ id }).populate("logs").select("-_id -__v");
-        return res.status(201).json({
+        const populatedUser = 
+        await User.findOne({ id })
+        .populate("logs")
+        .select("-_id -__v");
+
+        return res.status(201)
+        .json({
             message: "New log created",
             log: populatedUser.logs,
         });

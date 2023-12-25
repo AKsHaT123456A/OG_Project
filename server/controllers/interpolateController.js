@@ -18,6 +18,7 @@ const interpolateController = async (req, res) => {
         }
         const allWellPlan = await WellPlannedExcelModel.findOne({ md, excelName, userId: id });
         if (allWellPlan) {
+            console.log(allWellPlan);
             const interpolatedData = {
                 ...allWellPlan.toObject(),ew: allWellPlan.east, ns: allWellPlan.north
             };

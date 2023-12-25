@@ -8,7 +8,7 @@ const interpolateSchema = new mongoose.Schema(
         tvd: { type: String, trim: true, required: true },
         ew: { type: String, trim: true, required: true },
         ns: { type: String, trim: true, required: true },
-        rf: { type: String, trim: true, required: true },
+        rf: { type: String, trim: true },
         inc: { type: String, trim: true, required: true },
         azi: { type: String, trim: true, required: true }
     },
