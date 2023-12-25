@@ -52,9 +52,9 @@ const lengthSurvey = async (req, res) => {
     try {
         const { id } = req.query;
         const { logName } = req.query;
-        const surveys = await survey.find({ userId: id, logName }).sort({ fieldNumber: -1 });
-        const fieldNumber = surveys[0].fieldNumber;
-        return res.status(200).json({ length: fieldNumber });
+        const surveys = await survey.find({ userId: id, logName });
+        const length = surveys.length;
+        return res.status(200).json({ length });
     } catch (err) {
         return res.status(500).json({ err: err.message });
     }
