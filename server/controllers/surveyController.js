@@ -48,7 +48,17 @@ const surveyController = async (req, res) => {
     }
 };
 
-
+const lenthSurvey = async (req, res) => {
+    try {
+        const { id } = req.query;
+        const { logName, excelName } = req.query;
+        const surveys = await survey.find({ userId: id, logName,excelName });
+        const length = surveys.length;
+        return res.status(200).json({ length });
+    } catch (err) {
+        return res.status(500).json({ err: err.message });
+    }
+}
 
 const getAllSurveys = async (req, res) => {
     try {
@@ -170,4 +180,4 @@ const updateSurveyList = async (req, res) => {
     }
 };
 
-module.exports = { surveyController, updateSurveyList, updateSurvey, getAllSurveys };
+module.exports = { surveyController, updateSurveyList, updateSurvey, getAllSurveys,lenthSurvey };
