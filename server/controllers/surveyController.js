@@ -153,11 +153,13 @@ const updateSurveyList = async (req, res) => {
         }
 
         const prevFieldNumber = fieldNumber - 1;
+        console.log(prevFieldNumber);
         const { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew } = await survey
             .findOne({ fieldNumber: prevFieldNumber,logName })
             .select("md inc azi tvd ns ew");
 
         const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
+        console.log(prevDetails);
         const surveyDetails = await saveToDatabaseEdit(
             prevDetails,
             md,

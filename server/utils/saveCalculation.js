@@ -50,7 +50,7 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
             ew: ew.toFixed(2),
             vs: vs.toFixed(2),
             userId: id,
-            excelName:prevDetails.excelName
+            excelName: prevDetails.excelName
         });
 
         await newSurvey.save();
@@ -88,8 +88,8 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
         // Check if the conversion was successful
         if (!isNaN(clNumber) && !isNaN(dlNumber) && !isNaN(dlsNumber) && !isNaN(rfNumber) && !isNaN(tvdNumber) && !isNaN(nsNumber) && !isNaN(ewNumber) && !isNaN(vsNumber)) {
             // Update the existing document
-            const updatedSurvey = await survey.findOneAndUpdate(
-                { fieldNumber, userId: id },
+            const updatedSurvey = await survey.updateOne(
+                { fieldNumber, userId: id, logName },
                 {
                     $set: {
                         md: md2,
@@ -105,16 +105,14 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
                         ew: ewNumber,
                         vs: vsNumber
                     }
-                },
-                { new: true }
+                }
             );
-
             if (!updatedSurvey) {
                 console.error('Survey not found for update');
                 return { bool: false, error: 'Survey not found for update' };
             }
-
-            return { bool: true, updatedSurvey };
+            const existingDocument = await survey.findOne({ fieldNumber, userId: id, logName });
+            return { bool: true, updatedSurvey:existingDocument };
         } else {
             console.error('Invalid values for cl, dl, dls, rf, tvd, ns, ew, or vs');
             console.error({ clNumber, dlNumber, dlsNumber, rfNumber, tvdNumber, nsNumber, ewNumber, vsNumber });
