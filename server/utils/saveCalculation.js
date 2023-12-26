@@ -46,10 +46,11 @@ const saveToDatabase = async (prevDetails, md2, i2, a2, fieldNumber, verticalSec
             dls,
             rf,
             tvd,
-            ns:ns.toFixed(2),
-            ew:ew.toFixed(2),
-            vs:vs.toFixed(2),
-            userId: id
+            ns: ns.toFixed(2),
+            ew: ew.toFixed(2),
+            vs: vs.toFixed(2),
+            userId: id,
+            excelName:prevDetails.excelName
         });
 
         await newSurvey.save();
@@ -105,7 +106,7 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
                         vs: vsNumber
                     }
                 },
-                { new: true } // To return the updated document
+                { new: true }
             );
 
             if (!updatedSurvey) {
