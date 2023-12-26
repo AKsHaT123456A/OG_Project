@@ -99,7 +99,7 @@ const updateSurvey = async (req, res) => {
                     tvd,
                     ns,
                     ew,
-                } = await survey.findOne({ fieldNumber: prevFieldNumber }).select("md inc azi tvd ns ew");
+                } = await survey.findOne({ fieldNumber: prevFieldNumber,logName }).select("md inc azi tvd ns ew");
 
                 prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
             }
@@ -154,7 +154,7 @@ const updateSurveyList = async (req, res) => {
 
         const prevFieldNumber = fieldNumber - 1;
         const { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew } = await survey
-            .findOne({ fieldNumber: prevFieldNumber })
+            .findOne({ fieldNumber: prevFieldNumber,logName })
             .select("md inc azi tvd ns ew");
 
         const prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
