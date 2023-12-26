@@ -112,7 +112,34 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
                 return { bool: false, error: 'Survey not found for update' };
             }
             const existingDocument = await survey.findOne({ fieldNumber, userId: id, logName });
-            return { bool: true, updatedSurvey:existingDocument };
+            const belowSurveys = await survey.find({ fieldNumber: { $gt: fieldNumber }, logName });
+
+            for (const belowSurvey of belowSurveys) {
+                const angleWithoutDegree = verticalSectionAzimuth.replace(/°/g, '');
+                const fieldNumber = belowSurvey.fieldNumber;
+                let prevDetails;
+                const {
+                    md: prevMd,
+                    inc: prevInc,
+                    azi: prevAzi,
+                    tvd,
+                    ns,
+                    ew,
+                } = await survey.findOne({ fieldNumber: fieldNumber-1, logName }).select("md inc azi tvd ns ew");
+
+                prevDetails = { md: prevMd, inc: prevInc, azi: prevAzi, tvd, ns, ew };
+                await saveToDatabaseEdit(
+                    prevDetails,
+                    belowSurvey.md,
+                    belowSurvey.inc,
+                    belowSurvey.azi,
+                    fieldNumber,
+                    angleWithoutDegree,
+                    logName,
+                    id
+                );
+            }
+            return { bool: true, updatedSurvey: existingDocument };
         } else {
             console.error('Invalid values for cl, dl, dls, rf, tvd, ns, ew, or vs');
             console.error({ clNumber, dlNumber, dlsNumber, rfNumber, tvdNumber, nsNumber, ewNumber, vsNumber });
@@ -124,7 +151,6 @@ const saveToDatabaseEdit = async (prevDetails, md2, i2, a2, fieldNumber, vertica
     }
 };
 
-module.exports = { saveToDatabaseEdit };
 
 const allSurvey = async (req, res) => {
     try {

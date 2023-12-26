@@ -112,7 +112,8 @@ const updateSurvey = async (req, res) => {
                 fieldNumber,
                 angleWithoutDegree,
                 logName,
-                userId
+                userId,
+                angleWithoutDegree
             );
 
             if (surveyDetails.bool) {
