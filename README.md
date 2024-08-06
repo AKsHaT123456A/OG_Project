@@ -44,6 +44,5 @@ OG is a powerful server-side application designed for efficient and precise calc
 
 For any inquiries or feedback, please contact me at:
 
-- **Email:** akshatmishra.dev@gmail.com
 - **LinkedIn:** [linkedin.com/in/akshat-mishra-43930b235](https://www.linkedin.com/in/akshat-mishra-43930b235)
 - **GitHub:** [github.com/AKsHaT123456A](https://github.com/AKsHaT123456A)
