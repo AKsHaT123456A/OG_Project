@@ -16,12 +16,13 @@ OG is a powerful server-side application designed for efficient and precise calc
 - Express.js
 - MongoDB
 
+
 ## Workflow
 
 1. **File Upload:**
     - Users can upload files through the application interface.
     
-    ![File Upload](https://drive.google.com/file/d/1cXgcFy-0NPfC1oRmPDmnOi0gi65Pu19E/view)
+    ![File Upload](https://github.com/user-attachments/assets/8b54adf9-c604-4a82-b0da-823a1baa1cf7)
 
 2. **Basic Details Display:**
     - The basic details of the uploaded file are displayed on the interface.
@@ -34,12 +35,12 @@ OG is a powerful server-side application designed for efficient and precise calc
 4. **Backend Calculations:**
     - Advanced calculations, including interpolation and logging, are performed on the parsed data.
     
-    ![Backend Calculations](assets/backend-calculations.gif)
+    ![Backend Calculations](https://github.com/user-attachments/assets/1e1cc85f-e4fb-4c98-ad34-fc1bf0350dfb)
 
 5. **Results Display:**
     - The results of the calculations are displayed to the user.
     
-    ![Results Display](https://drive.google.com/file/d/1LkzUGnGXUHaV8Nze93UMR0ZoJ7EY6U3z/view?usp=sharing)
+    ![Results Display](https://github.com/user-attachments/assets/40b8fc3e-e219-45e9-89b2-4e46506c3f7b)
 
 ## Contact
 
