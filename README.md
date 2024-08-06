@@ -29,8 +29,6 @@ OG is a powerful server-side application designed for efficient and precise calc
 
 3. **Data Parsing:**
     - The application parses the uploaded file to extract necessary data.
-    
-    ![Data Parsing](https://drive.google.com/file/d/1mFoAE7aV_8cfUSejIBGcs8clfdFrq4sT/view)
 
 4. **Backend Calculations:**
     - Advanced calculations, including interpolation and logging, are performed on the parsed data.
